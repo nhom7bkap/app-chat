@@ -2,6 +2,7 @@ package com.team7.app_chat;
 
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.core.Tag;
+import com.team7.app_chat.Util.FiresBaseRepository;
 import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.Util.Identifiable;
 import com.team7.app_chat.models.User;
@@ -28,10 +30,13 @@ import com.team7.app_chat.ui.main.SectionsPagerAdapter;
 import com.team7.app_chat.databinding.ActivityMainBinding;
 
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Write a message to the database
 
-        FirestoreRepository FR = new FirestoreRepository(new User().getClass(), "User");
+        FiresBaseRepository FR = new FiresBaseRepository<User>(User.class);
         User u = new User();
-        u.setId(2);
         u.setUserName("phong");
         u.setEmail("phong123@gmail.com");
         u.setPhone("0123456789");
@@ -50,18 +54,27 @@ public class MainActivity extends AppCompatActivity {
         u.setFirstName("phong");
         u.setLastName("hoang");
         u.setGender(1);
-        u.setDOB(new Date());
+        u.setDOB(new Date().toString());
         u.setAddress("ha noi");
         u.setImage("abc.png");
         u.setVerification(true);
         u.setType(1);
         u.setStatus(1);
-        u.setCreated_at(new Date());
-        u.setUpdated_at(new Date());
-        
-        Log.e("error", u.getEntityKey());
+        u.setCreated_at(new Date().toString());
+        u.setUpdated_at(new Date().toString());
 
-        FR.create(u);
+        Task t = FR.add(u);
+
+       List<User> userList = FR.get();
+
+       if (!userList.isEmpty()){
+           for (User us : userList){
+               Log.e("data", us.getKey());
+           }
+       }else {
+           Log.e("empty","Empty user list");
+       }
+
 
 //        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
 //        connectedRef.addValueEventListener(new ValueEventListener() {

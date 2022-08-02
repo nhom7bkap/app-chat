@@ -26,7 +26,7 @@ public class FirestoreRepository<TEntity extends Identifiable<String>> implement
     private final String collectionName;
 
     /**
-     * Initializes the repository storing the data in the given collection. Should be from {@link FirestoreCollections}.
+     * Initializes the repository storing the data in the given collection. Should be from {@link FirestoreRepository}.
      */
     public FirestoreRepository(Class<TEntity> entityClass, String collectionName) {
         this.collectionName = collectionName;

@@ -2,13 +2,15 @@ package com.team7.app_chat.models;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
 import com.team7.app_chat.Util.Identifiable;
 
 import java.util.Date;
 
-public class User implements Identifiable<String> {
-    private int id;
+public class User {
+    @Exclude
+    private String key;
     private String userName;
     private String email;
     private String phone;
@@ -17,20 +19,19 @@ public class User implements Identifiable<String> {
     private String firstName;
     private String lastName;
     private int gender;
-    private Date DOB;
+    private String  DOB;
     private String address;
     private String image;
     private boolean verification;
     private int type;
     private int status;
-    private Date created_at;
-    private Date updated_at;
+    private String created_at;
+    private String updated_at;
 
     public User() {
     }
 
-    public User(int id, String userName, String email, String phone, String password, String confirmPassword, String firstName, String lastName, int gender, Date DOB, String address, String image, boolean verification, int type, int status, Date created_at, Date updated_at) {
-        this.id = id;
+    public User(String userName, String email, String phone, String password, String confirmPassword, String firstName, String lastName, int gender, String DOB, String address, String image, boolean verification, int type, int status, String created_at, String updated_at) {
         this.userName = userName;
         this.email = email;
         this.phone = phone;
@@ -49,31 +50,12 @@ public class User implements Identifiable<String> {
         this.updated_at = updated_at;
     }
 
-    public User(String userName, String email, String phone, String password, String confirmPassword, String firstName, String lastName, int gender, Date DOB, String address, String image, boolean verification, int type, int status, Date created_at, Date updated_at) {
-        this.userName = userName;
-        this.email = email;
-        this.phone = phone;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.DOB = DOB;
-        this.address = address;
-        this.image = image;
-        this.verification = verification;
-        this.type = type;
-        this.status = status;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+    public String getKey() {
+        return key;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getUserName() {
@@ -140,11 +122,11 @@ public class User implements Identifiable<String> {
         this.gender = gender;
     }
 
-    public Date getDOB() {
+    public String getDOB() {
         return DOB;
     }
 
-    public void setDOB(Date DOB) {
+    public void setDOB(String DOB) {
         this.DOB = DOB;
     }
 
@@ -188,25 +170,47 @@ public class User implements Identifiable<String> {
         this.status = status;
     }
 
-    public Date getCreated_at() {
+    public String getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(Date created_at) {
+    public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
 
-    public Date getUpdated_at() {
+    public String getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(Date updated_at) {
+    public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
     }
 
-    @Exclude
     @Override
-    public String getEntityKey() {
-        return "";
+    public String toString() {
+        return "User{" +
+                "key='" + key + '\'' +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
+                ", confirmPassword='" + confirmPassword + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", gender=" + gender +
+                ", DOB='" + DOB + '\'' +
+                ", address='" + address + '\'' +
+                ", image='" + image + '\'' +
+                ", verification=" + verification +
+                ", type=" + type +
+                ", status=" + status +
+                ", created_at='" + created_at + '\'' +
+                ", updated_at='" + updated_at + '\'' +
+                '}';
     }
+
+    //    public User getDataSnapShot(DataSnapshot ds) {
+//
+//    }
+
 }
