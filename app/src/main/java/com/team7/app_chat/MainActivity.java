@@ -22,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.team7.app_chat.Util.FiresBaseRepository;
 import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.databinding.ActivityMainBinding;
-import com.team7.app_chat.models.City;
 import com.team7.app_chat.models.User;
 import com.team7.app_chat.ui.main.SectionsPagerAdapter;
 
