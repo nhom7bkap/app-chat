@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -11,11 +12,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.team7.app_chat.Util.FiresBaseRepository;
+import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.databinding.ActivityMainBinding;
+import com.team7.app_chat.models.City;
 import com.team7.app_chat.models.User;
 import com.team7.app_chat.ui.main.SectionsPagerAdapter;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,97 +34,39 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //aasd
         // Write a message to the database
-
-        FiresBaseRepository FR = new FiresBaseRepository<User>(User.class);
-        User u = new User();
-        u.setUserName("phong");
-        u.setEmail("phong123@gmail.com");
-        u.setPhone("0123456789");
-        u.setPassword("phong123");
-        u.setConfirmPassword("phong123");
-        u.setFirstName("phong");
-        u.setLastName("hoang");
-        u.setGender(1);
-        u.setDOB(new Date().toString());
-        u.setAddress("ha noi");
-        u.setImage("abc.png");
-        u.setVerification(true);
-        u.setType(1);
-        u.setStatus(1);
-        u.setCreated_at(new Date().toString());
-        u.setUpdated_at(new Date().toString());
-
-        Task t = FR.add(u);
-
-        List<User> userList = FR.get();
-
-        if (!userList.isEmpty()) {
-            for (User us : userList) {
-                Log.e("data", us.getKey());
-            }
-        } else {
-            Log.e("empty", "Empty user list");
-        }
-
-
-//        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
-//        connectedRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                DatabaseReference myRef = database.getReference("message");
-//                boolean connected = snapshot.getValue(Boolean.class);
-//                if (connected) {
-//                    myRef.setValue("Hello, World!");
+/** Test
+//        FirestoreRepository FR = new FirestoreRepository(new User().getClass(),"User");
+//        User u = new User();
+//        u.setKey("LA");
+//        u.setUserName("phong");
+//        u.setEmail("phong123@gmail.com");
+//        u.setPhone("0123456789");
+//        u.setPassword("phong123");
+//        u.setConfirmPassword("phong123");
+//        u.setFirstName("phong");
+//        u.setLastName("hoang");
+//        u.setGender(1);
+//        u.setDOB(new Date().toString());
+//        u.setAddress("ha noi");
+//        u.setImage("abc.png");
+//        u.setVerification(true);
+//        u.setType(1);
+//        u.setStatus(1);
+//        u.setCreated_at(new Date().toString());
+//        u.setUpdated_at(new Date().toString());
 //
-//                    myRef.addValueEventListener(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                            // This method is called once with the initial value and again
-//                            // whenever data at this location is updated.
-//                            String value = dataSnapshot.getValue(String.class);
-//                            Log.e("Info", "Value is: " + value);
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError error) {
-//                            // Failed to read value
-//                            Log.e("Info", "Failed to read value.", error.toException());
-//                        }
-//                    });
-//                    Log.d("ConnectDB", "connected");
-//                } else {
-//                    Log.d("ConnectDB", "not connected");
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Log.w("ConnectDB", "Listener was cancelled");
-//            }
-//        });
+//        Task t = FR.create(u);
 
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-//        myRef.child("message").addValueEventListener(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                String value = snapshot.getValue(String.class);
-//                Log.e("message", "Value is: " + value);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Log.e("Info", "Failed to read value.", error.toException());
-//            }
-//        });
-
+//        City city = new City("Los Angeles", "CA", "USA",
+//                false, 5000000L, Arrays.asList("west_coast", "sorcal"));
+//        db.collection("cities").document("abc123").set(city);
+**/
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

@@ -8,7 +8,7 @@ import com.team7.app_chat.Util.Identifiable;
 
 import java.util.Date;
 
-public class User {
+public class User{
     @Exclude
     private String key;
     private String userName;
@@ -50,10 +50,12 @@ public class User {
         this.updated_at = updated_at;
     }
 
+    @Exclude
     public String getKey() {
         return key;
     }
 
+    @Exclude
     public void setKey(String key) {
         this.key = key;
     }
@@ -186,6 +188,7 @@ public class User {
         this.updated_at = updated_at;
     }
 
+    @Exclude
     @Override
     public String toString() {
         return "User{" +
@@ -208,9 +211,4 @@ public class User {
                 ", updated_at='" + updated_at + '\'' +
                 '}';
     }
-
-    //    public User getDataSnapShot(DataSnapshot ds) {
-//
-//    }
-
 }

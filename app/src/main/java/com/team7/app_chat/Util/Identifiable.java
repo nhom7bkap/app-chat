@@ -1,7 +1,5 @@
 package com.team7.app_chat.Util;
 
-import com.google.firebase.firestore.Exclude;
-
 /**
  * Represents an object that can be uniquely identified among other objects of the same type
  * by using an UID.
@@ -12,7 +10,6 @@ import com.google.firebase.firestore.Exclude;
  */
 public interface Identifiable<TKey> {
 
-    @Exclude
     TKey getEntityKey();
 
 }

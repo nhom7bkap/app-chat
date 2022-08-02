@@ -5,7 +5,7 @@ import com.google.android.gms.tasks.Task;
 /**
  * Manages data access for POJOs that are uniquely identifiable by a key, such as POJOs implementing {@link Identifiable}.
  */
-public interface Repository<TEntity extends Identifiable<TKey>, TKey> {
+public interface Repository<TEntity, TKey> {
 
     /**
      * Checks the repository for a given id and returns a boolean representing its existence.
@@ -27,6 +27,13 @@ public interface Repository<TEntity extends Identifiable<TKey>, TKey> {
      * @param entity the entity implementing {@link Identifiable} to be stored.
      * @return An {@link Task} to be notified of failures.
      */
+    Task<Void> create(TEntity entity, TKey id);
+
+    /**
+     * Stores an entity in the repository so it is accessible via its unique id.
+     * @param entity the entity implementing {@link Identifiable} to be stored.
+     * @return An {@link Task} to be notified of failures.
+     */
     Task<Void> create(TEntity entity);
 
     /**
@@ -34,7 +41,7 @@ public interface Repository<TEntity extends Identifiable<TKey>, TKey> {
      * @param entity the new entity to be stored.
      * @return A {@link Task} to be notified of failures.
      */
-    Task<Void> update(TEntity entity);
+    Task<Void> update(TEntity entity, TKey id);
 
     /**
      * Deletes an entity from the repository.

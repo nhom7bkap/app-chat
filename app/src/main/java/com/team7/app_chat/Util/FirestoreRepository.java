@@ -16,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 /**
  * Manages data access for Firebase
  */
-public class FirestoreRepository<TEntity extends Identifiable<String>> implements Repository<TEntity, String> {
+public class FirestoreRepository<TEntity> implements Repository<TEntity, String> {
 
     private static final String TAG = "FirestoreRepository";
 
@@ -71,8 +71,8 @@ public class FirestoreRepository<TEntity extends Identifiable<String>> implement
     }
 
     @Override
-    public Task<Void> create(TEntity entity) {
-        final String documentName = entity.getEntityKey();
+    public Task<Void> create(TEntity entity,String id) {
+        final String documentName = id;
         DocumentReference documentReference = collectionReference.document(documentName);
         Log.i(TAG, "Creating '" + documentName + "' in '" + collectionName + "'.");
         return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
@@ -84,8 +84,20 @@ public class FirestoreRepository<TEntity extends Identifiable<String>> implement
     }
 
     @Override
-    public Task<Void> update(TEntity entity) {
-        final String documentName = entity.getEntityKey();
+    public Task<Void> create(TEntity entity) {
+        DocumentReference documentReference = collectionReference.document();
+        Log.i(TAG, "Creating '" + "Random id" + "' in '" + collectionName + "'.");
+        return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "There was an error creating '" + "Random id" + "' in '" + collectionName + "'!", e);
+            }
+        });
+    }
+
+    @Override
+    public Task<Void> update(TEntity entity, String id) {
+        final String documentName = id;
         DocumentReference documentReference = collectionReference.document(documentName);
         Log.i(TAG, "Updating '" + documentName + "' in '" + collectionName + "'.");
 
