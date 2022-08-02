@@ -1,33 +1,20 @@
 package com.team7.app_chat;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.core.Tag;
 import com.team7.app_chat.Util.FiresBaseRepository;
-import com.team7.app_chat.Util.FirestoreRepository;
-import com.team7.app_chat.Util.Identifiable;
+import com.team7.app_chat.databinding.ActivityMainBinding;
 import com.team7.app_chat.models.User;
 import com.team7.app_chat.ui.main.SectionsPagerAdapter;
-import com.team7.app_chat.databinding.ActivityMainBinding;
 
 import java.util.Date;
 import java.util.List;
@@ -37,11 +24,10 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //aasd
         // Write a message to the database
 
         FiresBaseRepository FR = new FiresBaseRepository<User>(User.class);
@@ -65,15 +51,15 @@ public class MainActivity extends AppCompatActivity {
 
         Task t = FR.add(u);
 
-       List<User> userList = FR.get();
+        List<User> userList = FR.get();
 
-       if (!userList.isEmpty()){
-           for (User us : userList){
-               Log.e("data", us.getKey());
-           }
-       }else {
-           Log.e("empty","Empty user list");
-       }
+        if (!userList.isEmpty()) {
+            for (User us : userList) {
+                Log.e("data", us.getKey());
+            }
+        } else {
+            Log.e("empty", "Empty user list");
+        }
 
 
 //        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
