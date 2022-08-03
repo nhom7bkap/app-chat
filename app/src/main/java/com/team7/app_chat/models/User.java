@@ -211,4 +211,34 @@ public class User{
                 ", updated_at='" + updated_at + '\'' +
                 '}';
     }
+
+    /** Test
+     //        FirestoreRepository FR = new FirestoreRepository(new User().getClass(),"User");
+     //        User u = new User();
+     //        u.setKey("LA");
+     //        u.setUserName("phong");
+     //        u.setEmail("phong123@gmail.com");
+     //        u.setPhone("0123456789");
+     //        u.setPassword("phong123");
+     //        u.setConfirmPassword("phong123");
+     //        u.setFirstName("phong");
+     //        u.setLastName("hoang");
+     //        u.setGender(1);
+     //        u.setDOB(new Date().toString());
+     //        u.setAddress("ha noi");
+     //        u.setImage("abc.png");
+     //        u.setVerification(true);
+     //        u.setType(1);
+     //        u.setStatus(1);
+     //        u.setCreated_at(new Date().toString());
+     //        u.setUpdated_at(new Date().toString());
+     //
+     //        Task t = FR.create(u);
+
+     //        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+     //        City city = new City("Los Angeles", "CA", "USA",
+     //                false, 5000000L, Arrays.asList("west_coast", "sorcal"));
+     //        db.collection("cities").document("abc123").set(city);
+     **/
 }
