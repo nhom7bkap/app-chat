@@ -1,4 +1,4 @@
-package com.team7.app_chat.ui.dashboard;
+package com.team7.app_chat.ui.contacts;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.team7.app_chat.databinding.FragmentDashboardBinding;
+import com.team7.app_chat.databinding.FragmentContactsBinding;
 
 
-public class DashboardFragment extends Fragment {
+public class ContactsFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentContactsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        ContactsViewModel dashboardViewModel =
+                new ViewModelProvider(this).get(ContactsViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentContactsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
+        final TextView textView = binding.textContacts;
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
