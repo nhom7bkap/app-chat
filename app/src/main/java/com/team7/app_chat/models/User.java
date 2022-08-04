@@ -8,7 +8,7 @@ import com.team7.app_chat.Util.Identifiable;
 
 import java.util.Date;
 
-public class User{
+public class User {
     @Exclude
     private String key;
     private String userName;
@@ -19,9 +19,9 @@ public class User{
     private String firstName;
     private String lastName;
     private int gender;
-    private String  DOB;
+    private String DOB;
     private String address;
-    private String image;
+    private String avatar;
     private boolean verification;
     private int type;
     private int status;
@@ -31,10 +31,9 @@ public class User{
     public User() {
     }
 
-    public User(String userName, String email, String phone, String password, String confirmPassword, String firstName, String lastName, int gender, String DOB, String address, String image, boolean verification, int type, int status, String created_at, String updated_at) {
+    public User(String userName, String email, String phone, String password, String confirmPassword, String firstName, String lastName, int gender, String DOB, String address, String avatar, boolean verification, int type, int status, String created_at, String updated_at) {
         this.userName = userName;
         this.email = email;
-        this.phone = phone;
         this.password = password;
         this.confirmPassword = confirmPassword;
         this.firstName = firstName;
@@ -42,7 +41,7 @@ public class User{
         this.gender = gender;
         this.DOB = DOB;
         this.address = address;
-        this.image = image;
+        this.avatar = avatar;
         this.verification = verification;
         this.type = type;
         this.status = status;
@@ -140,12 +139,12 @@ public class User{
         this.address = address;
     }
 
-    public String getImage() {
-        return image;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public boolean isVerification() {
@@ -212,33 +211,5 @@ public class User{
                 '}';
     }
 
-    /** Test
-     //        FirestoreRepository FR = new FirestoreRepository(new User().getClass(),"User");
-     //        User u = new User();
-     //        u.setKey("LA");
-     //        u.setUserName("phong");
-     //        u.setEmail("phong123@gmail.com");
-     //        u.setPhone("0123456789");
-     //        u.setPassword("phong123");
-     //        u.setConfirmPassword("phong123");
-     //        u.setFirstName("phong");
-     //        u.setLastName("hoang");
-     //        u.setGender(1);
-     //        u.setDOB(new Date().toString());
-     //        u.setAddress("ha noi");
-     //        u.setImage("abc.png");
-     //        u.setVerification(true);
-     //        u.setType(1);
-     //        u.setStatus(1);
-     //        u.setCreated_at(new Date().toString());
-     //        u.setUpdated_at(new Date().toString());
-     //
-     //        Task t = FR.create(u);
 
-     //        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-     //        City city = new City("Los Angeles", "CA", "USA",
-     //                false, 5000000L, Arrays.asList("west_coast", "sorcal"));
-     //        db.collection("cities").document("abc123").set(city);
-     **/
 }

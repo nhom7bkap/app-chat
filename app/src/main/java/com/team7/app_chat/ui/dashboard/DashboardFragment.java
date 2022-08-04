@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.team7.app_chat.databinding.FragmentDashboardBinding;
 
+
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
