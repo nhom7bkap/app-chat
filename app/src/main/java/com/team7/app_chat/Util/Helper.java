@@ -41,6 +41,13 @@ public class Helper {
         return false;
     }
 
+    public static boolean checkSignIn(String email, String password) {
+        if (!email.isEmpty() && !password.isEmpty())
+            if (isEmailValid(email))
+                    return true;
+        return false;
+    }
+
     public static String encode(String s) {
         // create a string to add in the initial
         // binary code for extra security

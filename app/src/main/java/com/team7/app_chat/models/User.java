@@ -1,19 +1,12 @@
 package com.team7.app_chat.models;
 
-import androidx.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
-import com.team7.app_chat.Util.Identifiable;
-
-import java.util.Date;
 
 public class User {
-    @Exclude
-    private String key;
+//    @Exclude
+//    private String key;
     private String userName;
     private String email;
-    private String phone;
     private String password;
     private String confirmPassword;
     private String firstName;
@@ -31,7 +24,7 @@ public class User {
     public User() {
     }
 
-    public User(String userName, String email, String phone, String password, String confirmPassword, String firstName, String lastName, int gender, String DOB, String address, String avatar, boolean verification, int type, int status, String created_at, String updated_at) {
+    public User(String userName, String email, String password, String confirmPassword, String firstName, String lastName, int gender, String DOB, String address, String avatar, boolean verification, int type, int status, String created_at, String updated_at) {
         this.userName = userName;
         this.email = email;
         this.password = password;
@@ -49,15 +42,15 @@ public class User {
         this.updated_at = updated_at;
     }
 
-    @Exclude
-    public String getKey() {
-        return key;
-    }
-
-    @Exclude
-    public void setKey(String key) {
-        this.key = key;
-    }
+//    @Exclude
+//    public String getKey() {
+//        return key;
+//    }
+//
+//    @Exclude
+//    public void setKey(String key) {
+//        this.key = key;
+//    }
 
     public String getUserName() {
         return userName;
@@ -73,14 +66,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getPassword() {
@@ -191,10 +176,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "key='" + key + '\'' +
                 ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
                 ", password='" + password + '\'' +
                 ", confirmPassword='" + confirmPassword + '\'' +
                 ", firstName='" + firstName + '\'' +
@@ -202,7 +185,7 @@ public class User {
                 ", gender=" + gender +
                 ", DOB='" + DOB + '\'' +
                 ", address='" + address + '\'' +
-                ", image='" + image + '\'' +
+                ", avatar='" + avatar + '\'' +
                 ", verification=" + verification +
                 ", type=" + type +
                 ", status=" + status +

@@ -21,7 +21,6 @@ import com.team7.app_chat.models.User;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "FirebaseAuth";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +60,9 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(SignUpActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
 //                                updateUI(null);
                 }
+            }).addOnFailureListener(e -> {
+                String error = e.getMessage();
+                Log.e(TAG,error);
             });
         } else {
             Toast.makeText(SignUpActivity.this, "Email or Password not match !",
