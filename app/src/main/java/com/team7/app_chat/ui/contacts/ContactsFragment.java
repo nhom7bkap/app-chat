@@ -19,14 +19,14 @@ public class ContactsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ContactsViewModel dashboardViewModel =
+        ContactsViewModel contactsViewModel =
                 new ViewModelProvider(this).get(ContactsViewModel.class);
 
         binding = FragmentContactsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textContacts;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        contactsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
