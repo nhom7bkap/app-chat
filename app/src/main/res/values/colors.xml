@@ -16,4 +16,13 @@
     <color name="icon_background">#20FFFFFF</color>
     <color name="error">#B00020</color>
     <color name="received_message_background">#090D16</color>
+
+    <color name="colo_Primary">#3F51B5</color>
+    <color name="colo_PrimaryDark">#292b3d</color>
+    <color name="colo_GrayLight">#fafafa</color>
+    <color name="colo_StartBlue">#09c6df</color>
+    <color name="colo_EndBlue">#0bcce6</color>
+    <color name="colo_Accent">#FF4081</color>
+    <color name="colo_bgs">#ADE7F3F4</color>
+    <color name="colo_bge">#ADE7F3F4</color>
 </resources>
