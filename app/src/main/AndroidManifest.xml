@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.team7.app_chat">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -17,22 +18,9 @@
         android:theme="@style/Theme.Appchat"
         tools:targetApi="31">
         <activity
-            android:name=".SettingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/title_activity_main">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar">
+            android:theme="@style/Theme.Appchat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,10 +29,16 @@
         </activity>
         <activity
             android:name=".SignInActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Appchat.NoActionBar"/>
         <activity
             android:name=".SignUpActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Appchat.NoActionBar"/>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>

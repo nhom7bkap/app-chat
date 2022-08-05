@@ -8,7 +8,6 @@
     tools:context=".SplashActivity">
 
     <ImageView
-        android:id="@+id/imageView"
         android:layout_width="300dp"
         android:layout_height="300dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,7 +17,6 @@
         android:src="@drawable/my_logo"/>
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
