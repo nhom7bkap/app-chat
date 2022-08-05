@@ -60,4 +60,9 @@ public class SignInActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void SignIn(View view) {
+        Intent it = new Intent(SignInActivity.this, SignUpActivity.class);
+        startActivity(it);
+    }
 }

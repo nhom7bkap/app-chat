@@ -103,6 +103,7 @@
             app:cornerRadius="@dimen/_8ssp"
             />
         <TextView
+            android:onClick="SignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_30sdp"
