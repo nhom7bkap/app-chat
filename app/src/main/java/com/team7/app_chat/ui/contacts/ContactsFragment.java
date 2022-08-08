@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.team7.app_chat.R;
 import com.team7.app_chat.databinding.FragmentContactsBinding;
 
 
@@ -27,6 +29,7 @@ public class ContactsFragment extends Fragment {
 
         final TextView textView = binding.textContacts;
         contactsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
         return root;
     }
 

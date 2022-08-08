@@ -37,13 +37,13 @@
                 android:scaleType="centerCrop"
                 app:riv_oval="true"/>
 
-            <!--            <TextView-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_gravity="center"-->
-            <!--                android:text="Add image"-->
-            <!--                android:textColor="@color/secondary_text"-->
-            <!--                android:textSize="@dimen/_10ssp"/>-->
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="Add image"-->
+<!--                            android:textColor="@color/secondary_text"-->
+<!--                            android:textSize="@dimen/_10ssp"/>-->
 
 
         </FrameLayout>
@@ -106,7 +106,7 @@
             android:onClick="SignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:text="Create New Account"
             android:textColor="@color/primary"
             android:textSize="@dimen/_13ssp"
