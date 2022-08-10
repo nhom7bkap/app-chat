@@ -48,7 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
                     ur.setEmail(user.getEmail());
                     ur.setAvatar("https://firebasestorage.googleapis.com/v0/b/chat-app-4aa49.appspot.com/o/user-avatar-pngrepo-com.png?alt=media&token=a7945b66-2094-4d39-a846-ca084e2e1c99");
                     FirestoreRepository<User> repository = new FirestoreRepository<>(User.class,"User");
-                    repository.create(ur);
+                    repository.create(ur,user.getUid());
                     //                                updateUI(user);
                     Intent it = new Intent(SignUpActivity.this, MainActivity.class);
                     startActivity(it);
