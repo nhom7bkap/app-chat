@@ -41,13 +41,13 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageView1"
-                    app:srcCompat="@drawable/profile" />
+                    app:srcCompat="@mipmap/ic_profile" />
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/txtEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nguyễn Hoàng Tân"
+                    android:text=""
                     android:textSize="25dp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +64,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView">
+                    app:layout_constraintTop_toBottomOf="@+id/txtEmail">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -81,26 +81,27 @@
                             app:layout_constraintBottom_toBottomOf="@+id/textView6"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/textView6"
-                            app:srcCompat="@drawable/xxx" />
+                            app:srcCompat="@mipmap/xxx" />
 
                         <ImageView
                             android:id="@+id/imageView5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_5" />
+                            app:srcCompat="@mipmap/ic_1" />
 
                         <TextView
                             android:id="@+id/textView6"
+                            android:onClick="btnUD"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="24dp"
-                            android:text="Chế độ hẹn giờ"
+                            android:text="Cập nhật thông tin"
                             android:textColor="#000000"
                             android:textSize="18sp"
                             android:textStyle="bold"
@@ -124,19 +125,19 @@
                             app:layout_constraintBottom_toBottomOf="@+id/textView4"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/textView4"
-                            app:srcCompat="@drawable/xxx" />
+                            app:srcCompat="@mipmap/xxx" />
 
                         <ImageView
                             android:id="@+id/imageView12"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_3" />
+                            app:srcCompat="@mipmap/ic_3" />
 
                         <TextView
                             android:id="@+id/textView4"
@@ -167,19 +168,19 @@
                             app:layout_constraintBottom_toBottomOf="@+id/textView3"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/textView3"
-                            app:srcCompat="@drawable/xxx" />
+                            app:srcCompat="@mipmap/xxx" />
 
                         <ImageView
                             android:id="@+id/imageView11"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_22" />
+                            app:srcCompat="@mipmap/ic_22" />
 
                         <TextView
                             android:id="@+id/textView3"
@@ -210,19 +211,19 @@
                             app:layout_constraintBottom_toBottomOf="@+id/textView2"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/textView2"
-                            app:srcCompat="@drawable/xxx" />
+                            app:srcCompat="@mipmap/xxx" />
 
                         <ImageView
                             android:id="@+id/imageView10"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_1" />
+                            app:srcCompat="@mipmap/ic_4" />
 
                         <TextView
                             android:id="@+id/textView2"
@@ -253,19 +254,19 @@
                             app:layout_constraintBottom_toBottomOf="@+id/textView5"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/textView5"
-                            app:srcCompat="@drawable/xxx" />
+                            app:srcCompat="@mipmap/xxx" />
 
                         <ImageView
                             android:id="@+id/imageView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_4" />
+                            app:srcCompat="@mipmap/ic_3" />
 
                         <TextView
                             android:id="@+id/textView5"
@@ -284,6 +285,12 @@
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="300dp"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:text="Log Out"/>
         </LinearLayout>
     </ScrollView>
 
