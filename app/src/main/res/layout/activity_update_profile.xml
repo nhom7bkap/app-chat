@@ -18,7 +18,7 @@
             android:layout_height="180dp"
             android:background="@color/colo_GrayLight">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImgView"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
