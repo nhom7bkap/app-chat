@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.team7.app_chat">
 
-<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -18,6 +20,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ItemContainerUser"
+            android:exported="false" />
+        <activity
+            android:name=".SetupProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Appchat.NoActionBar" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.Appchat.NoActionBar">
@@ -30,23 +39,17 @@
         <activity
             android:name=".SignInActivity"
             android:exported="false"
-            android:theme="@style/Theme.Appchat.NoActionBar"/>
-        <activity
-            android:name=".SettingActivity"
-            android:exported="false">
-        </activity>
+            android:theme="@style/Theme.Appchat.NoActionBar" />
         <activity
             android:name=".UpdateProfileActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".SignUpActivity"
             android:exported="false"
-            android:theme="@style/Theme.Appchat.NoActionBar"/>
+            android:theme="@style/Theme.Appchat.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
     </application>
 
 </manifest>

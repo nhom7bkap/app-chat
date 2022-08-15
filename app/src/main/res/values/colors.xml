@@ -25,4 +25,11 @@
     <color name="colo_Accent">#FF4081</color>
     <color name="colo_bgs">#ADE7F3F4</color>
     <color name="colo_bge">#ADE7F3F4</color>
+<!--    <color name="theme_color">#11A643</color>-->
+    <color name="theme_color">#0997CF</color>
+    <color name="error_2">#C62A2A</color>
+
+    <color name="nav_bar_bg">#FFFFFF</color>
+    <color name="setup_pr_bg">#EDEDED</color>
+    <color name="title_color">#C1000000</color>
 </resources>

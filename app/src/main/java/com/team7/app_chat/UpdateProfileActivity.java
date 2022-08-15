@@ -7,12 +7,8 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -27,7 +23,6 @@ import android.widget.RadioGroup;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -50,14 +45,10 @@ import com.team7.app_chat.Util.FiresBaseRepository;
 import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.models.User;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class UpdateProfileActivity extends AppCompatActivity {
     EditText dateTime_in, editTextName, editTextEmail, editTextAddress;
@@ -85,22 +76,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
         editTextEmail = findViewById(R.id.userEmail);
         editTextAddress = findViewById(R.id.userAddress);
 
-        StorageReference profileRef = storageReference.child("users").child(firebaseProfile.getCurrentUser().getUid()).child("profile.jpg");
+        StorageReference profileRef = storageReference.child("User/" + firebaseProfile.getCurrentUser().getUid() + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-//                Picasso.get().load(uri).fit().centerCrop().into(profileImage);
-                Handler handler = new Handler(Looper.getMainLooper());
-                ExecutorService pool = Executors.newSingleThreadExecutor();
-                pool.execute(() -> {
-                    try{
-                        InputStream url = new URL(uri.toString()).openStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(url);
-                        handler.post(() -> ((ImageView) findViewById(R.id.profileImgView)).setImageBitmap(bitmap));
-                    } catch(Exception e){
-
-                    }
-                });
+                Picasso.get().load(uri).into(profileImage);
             }
         });
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -156,8 +136,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void avoid) {
                                 Toast.makeText(UpdateProfileActivity.this, "Profile update", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(UpdateProfileActivity.this, SettingActivity.class);
-                                startActivity(intent);
+//                                Intent intent = new Intent(UpdateProfileActivity.this, SettingActivity.class);
+//                                startActivity(intent);
                             }
                         });
                         Toast.makeText(UpdateProfileActivity.this, "Email is changed", Toast.LENGTH_SHORT).show();
@@ -184,13 +164,13 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     return;
                 } else {
                     textFullName = task.getResult().getUserName();
-                    textDob = task.getResult().getDOB();
-                    textEmail = task.getResult().getEmail();
+//                    textDob = task.getResult().getDOB();
+//                    textEmail = task.getResult().getEmail();
                     textAddress = task.getResult().getAddress();
 
                     editTextName.setText(textFullName);
                     editTextAddress.setText(textAddress);
-                    editTextEmail.setText(textEmail);
+//                    editTextEmail.setText(textEmail);
                     dateTime_in.setText(textDob);
                 }
             }
@@ -235,5 +215,4 @@ public class UpdateProfileActivity extends AppCompatActivity {
         });
 
     }
-
 }

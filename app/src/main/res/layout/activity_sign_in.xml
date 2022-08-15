@@ -23,7 +23,8 @@
             android:text="Messager"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_18ssp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,15 +36,15 @@
                 android:layout_height="@dimen/_80sdp"
                 android:background="@drawable/ic_message_paper_plane_svgrepo_com"
                 android:scaleType="centerCrop"
-                app:riv_oval="true"/>
+                app:riv_oval="true" />
 
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_gravity="center"-->
-<!--                            android:text="Add image"-->
-<!--                            android:textColor="@color/secondary_text"-->
-<!--                            android:textSize="@dimen/_10ssp"/>-->
+            <!--                                    <TextView-->
+            <!--                                        android:layout_width="wrap_content"-->
+            <!--                                        android:layout_height="wrap_content"-->
+            <!--                                        android:layout_gravity="center"-->
+            <!--                                        android:text="Add image"-->
+            <!--                                        android:textColor="@color/secondary_text"-->
+            <!--                                        android:textSize="@dimen/_10ssp"/>-->
 
 
         </FrameLayout>
@@ -55,14 +56,14 @@
             android:text="Login to continue"
             android:textColor="@color/secondary_text"
             android:textSize="@dimen/_12ssp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/formEmail"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_40sdp"
-            android:background="@drawable/background_input"
+            android:background="#EDEDED"
             android:hint="Email"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -70,8 +71,7 @@
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
-            android:textSize="@dimen/_16ssp"
-            />
+            android:textSize="@dimen/_16ssp" />
 
 
         <EditText
@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:background="@drawable/background_input"
+            android:background="#EDEDED"
             android:hint="PassWord"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -87,31 +87,36 @@
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
-            android:textSize="@dimen/_16ssp"
-            />
+            android:textSize="@dimen/_16ssp" />
 
-        <com.google.android.material.button.MaterialButton
+        <!--        <com.google.android.material.button.MaterialButton-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="@dimen/_50sdp"-->
+        <!--            android:layout_marginTop="@dimen/_20sdp"-->
+        <!--            android:onClick="Sighup"-->
+        <!--            android:text="sign in"-->
+        <!--            android:textColor="@color/white"-->
+        <!--            android:textSize="@dimen/_13ssp"-->
+        <!--            android:textStyle="bold"-->
+        <!--            app:backgroundTint="#11A643"-->
+        <!--            app:cornerRadius="@dimen/_8ssp"/>-->
+
+        <include
+            android:id="@+id/signInButton"
+            layout="@layout/progress_btn_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:text="sign in"
-            android:onClick="Sighup"
-            app:backgroundTint="#11A643"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_13ssp"
-            android:textStyle="bold"
-            app:cornerRadius="@dimen/_8ssp"
-            />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp" />
+
         <TextView
-            android:onClick="SignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
+            android:onClick="signUp"
             android:text="Create New Account"
             android:textColor="@color/primary"
             android:textSize="@dimen/_13ssp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
     </LinearLayout>
 
 </ScrollView>

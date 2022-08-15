@@ -112,37 +112,30 @@
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_16ssp"
             />
-
-        <com.google.android.material.button.MaterialButton
+        <include
+            android:id="@+id/signUpButton"
+            layout="@layout/progress_btn_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:onClick="onSignUp"
-            app:backgroundTint="#11A643"
-            android:text="sign up"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_13ssp"
-            android:textStyle="bold"
-            app:cornerRadius="@dimen/_8ssp"
-            />
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:onClick="onSignUp"
-            app:backgroundTint="#11A643"
-            android:text="sign up"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_13ssp"
-            android:textStyle="bold"
-            android:drawableLeft="@android:drawable/ic_menu_search"
-            android:drawableRight="@android:drawable/ic_menu_search"
-            app:cornerRadius="@dimen/_8ssp"
-            />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp" />
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_50sdp"-->
+<!--            android:layout_marginTop="@dimen/_16sdp"-->
+<!--            android:onClick="onSignUp"-->
+<!--            app:backgroundTint="#11A643"-->
+<!--            android:text="sign up"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="@dimen/_13ssp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:drawableLeft="@android:drawable/ic_menu_search"-->
+<!--            android:drawableRight="@android:drawable/ic_menu_search"-->
+<!--            app:cornerRadius="@dimen/_8ssp"-->
+<!--            />-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="SignIn"
+            android:onClick="signIn"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="Sign in"
             android:textColor="@color/primary"

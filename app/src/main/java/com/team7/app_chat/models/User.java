@@ -2,55 +2,79 @@ package com.team7.app_chat.models;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.Date;
+import java.util.List;
+
 public class User {
-//    @Exclude
-//    private String key;
+    @Exclude
+    private String id;
+
     private String userName;
     private String email;
     private String password;
     private String confirmPassword;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private int gender;
-    private String DOB;
+    private Date DOB;
     private String address;
     private String avatar;
     private boolean verification;
+    private boolean firstTime;
+    private List<Contact> contacts;
     private int type;
     private int status;
-    private String created_at;
-    private String updated_at;
+    private Date created_at;
+    private Date updated_at;
 
     public User() {
     }
 
-    public User(String userName, String email, String password, String confirmPassword, String firstName, String lastName, int gender, String DOB, String address, String avatar, boolean verification, int type, int status, String created_at, String updated_at) {
+    public User(String id, String userName, String email, String password, String confirmPassword, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, List<Contact> contacts, int type, int status, Date created_at, Date updated_at) {
+        this.id = id;
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.fullName = fullName;
         this.gender = gender;
         this.DOB = DOB;
         this.address = address;
         this.avatar = avatar;
         this.verification = verification;
+        this.firstTime = firstTime;
+        this.contacts = contacts;
         this.type = type;
         this.status = status;
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
 
-//    @Exclude
-//    public String getKey() {
-//        return key;
-//    }
-//
-//    @Exclude
-//    public void setKey(String key) {
-//        this.key = key;
-//    }
+    public User(String userName, String email, String password, String confirmPassword, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, List<Contact> contacts, int type, int status, Date created_at, Date updated_at) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.fullName = fullName;
+        this.gender = gender;
+        this.DOB = DOB;
+        this.address = address;
+        this.avatar = avatar;
+        this.verification = verification;
+        this.firstTime = firstTime;
+        this.contacts = contacts;
+        this.type = type;
+        this.status = status;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getUserName() {
         return userName;
@@ -84,20 +108,12 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public int getGender() {
@@ -108,11 +124,11 @@ public class User {
         this.gender = gender;
     }
 
-    public String getDOB() {
+    public Date getDOB() {
         return DOB;
     }
 
-    public void setDOB(String DOB) {
+    public void setDOB(Date DOB) {
         this.DOB = DOB;
     }
 
@@ -140,6 +156,22 @@ public class User {
         this.verification = verification;
     }
 
+    public boolean isFirstTime() {
+        return firstTime;
+    }
+
+    public void setFirstTime(boolean firstTime) {
+        this.firstTime = firstTime;
+    }
+
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
     public int getType() {
         return type;
     }
@@ -156,19 +188,19 @@ public class User {
         this.status = status;
     }
 
-    public String getCreated_at() {
+    public Date getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(String created_at) {
+    public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
 
-    public String getUpdated_at() {
+    public Date getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(String updated_at) {
+    public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
     }
 
@@ -180,8 +212,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", confirmPassword='" + confirmPassword + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                ", fullName='" + fullName + '\'' +
                 ", gender=" + gender +
                 ", DOB='" + DOB + '\'' +
                 ", address='" + address + '\'' +

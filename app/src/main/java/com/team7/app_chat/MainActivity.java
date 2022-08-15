@@ -5,9 +5,11 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -15,6 +17,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.Util.Helper;
 import com.team7.app_chat.databinding.ActivityMainBinding;
@@ -52,31 +56,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        String encodepass = Helper.encode("phong123");
-//        Log.e("Error",encodepass);
-//        String decodepass = Helper.decode(encodepass);
-//        Log.e("Error",decodepass);
-/*
-        FirestoreRepository FR = new FirestoreRepository(new User().getClass(), "User");
-        User u = new User();
-        u.setKey("LA");
-        u.setUserName("phong");
-        u.setEmail("phong123@gmail.com");
-        u.setPassword("phong123");
-        u.setConfirmPassword("phong123");
-        u.setFirstName("phong");
-        u.setLastName("hoang");
-        u.setGender(1);
-        u.setDOB(new Date().toString());
-        u.setAddress("ha noi");
-        u.setImage("abc.png");
-        u.setVerification(true);
-        u.setType(1);
-        u.setStatus(1);
-        u.setCreated_at(new Date().toString());
-        u.setUpdated_at(new Date().toString());
-
-        Task t = FR.create(u);
- */
     }
 }

@@ -8,34 +8,51 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.team7.app_chat.R;
-import com.team7.app_chat.databinding.FragmentContactsBinding;
+import com.team7.app_chat.adapters.UsersAdapter;
+import com.team7.app_chat.models.Contact;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class ContactsFragment extends Fragment {
+public class ContactsFragment extends Fragment implements UsersAdapter.ItemClickListener {
 
-    private FragmentContactsBinding binding;
+    private FirebaseAuth mAuth;
+    private UsersAdapter usersAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ContactsViewModel contactsViewModel =
-                new ViewModelProvider(this).get(ContactsViewModel.class);
+        View view = inflater.inflate(R.layout.fragment_home,
+                container, false);
 
-        binding = FragmentContactsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        mAuth = FirebaseAuth.getInstance();
+        RecyclerView recyclerView = view.findViewById(R.id.listContacts);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseFirestore.getInstance().collection("User").document(currentUser.getUid()).collection("contacts").get().addOnCompleteListener(task -> {
+            List<Contact> list = new ArrayList<>();
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Contact contact = document.toObject(Contact.class);
+                    list.add(contact);
+                }
+                usersAdapter = new UsersAdapter(view.getContext(), list);
+                recyclerView.setAdapter(usersAdapter);
+            }
+        });
 
-        final TextView textView = binding.textContacts;
-        contactsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
-        return root;
+        return view;
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onItemClick(View view, int position) {
+
     }
 }

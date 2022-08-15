@@ -1,5 +1,6 @@
 package com.team7.app_chat.Util;
 
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -8,6 +9,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +50,16 @@ public class Helper {
                     return true;
         return false;
     }
+
+//    private String getDate(long time) {
+//        SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+//        sfd.format(new Date(timestamp));
+//
+//        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+//        cal.setTimeInMillis(time * 1000);
+//        String date = DateFormat.format("dd-MM-yyyy", cal).toString();
+//        return date;
+//    }
 
     public static String encode(String s) {
         // create a string to add in the initial
