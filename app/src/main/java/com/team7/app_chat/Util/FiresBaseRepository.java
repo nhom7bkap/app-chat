@@ -11,7 +11,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
@@ -58,10 +57,10 @@ public class FiresBaseRepository<TEntity> {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Object object = dataSnapshot.getValue(Object.class);
-                    String json = new Gson().toJson(object);
-                    TEntity entity = new Gson().fromJson(json, entityClass);
-                    Log.e("json", "json: " + entity.toString());
-                    lstData.add(entity);
+//                    String json = new Gson().toJson(object);
+//                    TEntity entity = new Gson().fromJson(json, entityClass);
+//                    Log.e("json", "json: " + entity.toString());
+//                    lstData.add(entity);
                 }
             }
 

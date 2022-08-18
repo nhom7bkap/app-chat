@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:background="@color/theme_color"
+    android:orientation="vertical"
+    android:weightSum="9"
     tools:context=".ui.contacts.ContactsFragment">
-
-    <TextView
-        android:id="@+id/textContacts"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
+        android:layout_height="60dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:text="Contact"
+            android:textSize="@dimen/_20sdp"
+            android:gravity="center"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/textContacts"
-        android:fillViewport="true">
+        android:background="@drawable/recyclerview_bg"
+        android:padding="14dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listContacts"
+            android:id="@+id/recyclerViewContact"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </ScrollView>
-</RelativeLayout>
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

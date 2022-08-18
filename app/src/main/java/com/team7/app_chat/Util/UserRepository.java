@@ -32,7 +32,7 @@ public class UserRepository {
     private final Class<User> entityClass;
 
     private final CollectionReference collectionReference;
-    private final String collectionName;
+    private final String collectionName = "User";
 
     private IContactCallback callback;
 
@@ -43,15 +43,13 @@ public class UserRepository {
     /**
      * Initializes the repository storing the data in the given collection. Should be from {@link FirestoreRepository}.
      */
-    public UserRepository(String collectionName) {
-        this.collectionName = collectionName;
+    public UserRepository() {
         this.entityClass = User.class;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         this.collectionReference = db.collection(this.collectionName);
     }
-    public UserRepository(String collectionName, IContactCallback callback) {
-        this.collectionName = collectionName;
+    public UserRepository(IContactCallback callback) {
         this.entityClass = User.class;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();

@@ -63,7 +63,7 @@ public class SignInActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                new UserRepository("User").get(user.getUid()).addOnSuccessListener(new OnSuccessListener<User>() {
+                                new UserRepository().get(user.getUid()).addOnSuccessListener(new OnSuccessListener<User>() {
                                     @Override
                                     public void onSuccess(User user) {
                                         Intent it;

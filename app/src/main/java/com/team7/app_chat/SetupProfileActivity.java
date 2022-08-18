@@ -71,7 +71,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         progressButton = new ProgressButton(SetupProfileActivity.this, findViewById(R.id.btnSetupProfile), "Setup Profile");
-        userRepository = new UserRepository("User");
+        userRepository = new UserRepository();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         userRepository.get(currentUser.getUid()).addOnSuccessListener(this, user -> {
             this.user = user;

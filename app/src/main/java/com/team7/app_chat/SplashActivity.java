@@ -44,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } finally {
                     if (currentUser != null) {
-                        new UserRepository("User").get(currentUser.getUid()).addOnSuccessListener(user -> {
+                        new UserRepository().get(currentUser.getUid()).addOnSuccessListener(user -> {
                             Intent it;
                             if (user.isFirstTime()) {
                                 it = new Intent(SplashActivity.this, SetupProfileActivity.class);

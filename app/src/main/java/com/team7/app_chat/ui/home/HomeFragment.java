@@ -64,21 +64,9 @@ public class HomeFragment extends Fragment implements UserRepository.IContactCal
             Log.e("currentUser", currentUser.getEmail());
         }
 //        List<Contact> lstContact = new ArrayList<>();
-        UserRepository repository = new UserRepository("User");
-//        repository.getContacts(currentUser.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
-//            List<Contact> list = queryDocumentSnapshots.getDocuments()
-//                    .stream()
-//                    .map(documentSnapshot -> documentSnapshot.toObject(Contact.class))
-//                    .collect(Collectors.toList());
-//        });
-        repository.get(currentUser.getUid()).addOnCompleteListener(new OnCompleteListener<User>() {
-            @Override
-            public void onComplete(@NonNull Task<User> task) {
-
-                Log.e("currentUserInfo", task.getResult().getEmail());
-            }
-        });
-        new UserRepository("User", this).getContactsWithCallback(currentUser.getUid());
+//        UserRepository repository = new UserRepository();
+//       repository.getContactsWithCallback(currentUser.getUid());
+//        new UserRepository( this).getContactsWithCallback(currentUser.getUid());
     }
 
 
