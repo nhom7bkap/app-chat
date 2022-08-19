@@ -97,18 +97,6 @@ public class UserRepository {
         List<Contact> lstContact = new ArrayList<Contact>();
         final String documentName = userId;
         CollectionReference documentReference = collectionReference.document(documentName).collection("contacts");
-//        Log.i(TAG, "Getting '" + documentName + "' in '" + collectionName + "'.");
-//        documentReference.get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                for (QueryDocumentSnapshot document : task.getResult()) {
-//                    Log.d(TAG, document.toObject(Contact.class).getNickName());
-//                    Contact contact = document.toObject(Contact.class);
-//                    lstContact.add(contact);
-//                }
-//            } else {
-////                Log.d(TAG, "Error getting documents: ", task.getException());
-//            }
-//        });
         return documentReference;
     }
     public void getContactsWithCallback(String userId){
