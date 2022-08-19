@@ -26,7 +26,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         progressButton = new ProgressButton(SignUpActivity.this, findViewById(R.id.signUpButton), "Sign Up");
-        findViewById(R.id.signInButton).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.signUpButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressButton.buttonActivated();
