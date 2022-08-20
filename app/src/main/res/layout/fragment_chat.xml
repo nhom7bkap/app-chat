@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.chat.ChatFragment"
     android:orientation="vertical">
 
     <LinearLayout
@@ -73,43 +75,51 @@
     <LinearLayout
         android:id="@+id/chatBody"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/chatBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chatHeader">
+        app:layout_constraintTop_toBottomOf="@id/chatHeader"
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chatRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:clipToPadding="false"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:overScrollMode="never"
             android:padding="@dimen/_20sdp"
-            android:visibility="gone" />
+            />
 
-        <ProgressBar
-            android:id="@+id/progessBar"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:layout_gravity="center" />
+<!--        <ProgressBar-->
+<!--            android:id="@+id/progessBar"-->
+<!--            android:layout_width="@dimen/_25sdp"-->
+<!--            android:layout_height="@dimen/_25sdp"-->
+<!--            android:layout_gravity="center" />-->
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/chatBar"
+        android:background="@drawable/bottom_shpe"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+        <ImageView
+            android:id="@+id/botttom_sheet"
+            android:src="@drawable/ic_attachment_svgrepo_com"
+            android:background="@drawable/send_bg"
+            android:layout_marginStart="9dp"
+            android:padding="12dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="@color/white" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
-            android:layout_marginBottom="8dp"
             android:layout_weight="2"
             app:cardCornerRadius="8dp"
             app:cardElevation="10dp"
@@ -127,6 +137,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:gravity="center"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -138,29 +150,32 @@
                         android:gravity="start"
                         android:hint="Ask a question..."
                         android:padding="5dp"
+                        android:layout_marginStart="5dp"
                         android:paddingStart="5dp"
                         android:paddingEnd="1dp"
                         android:textColorHint="#424242"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:padding="9dp"
-                    android:src="@drawable/ic_attachment_svgrepo_com"
-                    app:tint="#5C5C5C" />
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
+                    android:layout_weight="5"
                     android:padding="9dp"
                     android:src="@drawable/ic_baseline_photo_camera_24"
                     app:tint="#5C5C5C" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:src="@drawable/ic_send_svgrepo_com"
+            android:background="@drawable/send_bg"
+            android:layout_marginEnd="9dp"
+            android:padding="12dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="@color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

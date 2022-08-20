@@ -1,79 +1,81 @@
 package com.team7.app_chat.ui.home;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
+
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.team7.app_chat.R;
-import com.team7.app_chat.SignInActivity;
-import com.team7.app_chat.Util.FirestoreRepository;
-import com.team7.app_chat.Util.UserRepository;
-import com.team7.app_chat.adapters.UsersAdapter;
-import com.team7.app_chat.components.ProgressButton;
-import com.team7.app_chat.models.Contact;
-import com.team7.app_chat.models.User;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class HomeFragment extends Fragment implements UserRepository.IContactCallback {
-
-    private FirebaseAuth mAuth;
-    private UsersAdapter usersAdapter;
-    private final List<Contact> mListContact = new ArrayList<>();
+import com.team7.app_chat.adapters.ViewPagerAdapter;
+import com.team7.app_chat.databinding.ActivityMainBinding;
+import com.team7.app_chat.ui.chat.ChatRoomFragment;
+import com.team7.app_chat.ui.contacts.ContactsFragment;
+import com.team7.app_chat.ui.settings.SettingsFragment;
 
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home,
-                container, false);
+public class HomeFragment extends Fragment {
 
-        mAuth = FirebaseAuth.getInstance();
+    private ActivityMainBinding binding;
+    private BottomNavigationView bottomNavBar;
+    private ViewPager2 viewPager;
 
-        ((TextView) view.findViewById(R.id.textHome)).setText("Hello world");
+    public HomeFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        bottomNavBar = view.findViewById(R.id.bottomNavBar);
+        bottomNavBar.setOnNavigationItemSelectedListener(item -> navigation(item));
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPagerAdapter.addFragment(new ContactsFragment());
+        viewPagerAdapter.addFragment(new ChatRoomFragment());
+        viewPagerAdapter.addFragment(new SettingsFragment());
+
+        viewPager = view.findViewById(R.id.viewPagerMain);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                switch (position) {
+                    case 0:
+                        bottomNavBar.setSelectedItemId(R.id.menu_contacts);
+                        break;
+                    case 1:
+                        bottomNavBar.setSelectedItemId(R.id.menu_chat_room);
+                        break;
+                    case 2:
+                        bottomNavBar.setSelectedItemId(R.id.menu_settings);
+                        break;
+                }
+            }
+        });
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            Log.e("currentUser", currentUser.getEmail());
-        } else {
-            Log.e("currentUser", currentUser.getEmail());
+    private boolean navigation(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.menu_contacts:
+                viewPager.setCurrentItem(0);
+                return true;
+            case R.id.menu_chat_room:
+                viewPager.setCurrentItem(1);
+                return true;
+            case R.id.menu_settings:
+                viewPager.setCurrentItem(2);
+                return true;
+            default:
+                return false;
         }
-//        List<Contact> lstContact = new ArrayList<>();
-//        UserRepository repository = new UserRepository();
-//       repository.getContactsWithCallback(currentUser.getUid());
-//        new UserRepository( this).getContactsWithCallback(currentUser.getUid());
-    }
-
-
-    @Override
-    public void loadContact(List<Contact> list) {
-        // Nó trả về listcontact ở đây
-        this.mListContact.addAll(list);
-//        List<Contact> a = list;
     }
 }
