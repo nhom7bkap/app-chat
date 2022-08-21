@@ -1,4 +1,4 @@
-package com.team7.app_chat.components;
+package com.team7.app_chat.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,15 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.team7.app_chat.R;
 import com.team7.app_chat.models.Contact;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
     private Context context;

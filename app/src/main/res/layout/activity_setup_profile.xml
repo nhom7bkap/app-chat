@@ -66,12 +66,12 @@
 
             <LinearLayout
                 android:id="@+id/setup_profile_form"
-                app:cardCornerRadius="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="20dp"
+                app:cardCornerRadius="20dp">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -116,16 +116,16 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/editName"
-                    app:boxStrokeColor="@color/theme_color"
-                    android:textColorHint="@color/theme_color"
-                    app:placeholderTextColor="@color/theme_color"
-                    app:counterTextColor="@color/theme_color"
-                    app:boxBackgroundColor="@color/theme_color"
-                    app:helperTextTextColor="@color/theme_color"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Full Name"
-                    app:errorEnabled="true">
+                    android:textColorHint="@color/theme_color"
+                    app:boxBackgroundColor="@color/theme_color"
+                    app:boxStrokeColor="@color/theme_color"
+                    app:counterTextColor="@color/theme_color"
+                    app:errorEnabled="true"
+                    app:helperTextTextColor="@color/theme_color"
+                    app:placeholderTextColor="@color/theme_color">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
@@ -204,11 +204,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:background="#EDEDED"
-                        android:textColorHighlight="@color/theme_color"
                         android:gravity="center"
                         android:hint="07/01/2022"
                         android:inputType="date"
                         android:onClick="openDatePicker"
+                        android:textColorHighlight="@color/theme_color"
                         android:textSize="20dp" />
 
                     <com.google.android.material.divider.MaterialDivider

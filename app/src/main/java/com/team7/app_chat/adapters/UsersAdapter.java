@@ -1,9 +1,13 @@
 package com.team7.app_chat.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,79 +15,75 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.team7.app_chat.R;
-import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.User;
-import com.team7.app_chat.ui.contacts.ItemContainerUser;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ItemContainerBinding> {
+public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> implements View.OnClickListener {
+    private Context context;
+    private ArrayList<User> listUser;
+    private SelectListstener listener;
 
-    private List<Contact> mData;
-    private LayoutInflater mInflater;
-    private ItemClickListener mClickListener;
-
-    // data is passed into the constructor
-    public UsersAdapter(Context context, List<Contact> data) {
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
+    public UsersAdapter(Context context, ArrayList<User> listUser, SelectListstener listener) {
+        this.context = context;
+        this.listUser = listUser;
+        this.listener = listener;
     }
 
-    // inflates the row layout from xml when needed
+    public interface SelectListstener {
+        void onItemClicked(User user);
+    }
+
+    @NonNull
     @Override
-    public ItemContainerBinding onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_container_user, parent, false);
-        return new ItemContainerBinding(view);
+    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_container_friend, parent, false);
+        return new UserViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
+    @SuppressLint("RecyclerView")
     @Override
-    public void onBindViewHolder(ItemContainerBinding holder, int position) {
-        String nickName = mData.get(position).getNickName();
-//        holder.imageContact.setImageResource(animal);
-        holder.nameContact.setText(nickName);
-        holder.descContact.setText("Recenly");
+    public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+        User user = listUser.get(position);
+
+        holder.textViewName.setText(user.getFullName());
+        holder.textViewDesc.setText(user.getEmail());
+        holder.imageView.setImageResource(R.drawable.ic_user_profile_svgrepo_com);
+        holder.position = position;
+        holder.user = user;
+        holder.btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onItemClicked(listUser.get(position));
+            }
+        });
     }
 
-    // total number of rows
     @Override
     public int getItemCount() {
-        return mData.size();
+        return listUser.size();
+    }
+
+    @Override
+    public void onClick(View view) {
+
     }
 
 
-    // stores and recycles views as they are scrolled off screen
-    public class ItemContainerBinding extends RecyclerView.ViewHolder implements View.OnClickListener {
-        RoundedImageView imageContact;
-        TextView nameContact;
-        TextView descContact;
+    public class UserViewHolder extends RecyclerView.ViewHolder {
+        RoundedImageView imageView;
+        TextView textViewName;
+        TextView textViewDesc;
+        ImageView btnAdd;
+        int position;
+        User user;
 
-        ItemContainerBinding(View itemView) {
+        public UserViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageContact = itemView.findViewById(R.id.imageContact);
-            nameContact = itemView.findViewById(R.id.nameContact);
-            descContact = itemView.findViewById(R.id.descContact);
-            itemView.setOnClickListener(this);
+            imageView = itemView.findViewById(R.id.imageUser);
+            textViewName = itemView.findViewById(R.id.nameUser);
+            textViewDesc = itemView.findViewById(R.id.descUser);
+            btnAdd = itemView.findViewById(R.id.btnAddFriend);
         }
-
-        @Override
-        public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-        }
-    }
-
-    // convenience method for getting data at click position
-    Contact getItem(int id) {
-        return mData.get(id);
-    }
-
-    // allows clicks events to be caught
-    void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }
-
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
     }
 }

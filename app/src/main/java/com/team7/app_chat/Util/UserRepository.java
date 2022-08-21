@@ -5,14 +5,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.User;
@@ -72,6 +70,10 @@ public class UserRepository {
         });
     }
 
+    public CollectionReference get() {
+        return collectionReference;
+    }
+
 
     public Task<User> get(String id) {
         final String documentName = id;
@@ -93,12 +95,14 @@ public class UserRepository {
         });
     }
 
-    public CollectionReference getContacts(String userId) {
-        List<Contact> lstContact = new ArrayList<Contact>();
-        final String documentName = userId;
-        CollectionReference documentReference = collectionReference.document(documentName).collection("contacts");
+    public DocumentReference getDocRf(String id) {
+        final String documentName = id;
+        DocumentReference documentReference = collectionReference.document(documentName);
+        Log.i(TAG, "Getting '" + documentName + "' in '" + collectionName + "'.");
+
         return documentReference;
     }
+
     public void getContactsWithCallback(String userId){
         collectionReference.document(userId).collection("contacts").get().addOnSuccessListener(queryDocumentSnapshots -> {
             List<Contact> list = queryDocumentSnapshots.getDocuments()

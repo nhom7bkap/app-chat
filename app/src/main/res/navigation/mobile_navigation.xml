@@ -17,8 +17,21 @@
         app:defaultNavHost="true"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/home_to_chat"
-            app:destination="@id/navigation_chat" />
+            android:id="@+id/action_home_to_chat"
+            app:destination="@id/navigation_chat"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+        <action
+            android:id="@+id/action_home_to_add_friend"
+            app:destination="@id/navigation_add_contact"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
     </fragment>
 
     <fragment
@@ -44,4 +57,18 @@
         android:name="com.team7.app_chat.ui.chat.ChatFragment"
         android:label="ChatRoom"
         tools:layout="@layout/fragment_chat" />
+
+    <fragment
+        android:id="@+id/navigation_add_contact"
+        android:name="com.team7.app_chat.ui.contacts.AddContactFragment"
+        android:label="Add Friend"
+        tools:layout="@layout/fragment_add_contact" >
+        <action
+            android:id="@+id/action_add_contact_to_home"
+            app:destination="@id/navigation_home"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
 </navigation>

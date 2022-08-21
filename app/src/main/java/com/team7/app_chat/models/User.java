@@ -6,9 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class User {
-    @Exclude
-    private String id;
-
+    @Exclude private String id;
     private String userName;
     private String email;
     private String password;
@@ -68,6 +66,7 @@ public class User {
         this.updated_at = updated_at;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }
@@ -156,9 +155,11 @@ public class User {
         this.verification = verification;
     }
 
+    @Exclude
     public boolean isFirstTime() {
         return firstTime;
     }
+
 
     public void setFirstTime(boolean firstTime) {
         this.firstTime = firstTime;

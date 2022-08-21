@@ -1,23 +1,49 @@
 package com.team7.app_chat.models;
 
+
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.Exclude;
+
 
 public class Contact {
+
+    @Exclude
+    private String id;
     private String nickName;
-    private boolean isFriend;
-    private boolean isBlocked;
-    private String userId;
+    private boolean friend;
+    private boolean blocked;
+    private DocumentReference user;
     private Timestamp created;
 
     public Contact() {
     }
 
-    public Contact(String nickName, boolean isFriend, boolean isBlocked, String userId, Timestamp created) {
+    public Contact(String id, String nickName, boolean friend, boolean blocked, DocumentReference user, Timestamp created) {
+        this.id = id;
         this.nickName = nickName;
-        this.isFriend = isFriend;
-        this.isBlocked = isBlocked;
-        this.userId = userId;
+        this.friend = friend;
+        this.blocked = blocked;
+        this.user = user;
         this.created = created;
+    }
+
+    public Contact(String nickName, boolean friend, boolean blocked, DocumentReference user, Timestamp created) {
+        this.nickName = nickName;
+        this.friend = friend;
+        this.blocked = blocked;
+        this.user = user;
+        this.created = created;
+    }
+
+    @Exclude
+    public String getId() {
+        return id;
+    }
+
+    @Exclude
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNickName() {
@@ -28,28 +54,30 @@ public class Contact {
         this.nickName = nickName;
     }
 
+    @Exclude
     public boolean isFriend() {
-        return isFriend;
+        return friend;
     }
 
-    public void setisFriend(boolean isFriend) {
-        this.isFriend = isFriend;
+    public void setFriend(boolean friend) {
+        this.friend = friend;
     }
 
+    @Exclude
     public boolean isBlocked() {
-        return isBlocked;
+        return blocked;
     }
 
-    public void setisBlocked(boolean isBlocked) {
-        this.isBlocked = isBlocked;
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
-    public String getUserId() {
-        return userId;
+    public DocumentReference getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(DocumentReference user) {
+        this.user = user;
     }
 
     public Timestamp getCreated() {

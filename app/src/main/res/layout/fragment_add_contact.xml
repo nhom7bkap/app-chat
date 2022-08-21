@@ -6,40 +6,43 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="9"
-    tools:context=".ui.contacts.ContactsFragment">
+    tools:context=".ui.contacts.AddContactFragment">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="10dp"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal"
+            android:padding="10dp">
+
             <ImageView
-                android:src="@drawable/ic_left_arrow_svgrepo_com"
+                android:id="@+id/imAFback"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:tint="@color/theme_color"
-                android:layout_height="wrap_content"/>
+                android:src="@drawable/ic_left_arrow_svgrepo_com"
+                app:tint="@color/theme_color" />
 
             <TextView
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:gravity="center"
-                android:textStyle="bold"
+                android:text="Add Friend"
                 android:textSize="24dp"
-                android:text="Contacts"
-                android:layout_height="wrap_content"/>
+                android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/imAddFriend"
-                android:src="@drawable/ic_user_plus_svgrepo_com"
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                app:tint="@color/theme_color" />
+                android:layout_weight="1"
+                android:textColor="@color/theme_color"
+                android:textSize="20sp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,10 +92,11 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -100,7 +104,7 @@
         android:padding="14dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewContact"
+            android:id="@+id/recyclerViewUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

@@ -48,7 +48,7 @@ public class ChatRoomFragment extends Fragment implements UserRepository.IContac
         bottomsheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavHostFragment.findNavController(ChatRoomFragment.this).navigate(R.id.home_to_chat);
+                NavHostFragment.findNavController(ChatRoomFragment.this).navigate(R.id.action_home_to_chat);
 //                showDialog();
 
             }
