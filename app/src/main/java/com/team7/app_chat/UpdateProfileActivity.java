@@ -1,5 +1,7 @@
 package com.team7.app_chat;
 
+import static androidx.fragment.app.FragmentManager.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,11 +9,16 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -27,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -43,23 +51,37 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.team7.app_chat.Util.FiresBaseRepository;
 import com.team7.app_chat.Util.FirestoreRepository;
+import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.models.User;
+import com.team7.app_chat.ui.settings.SettingsFragment;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class UpdateProfileActivity extends AppCompatActivity {
     EditText dateTime_in, editTextName, editTextEmail, editTextAddress;
 
-    String textFullName, textDob, textEmail, textAddress;
+    String textFullName;
+    String textDob;
+    RadioGroup radioButton;
+    RadioButton female_btn, male_btn;
+    String textAddress;
     ImageView profileImage;
     FirebaseAuth firebaseProfile;
     FirebaseUser firebaseUser;
     FirebaseFirestore fStore;
+    UserRepository userRepository;
     StorageReference storageReference;
     Button btnUpdate;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,20 +90,36 @@ public class UpdateProfileActivity extends AppCompatActivity {
         firebaseProfile = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         firebaseUser = firebaseProfile.getCurrentUser();
+
+        userRepository = new UserRepository();
+        userRepository.get(firebaseUser.getUid()).addOnSuccessListener(this, user -> {
+            this.user = user;
+            this.user.setId(firebaseUser.getUid());
+        });
+        female_btn = findViewById(R.id.female_btn);
+        male_btn = findViewById(R.id.male_btn);
+        radioButton = findViewById(R.id.radioGenderGroup);
         storageReference = FirebaseStorage.getInstance().getReference();
         editTextName = findViewById(R.id.userName);
         profileImage = findViewById(R.id.profileImgView);
 
         btnUpdate = findViewById(R.id.btnUpdate);
-        editTextEmail = findViewById(R.id.userEmail);
+
         editTextAddress = findViewById(R.id.userAddress);
 
-        StorageReference profileRef = storageReference.child("User/" + firebaseProfile.getCurrentUser().getUid() + "/profile.jpg");
-        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).into(profileImage);
-            }
+        StorageReference profileRef = storageReference.child("users").child(firebaseProfile.getCurrentUser().getUid()).child("profile.jpg");
+        profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Handler handler = new Handler(Looper.getMainLooper());
+            ExecutorService pool = Executors.newSingleThreadExecutor();
+            pool.execute(() -> {
+                try {
+                    InputStream url = new URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(url);
+                    handler.post(() -> ((ImageView) findViewById(R.id.profileImgView)).setImageBitmap(bitmap));
+                } catch (Exception e) {
+
+                }
+            });
         });
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,38 +153,40 @@ public class UpdateProfileActivity extends AppCompatActivity {
             }
         });
 
+
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (editTextName.getText().toString().isEmpty() || editTextEmail.getText().toString().isEmpty() || editTextAddress.getText().toString().isEmpty() || dateTime_in.getText().toString().isEmpty()) {
-                    Toast.makeText(UpdateProfileActivity.this, "aaa", Toast.LENGTH_SHORT).show();
-                    return;
+                textFullName = ((EditText) findViewById(R.id.userName)).getText().toString();
+                textAddress = ((EditText) findViewById(R.id.userAddress)).getText().toString();
+                String date = ((EditText) findViewById(R.id.dateTime)).getText().toString();
+                Date birthday = null;
+                try {
+                    birthday = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-                textEmail = editTextEmail.getText().toString();
-                firebaseUser.updateEmail(textEmail).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void avoid) {
-                        DocumentReference documentReference = fStore.collection("User").document(firebaseUser.getUid());
-                        Map<String, Object> edited = new HashMap<>();
-                        edited.put("email", textEmail);
-                        edited.put("userName", editTextName.getText().toString());
-                        edited.put("dob", dateTime_in.getText().toString());
-                        edited.put("address", editTextAddress.getText().toString());
-                        documentReference.update(edited).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void avoid) {
-                                Toast.makeText(UpdateProfileActivity.this, "Profile update", Toast.LENGTH_SHORT).show();
-//                                Intent intent = new Intent(UpdateProfileActivity.this, SettingActivity.class);
-//                                startActivity(intent);
-                            }
-                        });
-                        Toast.makeText(UpdateProfileActivity.this, "Email is changed", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(UpdateProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                user.setUserName(textFullName);
+                user.setAddress(textAddress);
+                user.setDOB(birthday);
+                RadioGroup radioButton = findViewById(R.id.radioGenderGroup);
+                switch (radioButton.getCheckedRadioButtonId()) {
+                    case R.id.female_btn:
+                        user.setGender(1);
+                        break;
+                    case R.id.male_btn:
+                        user.setGender(2);
+                        break;
+                    default:
+                        user.setGender(0);
+                        break;
+                }
+                userRepository.update(user).addOnSuccessListener(unused -> {
+                    Toast.makeText(UpdateProfileActivity.this, "Update Success", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(UpdateProfileActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(UpdateProfileActivity.this, "Update fails", Toast.LENGTH_SHORT).show();
                 });
             }
         });
@@ -164,13 +204,18 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     return;
                 } else {
                     textFullName = task.getResult().getUserName();
-//                    textDob = task.getResult().getDOB();
-//                    textEmail = task.getResult().getEmail();
+                    textDob = task.getResult().getDOB() + "";
                     textAddress = task.getResult().getAddress();
+                    if(task.getResult().getGender() == 1){
+                        female_btn.setChecked(true);
+                        male_btn.setChecked(false);
+                    }else {
+                        female_btn.setChecked(false);
+                        male_btn.setChecked(true);
+                    }
 
                     editTextName.setText(textFullName);
                     editTextAddress.setText(textAddress);
-//                    editTextEmail.setText(textEmail);
                     dateTime_in.setText(textDob);
                 }
             }
@@ -183,9 +228,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
         if (requestCode == 1000) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri imageUri = data.getData();
-
-                //profileImage.setImageURI(imageUri);
-
                 uploadImageToFirebase(imageUri);
 
 
@@ -213,6 +255,5 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 }

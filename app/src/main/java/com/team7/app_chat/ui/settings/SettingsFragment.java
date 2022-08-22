@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.team7.app_chat.ChangePassActivity;
 import com.team7.app_chat.R;
 import com.team7.app_chat.SignInActivity;
 import com.team7.app_chat.UpdateProfileActivity;
@@ -73,7 +74,13 @@ public class SettingsFragment extends Fragment {
                 }
             });
         });
-
+        view.findViewById(R.id.textView4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(view.getContext(), ChangePassActivity.class);
+                startActivity(intent);
+            }
+        });
         view.findViewById(R.id.textView6).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

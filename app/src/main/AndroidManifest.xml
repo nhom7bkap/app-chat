@@ -20,6 +20,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ForgotPassActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePassActivity"
+            android:exported="false" />
+        <activity
             android:name=".SetupProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.Appchat.NoActionBar" />
@@ -46,8 +52,8 @@
             android:theme="@style/Theme.Appchat.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.Appchat.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Appchat.NoActionBar" />
     </application>
 
 </manifest>

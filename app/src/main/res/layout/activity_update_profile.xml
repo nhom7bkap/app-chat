@@ -25,14 +25,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:src="@mipmap/ic_profile" />
-            <!--           <TextView-->
-            <!--               android:layout_width="wrap_content"-->
-            <!--               android:layout_height="wrap_content"-->
-            <!--               android:text="Nguyễn Hoàng Tân"-->
-            <!--               android:layout_marginTop="80dp"-->
-            <!--               android:layout_marginLeft="50dp"-->
-            <!--               android:textSize="20dp"-->
-            <!--               android:textStyle="bold" />-->
+
         </LinearLayout>
 
         <LinearLayout
@@ -55,15 +48,7 @@
                     android:drawablePadding="10dp"
                     android:text="" />
             </com.google.android.material.textfield.TextInputLayout>
-            // khi nào dki sai
 
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:id="@+id/nameValidate"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:helperText=""-->
-<!--                app:errorEnabled="true">-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -80,14 +65,8 @@
                     android:text="" />
             </com.google.android.material.textfield.TextInputLayout>
 
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:id="@+id/dobVali"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:helperText=""-->
-<!--                app:errorEnabled="true">-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
-// dia chỉ
+
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -102,63 +81,36 @@
                     android:drawablePadding="10dp"
                     android:text="" />
             </com.google.android.material.textfield.TextInputLayout>
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:id="@+id/addVali"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:helperText=""-->
-<!--                app:errorEnabled="true">-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
-
-            <com.google.android.material.textfield.TextInputLayout
+            <RadioGroup
+                android:id="@+id/radioGenderGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="Email">
+                android:layout_marginTop="10dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/userEmail"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_notifications_black_24dp"
-                    android:drawablePadding="10dp"
-                    android:text="" />
-            </com.google.android.material.textfield.TextInputLayout>
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:id="@+id/emailVali"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:helperText=""-->
-<!--                app:errorEnabled="true">-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
+                    android:text="Gender"
+                    android:textColor="@color/title_color"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="5dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:text="Gender"-->
-<!--                android:textColor="#555555"-->
-<!--                android:textSize="20dp" />-->
+                <RadioButton
+                    android:id="@+id/female_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:buttonTint="@color/theme_color"
+                    android:text="Female"
+                    android:textColor="@color/title_color" />
 
-
-
-<!--                <RadioButton-->
-<!--                    android:id="@+id/radio_female"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="Famale"-->
-<!--                    android:checked="true"-->
-<!--                    android:textColor="#666666"-->
-<!--                    android:textSize="16dp" />-->
-
-<!--                <RadioButton-->
-<!--                    android:id="@+id/radio_male"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="Male"-->
-<!--                    android:textColor="#666666"-->
-<!--                    android:textSize="16dp" />-->
+                <RadioButton
+                    android:id="@+id/male_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:buttonTint="@color/theme_color"
+                    android:text="Male"
+                    android:textColor="@color/title_color" />
+            </RadioGroup>
 
 
             <Button

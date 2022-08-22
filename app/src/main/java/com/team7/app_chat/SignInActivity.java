@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,19 +30,25 @@ import com.team7.app_chat.models.User;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "FirebaseAuth";
-//    private ProgressDialogActivity PDA;
+    //    private ProgressDialogActivity PDA;
     private ProgressButton progressButton;
     private View view;
+    private TextView layout_forgot_password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         view = findViewById(R.id.signInButton);
+        layout_forgot_password = findViewById(R.id.layout_forgot_password);
         progressButton = new ProgressButton(SignInActivity.this, findViewById(R.id.signInButton), "Sign In");
-//        PDA = new ProgressDialogActivity(this);
-//        PDA.setCancelable(false);
-//        PDA.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        layout_forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignInActivity.this,ForgotPassActivity.class);
+                startActivity(intent);
+            }
+        });
         findViewById(R.id.signInButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,4 +103,5 @@ public class SignInActivity extends AppCompatActivity {
         Intent it = new Intent(SignInActivity.this, SignUpActivity.class);
         startActivity(it);
     }
+
 }

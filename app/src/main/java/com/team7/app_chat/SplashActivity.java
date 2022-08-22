@@ -44,6 +44,7 @@ public class SplashActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } finally {
                     if (currentUser != null) {
+                        Log.e("bug",currentUser.getUid());
                         new UserRepository().get(currentUser.getUid()).addOnSuccessListener(user -> {
                             Intent it;
                             if (user.isFirstTime()) {
@@ -55,8 +56,13 @@ public class SplashActivity extends AppCompatActivity {
                         }).addOnFailureListener(e -> {
                             Toast.makeText(SplashActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            Log.d(TAG,"CurrentUser Error: "+  e.getMessage());
-                        });;
+                            Log.e(TAG,"CurrentUser Error: "+  e.getMessage());
+                        }).addOnCompleteListener(new OnCompleteListener<User>() {
+                            @Override
+                            public void onComplete(@NonNull Task<User> task) {
+                                Log.e(TAG,"User "+  task.getResult().getUserName());
+                            }
+                        });
                     } else {
                         startActivity(new Intent(SplashActivity.this, SignInActivity.class));
                     }
