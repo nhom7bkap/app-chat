@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp"
-    android:id="@+id/contactLayout"
     tools:context=".ui.contacts.ItemContainerUser">
 
     <LinearLayout
@@ -14,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
         <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/imageContact"
+            android:id="@+id/imageUser"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
             android:background="@drawable/background_image"
@@ -25,37 +24,53 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="4"
+        android:layout_weight="3"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/nameContact"
+            android:id="@+id/nameUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nick Name"
             android:textColor="#373737"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_13sdp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/descContact"
+            android:id="@+id/descUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Description"
-            android:textSize="@dimen/_14sdp" />
+            android:textSize="@dimen/_11sdp" />
     </LinearLayout>
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_weight="1">-->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_weight="1.7">
+        <ImageView
+            android:id="@+id/btnUnAccept"
+            android:src="@drawable/ic_delete_remove_uncheck_svgrepo_com"
+            android:backgroundTint="#F6BBBB"
+            android:background="@drawable/send_bg"
+            android:padding="8dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="#E64747" />
 
-<!--        <Button-->
-<!--            android:id="@+id/btnLike"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center_vertical"-->
-<!--            android:text="Like" />-->
-<!--    </LinearLayout>-->
+        <ImageView
+            android:id="@+id/btnAccept"
+            android:src="@drawable/ic_accept_check_good_mark_ok_tick_svgrepo_com"
+            android:backgroundTint="#CBF6CD"
+            android:background="@drawable/send_bg"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:padding="8dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="#42F34A" />
+    </LinearLayout>
 </LinearLayout>

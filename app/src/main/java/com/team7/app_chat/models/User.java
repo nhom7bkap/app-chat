@@ -1,6 +1,7 @@
 package com.team7.app_chat.models;
 
 import com.google.firebase.database.Exclude;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.Date;
 import java.util.List;
@@ -17,8 +18,8 @@ public class User {
     private String address;
     private String avatar;
     private boolean verification;
+    private DocumentReference contacts;
     private boolean firstTime;
-    private List<Contact> contacts;
     private int type;
     private int status;
     private Date created_at;
@@ -27,7 +28,26 @@ public class User {
     public User() {
     }
 
-    public User(String id, String userName, String email, String password, String confirmPassword, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, List<Contact> contacts, int type, int status, Date created_at, Date updated_at) {
+    public User(String userName, String email, String password, String confirmPassword, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, DocumentReference contacts, boolean firstTime, int type, int status, Date created_at, Date updated_at) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.fullName = fullName;
+        this.gender = gender;
+        this.DOB = DOB;
+        this.address = address;
+        this.avatar = avatar;
+        this.verification = verification;
+        this.contacts = contacts;
+        this.firstTime = firstTime;
+        this.type = type;
+        this.status = status;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+
+    public User(String id, String userName, String email, String password, String confirmPassword, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, DocumentReference contacts, boolean firstTime, int type, int status, Date created_at, Date updated_at) {
         this.id = id;
         this.userName = userName;
         this.email = email;
@@ -39,34 +59,14 @@ public class User {
         this.address = address;
         this.avatar = avatar;
         this.verification = verification;
-        this.firstTime = firstTime;
         this.contacts = contacts;
+        this.firstTime = firstTime;
         this.type = type;
         this.status = status;
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
 
-    public User(String userName, String email, String password, String confirmPassword, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, List<Contact> contacts, int type, int status, Date created_at, Date updated_at) {
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-        this.fullName = fullName;
-        this.gender = gender;
-        this.DOB = DOB;
-        this.address = address;
-        this.avatar = avatar;
-        this.verification = verification;
-        this.firstTime = firstTime;
-        this.contacts = contacts;
-        this.type = type;
-        this.status = status;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-    }
-
-    @Exclude
     public String getId() {
         return id;
     }
@@ -155,22 +155,20 @@ public class User {
         this.verification = verification;
     }
 
-    @Exclude
+    public DocumentReference getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(DocumentReference contacts) {
+        this.contacts = contacts;
+    }
+
     public boolean isFirstTime() {
         return firstTime;
     }
 
-
     public void setFirstTime(boolean firstTime) {
         this.firstTime = firstTime;
-    }
-
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
     }
 
     public int getType() {

@@ -55,6 +55,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             @Override
             public void onClick(View view) {
                 listener.onItemClicked(listUser.get(position));
+                holder.btnAdd.setVisibility(View.GONE);
             }
         });
     }

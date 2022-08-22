@@ -44,7 +44,7 @@ public class ChatFragment extends Fragment {
                 container, false);
         mView = view.getRootView();
 
-        bottomsheet = view.getRootView().findViewById(R.id.botttom_sheet);
+        bottomsheet = view.getRootView().findViewById(R.id.btnChoosePic);
         bottomsheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +58,8 @@ public class ChatFragment extends Fragment {
 
         return view;
     }
+
+
     private void showDialog() {
 
         final Dialog dialog = new Dialog(mView.getContext());

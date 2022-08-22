@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutMess"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/_4sdp">
-
+    android:layout_marginTop="10dp">
 
     <TextView
         android:id="@+id/tvTime"
@@ -17,6 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutMessChild"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,40 +32,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:minWidth="38dp"
-            android:padding="8dp"
             android:textColor="@color/secondary_text"
-            android:textSize="16sp"
+            android:textSize="10sp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/textMessage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textMessage"
-            android:layout_width="0dp"
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_sent_message"
-            android:backgroundTint="@color/purple_500"
-            android:padding="@dimen/_12sdp"
+            android:background="@drawable/bg_my_message"
+            android:minWidth="38dp"
+            android:padding="8dp"
             android:textColor="@color/white"
-            android:textSize="@dimen/_13ssp"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvName"
-            app:layout_constraintWidth_percent="0.8"
+            app:layout_constraintTop_toBottomOf="@id/tvName" />
 
-            />
+        <ImageView
+            android:id="@+id/ivImageMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/my_logo" />
 
-        <!--       <TextView-->
-        <!--           android:id="@+id/textDateTime"-->
-        <!--           android:layout_width="0dp"-->
-        <!--           android:layout_height="wrap_content"-->
-        <!--           android:layout_marginTop="@dimen/_4sdp"-->
-        <!--           android:textColor="@color/secondary_text"-->
-        <!--           android:textSize="@dimen/_10ssp"-->
-        <!--           app:layout_constraintEnd_toEndOf="parent"-->
-        <!--           app:layout_constraintTop_toBottomOf="@id/textMessage"-->
-
-        <!--           />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

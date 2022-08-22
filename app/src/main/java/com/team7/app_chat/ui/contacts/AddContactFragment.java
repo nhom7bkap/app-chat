@@ -10,13 +10,19 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
@@ -29,67 +35,49 @@ import com.team7.app_chat.SplashActivity;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.ContactAdapter;
 import com.team7.app_chat.adapters.UsersAdapter;
+import com.team7.app_chat.adapters.ViewPager2Adapter;
+import com.team7.app_chat.adapters.ViewPagerAdapter;
+import com.team7.app_chat.databinding.ActivityMainBinding;
 import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.User;
+import com.team7.app_chat.ui.chat.ChatRoomFragment;
+import com.team7.app_chat.ui.settings.SettingsFragment;
 
 import java.util.ArrayList;
 
-public class AddContactFragment extends Fragment implements UsersAdapter.SelectListstener {
-    private RecyclerView recyclerView;
-    private FirebaseAuth mAuth;
-    private UsersAdapter usersAdapter;
-    private ArrayList<User> userArrayList;
-    private FirebaseUser currentUser;
+public class AddContactFragment extends Fragment {
+
+    private TabLayout mTabLayout;
+    private ViewPager2 viewPager;
+    private ViewPager2Adapter viewPager2Adapter;
     private View mView;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_add_contact, container, false);
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_add_contact,
-                container, false);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
-        this.recyclerView = mView.getRootView().findViewById(R.id.recyclerViewUser);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this.getContext(), DividerItemDecoration.VERTICAL));
+        mTabLayout = view.findViewById(R.id.tabLayoutAddFriend);
+        viewPager = view.findViewById(R.id.viewPagerAddContact);
 
-        userArrayList = new ArrayList<User>();
-        usersAdapter = new UsersAdapter(this.getContext(), userArrayList,this);
-        recyclerView.setAdapter(usersAdapter);
-        initialFun();
+        viewPager2Adapter = new ViewPager2Adapter(this);
 
-        mView.findViewById(R.id.imAFback).setOnClickListener(new View.OnClickListener() {
+        viewPager.setAdapter(viewPager2Adapter);
+        new TabLayoutMediator(mTabLayout, viewPager, (tab, position) -> {
+            switch (position) {
+                case 0:
+                    tab.setText("Find Friend");
+                    break;
+                case 1:
+                    tab.setText("Friend Request");
+                    break;
+            }
+        }).attach();
+        view.findViewById(R.id.imAFback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 NavHostFragment.findNavController(AddContactFragment.this).navigate(R.id.action_add_contact_to_home);
             }
         });
-        return mView;
-    }
-
-    public void initialFun() {
-        UserRepository repository = new UserRepository();
-        repository.get().addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e("FirestoreError", error.getMessage());
-                }
-
-                for (DocumentChange doc : value.getDocumentChanges()) {
-                    if (doc.getType() == DocumentChange.Type.ADDED) {
-                        Log.e("User", doc.getDocument().toObject(User.class).getEmail());
-                        userArrayList.add(doc.getDocument().toObject(User.class));
-                    }
-                    usersAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onItemClicked(User user) {
-        Toast.makeText(mView.getContext(), user.getEmail(),
-                Toast.LENGTH_SHORT).show();
+        return view;
     }
 }

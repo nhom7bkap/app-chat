@@ -25,11 +25,13 @@ import com.team7.app_chat.Util.ContactRepository;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.ContactAdapter;
 import com.team7.app_chat.models.Contact;
+import com.team7.app_chat.models.RoomChat;
+import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
 
 
-public class ContactsFragment extends Fragment {
+public class ContactsFragment extends Fragment implements ContactAdapter.ContactSelectListstener {
 
     private RecyclerView recyclerView;
     private FirebaseAuth mAuth;
@@ -48,7 +50,7 @@ public class ContactsFragment extends Fragment {
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.getContext(), DividerItemDecoration.VERTICAL));
         this.contactArrayList = new ArrayList<Contact>();
-        this.contactAdapter = new ContactAdapter(this.getContext(), contactArrayList);
+        this.contactAdapter = new ContactAdapter(this.getContext(), contactArrayList,this);
         this.recyclerView.setAdapter(contactAdapter);
         initialFun();
         mView.findViewById(R.id.imAddFriend).setOnClickListener(new View.OnClickListener() {
@@ -89,4 +91,8 @@ public class ContactsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onClick(User user) {
+//        RoomChat roomChat = new RoomChat()
+    }
 }

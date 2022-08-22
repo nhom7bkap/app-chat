@@ -19,8 +19,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.team7.app_chat.R;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.UsersAdapter;
@@ -44,17 +48,8 @@ public class ChatRoomFragment extends Fragment implements UserRepository.IContac
         View view = inflater.inflate(R.layout.fragment_chat_room,
                 container, false);
         mView = view.getRootView();
-        bottomsheet = view.getRootView().findViewById(R.id.openSheet);
-        bottomsheet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(ChatRoomFragment.this).navigate(R.id.action_home_to_chat);
-//                showDialog();
 
-            }
-        });
         mAuth = FirebaseAuth.getInstance();
-
         return view;
     }
 

@@ -7,44 +7,21 @@ import java.util.Date;
 
 public class RoomChat {
 
-    @Exclude
-    private String id;
     private String avatar;
     private String name;
     private boolean isPublic;
-    private DocumentReference member;
-    private DocumentReference messages;
+    private DocumentReference lastMessage;
     private Date created_at;
 
     public RoomChat() {
     }
 
-    public RoomChat(String avatar, String name, boolean isPublic, DocumentReference member, DocumentReference messages, Date created_at) {
+    public RoomChat(String avatar, String name, boolean isPublic, DocumentReference lastMessage, Date created_at) {
         this.avatar = avatar;
         this.name = name;
         this.isPublic = isPublic;
-        this.member = member;
-        this.messages = messages;
+        this.lastMessage = lastMessage;
         this.created_at = created_at;
-    }
-
-    public RoomChat(String id, String avatar, String name, boolean isPublic, DocumentReference member, DocumentReference messages, Date created_at) {
-        this.id = id;
-        this.avatar = avatar;
-        this.name = name;
-        this.isPublic = isPublic;
-        this.member = member;
-        this.messages = messages;
-        this.created_at = created_at;
-    }
-
-    @Exclude
-    public String getId() {
-        return id;
-    }
-    @Exclude
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getAvatar() {
@@ -71,20 +48,12 @@ public class RoomChat {
         isPublic = aPublic;
     }
 
-    public DocumentReference getMember() {
-        return member;
+    public DocumentReference getLastMessage() {
+        return lastMessage;
     }
 
-    public void setMember(DocumentReference member) {
-        this.member = member;
-    }
-
-    public DocumentReference getMessages() {
-        return messages;
-    }
-
-    public void setMessages(DocumentReference messages) {
-        this.messages = messages;
+    public void setLastMessages(DocumentReference lastMessage) {
+        this.lastMessage = lastMessage;
     }
 
     public Date getCreated_at() {

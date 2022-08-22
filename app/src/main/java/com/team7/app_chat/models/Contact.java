@@ -5,43 +5,33 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Exclude;
 
+import java.util.Date;
+
 
 public class Contact {
 
     @Exclude
     private String id;
     private String nickName;
-    private boolean friend;
     private boolean blocked;
     private DocumentReference user;
-    private Timestamp created;
+    private Date created;
 
     public Contact() {
     }
 
-    public Contact(String id, String nickName, boolean friend, boolean blocked, DocumentReference user, Timestamp created) {
+    public Contact(String id, String nickName, boolean blocked, DocumentReference user, Date created) {
         this.id = id;
         this.nickName = nickName;
-        this.friend = friend;
         this.blocked = blocked;
         this.user = user;
         this.created = created;
     }
 
-    public Contact(String nickName, boolean friend, boolean blocked, DocumentReference user, Timestamp created) {
-        this.nickName = nickName;
-        this.friend = friend;
-        this.blocked = blocked;
-        this.user = user;
-        this.created = created;
-    }
-
-    @Exclude
     public String getId() {
         return id;
     }
 
-    @Exclude
     public void setId(String id) {
         this.id = id;
     }
@@ -54,16 +44,6 @@ public class Contact {
         this.nickName = nickName;
     }
 
-    @Exclude
-    public boolean isFriend() {
-        return friend;
-    }
-
-    public void setFriend(boolean friend) {
-        this.friend = friend;
-    }
-
-    @Exclude
     public boolean isBlocked() {
         return blocked;
     }
@@ -80,11 +60,11 @@ public class Contact {
         this.user = user;
     }
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 }
