@@ -49,6 +49,7 @@ import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.MessageAdapter;
 import com.team7.app_chat.adapters.UsersAdapter;
 import com.team7.app_chat.models.Contact;
+import com.team7.app_chat.models.Member;
 import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.RoomChat;
 import com.team7.app_chat.models.User;
@@ -85,11 +86,7 @@ public class ChatFragment extends Fragment {
     private DocumentReference friendRef;
     private UserRepository userRepository;
 
-    private FirebaseAuth mAuth;
-    private UsersAdapter usersAdapter;
-    private final List<Contact> mListContact = new ArrayList<>();
-    private View mView;
-    Button bottomsheet;
+    private Button bottomsheet;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -107,7 +104,6 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        mAuth = FirebaseAuth.getInstance();
 
         return roomView;
     }
@@ -115,7 +111,7 @@ public class ChatFragment extends Fragment {
 
     private void showDialog() {
 
-        final Dialog dialog = new Dialog(mView.getContext());
+        final Dialog dialog = new Dialog(roomView.getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottom_sheet);
 
@@ -129,7 +125,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(mView.getContext(),"Edit is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(),"Edit is Clicked",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -139,7 +135,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(mView.getContext(),"Share is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(),"Share is Clicked",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -149,7 +145,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(mView.getContext(),"Upload is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(),"Upload is Clicked",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -159,7 +155,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(mView.getContext(),"Print is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(),"Print is Clicked",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -196,44 +192,44 @@ public class ChatFragment extends Fragment {
         }
     }
 
-//    private void createContract(){
-//
-//        takePhotoContract = registerForActivityResult(new ActivityResultContracts.TakePicture(), status -> {
-//            if(status){
-//                uploadImages();
-//            }
-//        });
-//
-//        permissionContract = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                AtomicBoolean status = new AtomicBoolean(true);
-//                result.forEach((key, val) -> {
-//                    if(!val){
-//                        status.set(false);
-//                    }
-//                });
-//                if(!status.get()){
-//                    Toast.makeText(getActivity(), "Please allow permission to use this feature!", Toast.LENGTH_SHORT).show();
-//                } else{
-//                    if(isCapture){
-//                        if(checkCameraPermission()){
-//                            sourceUri = createImageUri();
-//                            takePhotoContract.launch(sourceUri);
-//                        }
-//                    } else {
-//                        if(checkStoragePermission()){
-//                            pickImageContract.launch("image/*");
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//
-//        pickImageContract = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-//            sourceUri = uri;
-//            uploadImages();
-//        });
-//    }
+    private void createContract(){
+
+        takePhotoContract = registerForActivityResult(new ActivityResultContracts.TakePicture(), status -> {
+            if(status){
+                uploadImages();
+            }
+        });
+
+        permissionContract = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                AtomicBoolean status = new AtomicBoolean(true);
+                result.forEach((key, val) -> {
+                    if(!val){
+                        status.set(false);
+                    }
+                });
+                if(!status.get()){
+                    Toast.makeText(getActivity(), "Please allow permission to use this feature!", Toast.LENGTH_SHORT).show();
+                } else{
+                    if(isCapture){
+                        if(checkCameraPermission()){
+                            sourceUri = createImageUri();
+                            takePhotoContract.launch(sourceUri);
+                        }
+                    } else {
+                        if(checkStoragePermission()){
+                            pickImageContract.launch("image/*");
+                        }
+                    }
+                }
+            }
+        });
+
+        pickImageContract = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            sourceUri = uri;
+            uploadImages();
+        });
+    }
     private boolean checkStoragePermission(){
         boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -271,147 +267,146 @@ public class ChatFragment extends Fragment {
         Uri finalUri = getActivity().getContentResolver().insert(imageCollection, contentValues);
         return finalUri;
     }
-//
-//    private void uploadImages(){
-//        Toast.makeText(getActivity(), "Uploading...", Toast.LENGTH_SHORT).show();
-//        String fileName = String.valueOf(System.currentTimeMillis());
-//        StorageReference imgRef = storageRef.child("images/" + fileName);
-//        imgRef.putFile(sourceUri).addOnSuccessListener(taskSnapshot ->{
-//            imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//                Message message = new Message();
-//                ArrayList<DocumentReference> list = new ArrayList<>();
-//                list.add(currentUserRef);
-//                message.setViewer(list);
-//                message.setText(currentUser.getLastName() + " sent a image");
-//                message.setFile(true);
-//                message.setFileUrl(uri.toString());
-//                message.setCreatedDate(new Date());
-//                message.setSendBy(currentUserRef);
-//                roomRef.collection("messages").add(message).addOnSuccessListener(documentReference -> {
-//                    ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
-//                    roomRef.update("lastMessage", documentReference);
-//                    roomRef.update("updateAt", new Date());
-//                    Toast.makeText(getActivity(), "Completed!", Toast.LENGTH_SHORT).show();
-//                });
-//            });
-//        });
-//    }
-//
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    private void checkMember(){
-//        roomRef.collection("members").addSnapshotListener((value, error) -> {
-//            if(error != null) return;
-//            member = value.size();
-//            int count = (int) value.getDocuments().stream().filter(val -> val.getId().equals(currentUser.getId())).count();
-//            if(getActivity() != null){
-//                if(count == 0) {
-//                    NavHostFragment.findNavController(this).popBackStack();
-//                    Toast.makeText(getActivity(), "You has been banned from the chat room", Toast.LENGTH_SHORT).show();
-//                } else{
-//                    roomRef.get().addOnSuccessListener(documentSnapshot -> {
-//                        chatRoom = documentSnapshot.toObject(ChatRoom.class);
-//                        if(chatRoom.getName() == null){
-//                            getFriendInfo(value.getDocuments());
-//                        } else{
-//                            Glide.with(getActivity()).load(chatRoom.getAvatarPath()).into(avatarView);
-//                            ((TextView) roomView.findViewById(R.id.chatName)).setText(chatRoom.getName());
-//                        }
-//                    });
-//                    loadMessage();
-//                }
-//            }
-//        });
-//    }
-//
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    private void getFriendInfo(List<DocumentSnapshot> documents) {
-//        DocumentSnapshot member = documents.stream()
-//                .filter(doc -> !doc.toObject(Member.class).getUser().getId().equals(currentUser.getId()))
-//                .findFirst().get();
-//        member.toObject(Member.class).getUser().addSnapshotListener((value, error) -> {
-//            if(error != null) return;
-//            UserChat user = value.toObject(UserChat.class);
-//            Glide.with(this).load(user.getAvatarPath()).into(avatarView);
-//            String fullName = user.getFirstName() + " " + user.getLastName();
-//            ((TextView) roomView.findViewById(R.id.chatName)).setText(fullName);
-//        });
-//    }
-//    private void loadMessage(){
-//        List<DocumentSnapshot> list = new ArrayList<>();
-//        MessageAdapter adapter = new MessageAdapter(list, getContext(), member);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-//        linearLayoutManager.setStackFromEnd(true);
-//
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//        recyclerView.setAdapter(adapter);
-//
-//        roomRef.collection("messages")
-//                .orderBy("createdDate")
-//                .addSnapshotListener((value, error) -> {
-//                    for (DocumentChange dc: value.getDocumentChanges()){
-//                        switch ((dc.getType())){
-//                            case ADDED:
-//                                list.add(dc.getDocument());
-//
-//                                adapter.notifyDataSetChanged();
-//                                recyclerView.scrollToPosition(list.size() - 1);
-//
-//                                break;
-//                        }
-//                    }
-//
-//                });
-//    }
-//
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    private void sendMessage(){
-//        Message message = new Message();
-//        message.setCreatedDate(new Date());
-//        String text = ((TextView) roomView.findViewById(R.id.edtMessage)).getText().toString();
-//        message.setText(text);
-//        message.setSendBy(currentUserRef);
-//
-//        try{
-//            ArrayList<DocumentReference> viewers = new ArrayList<>();
-//            viewers.add(currentUserRef);
-//            message.setViewer(viewers);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        }
-//
-//        if(roomId != null){
-//            ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
-//            repository.createMessage(roomId, message);
-//
-//        } else{
-//            ChatRoom chatRoom = new ChatRoom();
-//            chatRoom.setPublic(false);
-//
-//            Member current = new Member();
-//            current.setMod(true);
-//            current.setUser(currentUserRef);
-//
-//            Member friend = new Member();
-//            friend.setMod(true);
-//            friend.setUser(friendRef);
-//
-//            repository.getCollection().add(chatRoom).addOnSuccessListener(documentReference -> {
-//                ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
-//                roomRef = documentReference;
-//                documentReference.collection("members").document(currentUserRef.getId()).set(current);
-//                documentReference.collection("members").document(friendRef.getId()).set(friend);
-//                documentReference.collection("messages").add(message).addOnSuccessListener(doc -> {
-//                    documentReference.update("lastMessage", doc);
-//                });
-//                Map<String, Object> room = new HashMap<>();
-//                room.put("room", documentReference);
-//                room.put("updatedAt", new Date());
-//                currentUserRef.collection("chatRooms").document(roomRef.getId()).set(room);
-//                friendRef.collection("chatRooms").document(roomRef.getId()).set(room);
-//                checkMember();
-//            });
-//        }
-//    }
+
+    private void uploadImages(){
+        Toast.makeText(getActivity(), "Uploading...", Toast.LENGTH_SHORT).show();
+        String fileName = String.valueOf(System.currentTimeMillis());
+        StorageReference imgRef = storageRef.child("images/" + fileName);
+        imgRef.putFile(sourceUri).addOnSuccessListener(taskSnapshot ->{
+            imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                Message message = new Message();
+                ArrayList<DocumentReference> list = new ArrayList<>();
+                list.add(currentUserRef);
+                message.setViewer(list);
+                message.setText(currentUser.getFullName() + " sent a image");
+                message.setFile(true);
+                message.setFileUrl(uri.toString());
+                message.setCreatedDate(new Date());
+                message.setSendBy(currentUserRef);
+                roomRef.collection("messages").add(message).addOnSuccessListener(documentReference -> {
+                    ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
+                    roomRef.update("lastMessage", documentReference);
+                    roomRef.update("updateAt", new Date());
+                    Toast.makeText(getActivity(), "Completed!", Toast.LENGTH_SHORT).show();
+                });
+            });
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void checkMember(){
+        roomRef.collection("members").addSnapshotListener((value, error) -> {
+            if(error != null) return;
+            member = value.size();
+            int count = (int) value.getDocuments().stream().filter(val -> val.getId().equals(currentUser.getId())).count();
+            if(getActivity() != null){
+                if(count == 0) {
+                    NavHostFragment.findNavController(this).popBackStack();
+                    Toast.makeText(getActivity(), "You has been banned from the chat room", Toast.LENGTH_SHORT).show();
+                } else{
+                    roomRef.get().addOnSuccessListener(documentSnapshot -> {
+                        chatRoom = documentSnapshot.toObject(RoomChat.class);
+                        if(chatRoom.getName() == null){
+                            getFriendInfo(value.getDocuments());
+                        } else{
+                            Glide.with(getActivity()).load(chatRoom.getAvatar()).into(avatarView);
+                            ((TextView) roomView.findViewById(R.id.chatName)).setText(chatRoom.getName());
+                        }
+                    });
+                    loadMessage();
+                }
+            }
+        });
+    }
+
+    private void getFriendInfo(List<DocumentSnapshot> documents) {
+        DocumentSnapshot member = documents.stream()
+                .filter(doc -> !doc.toObject(Member.class).getUser().getId().equals(currentUser.getId()))
+                .findFirst().get();
+        member.toObject(Member.class).getUser().addSnapshotListener((value, error) -> {
+            if(error != null) return;
+            User user = value.toObject(User.class);
+            Glide.with(this).load(user.getAvatar()).into(avatarView);
+            String fullName = user.getFullName();
+            ((TextView) roomView.findViewById(R.id.chatName)).setText(fullName);
+        });
+    }
+    private void loadMessage(){
+        List<DocumentSnapshot> list = new ArrayList<>();
+        MessageAdapter adapter = new MessageAdapter(list, getContext(), member);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setStackFromEnd(true);
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
+
+        roomRef.collection("messages")
+                .orderBy("createdDate")
+                .addSnapshotListener((value, error) -> {
+                    for (DocumentChange dc: value.getDocumentChanges()){
+                        switch ((dc.getType())){
+                            case ADDED:
+                                list.add(dc.getDocument());
+
+                                adapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(list.size() - 1);
+
+                                break;
+                        }
+                    }
+
+                });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void sendMessage(){
+        Message message = new Message();
+        message.setCreatedDate(new Date());
+        String text = ((TextView) roomView.findViewById(R.id.edtMessage)).getText().toString();
+        message.setText(text);
+        message.setSendBy(currentUserRef);
+
+        try{
+            ArrayList<DocumentReference> viewers = new ArrayList<>();
+            viewers.add(currentUserRef);
+            message.setViewer(viewers);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(roomId != null){
+            ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
+            repository.createMessage(roomId, message);
+
+        } else{
+            RoomChat chatRoom = new RoomChat();
+            chatRoom.setPublic(false);
+
+            Member current = new Member();
+            current.setMod(true);
+            current.setUser(currentUserRef);
+
+            Member friend = new Member();
+            friend.setMod(true);
+            friend.setUser(friendRef);
+
+            repository.get().add(chatRoom).addOnSuccessListener(documentReference -> {
+                ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
+                roomRef = documentReference;
+                documentReference.collection("members").document(currentUserRef.getId()).set(current);
+                documentReference.collection("members").document(friendRef.getId()).set(friend);
+                documentReference.collection("messages").add(message).addOnSuccessListener(doc -> {
+                    documentReference.update("lastMessage", doc);
+                });
+                Map<String, Object> room = new HashMap<>();
+                room.put("room", documentReference);
+                room.put("updatedAt", new Date());
+                currentUserRef.collection("chatRooms").document(roomRef.getId()).set(room);
+                friendRef.collection("chatRooms").document(roomRef.getId()).set(room);
+                checkMember();
+            });
+        }
+    }
 
 }
