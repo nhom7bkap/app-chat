@@ -10,8 +10,7 @@ import java.util.Date;
 
 public class Contact {
 
-    @Exclude
-    private String id;
+
     private String nickName;
     private boolean blocked;
     private DocumentReference user;
@@ -20,20 +19,11 @@ public class Contact {
     public Contact() {
     }
 
-    public Contact(String id, String nickName, boolean blocked, DocumentReference user, Date created) {
-        this.id = id;
+    public Contact(String nickName, boolean blocked, DocumentReference user, Date created) {
         this.nickName = nickName;
         this.blocked = blocked;
         this.user = user;
         this.created = created;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getNickName() {

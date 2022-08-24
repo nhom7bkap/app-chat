@@ -5,18 +5,16 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Query;
 import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +33,7 @@ public class UserRepository {
 
     private IContactCallback callback;
 
-    public interface IContactCallback{
+    public interface IContactCallback {
         void loadContact(List<Contact> list);
     }
 
@@ -48,6 +46,7 @@ public class UserRepository {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         this.collectionReference = db.collection(this.collectionName);
     }
+
     public UserRepository(IContactCallback callback) {
         this.entityClass = User.class;
 
@@ -76,6 +75,9 @@ public class UserRepository {
         return collectionReference;
     }
 
+    public Query getByEmail(String email) {
+        return collectionReference.whereEqualTo("email", email);
+    }
 
     public Task<User> get(String id) {
         final String documentName = id;
@@ -105,7 +107,7 @@ public class UserRepository {
         return documentReference;
     }
 
-    public void getContactsWithCallback(String userId){
+    public void getContactsWithCallback(String userId) {
         collectionReference.document(userId).collection("contacts").get().addOnSuccessListener(queryDocumentSnapshots -> {
             List<Contact> list = queryDocumentSnapshots.getDocuments()
                     .stream()
@@ -113,6 +115,10 @@ public class UserRepository {
                     .collect(Collectors.toList());
             callback.loadContact(list);
         });
+    }
+
+    public CollectionReference getChatRoom(String userId) {
+        return collectionReference.document(userId).collection("RoomChat");
     }
 
     public Task<Void> create(User entity) {

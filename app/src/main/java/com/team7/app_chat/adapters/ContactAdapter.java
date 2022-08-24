@@ -14,65 +14,70 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.team7.app_chat.R;
+import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.FriendRequest;
 import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
+    private List<DocumentSnapshot> list;
+    private INavChat iNavChat;
     private Context context;
-    private ArrayList<Contact> listContacts;
-    private ContactSelectListstener listener;
+    private User user;
 
-    public ContactAdapter(Context context, ArrayList<Contact> listContacts, ContactSelectListstener liststener) {
+    public ContactAdapter(Context context, List<DocumentSnapshot> list, INavChat iNavChat) {
         this.context = context;
-        this.listContacts = listContacts;
-        this.listener = liststener;
+        this.list = list;
+        this.iNavChat = iNavChat;
     }
 
-    public interface ContactSelectListstener {
-        void onClick(User user);
+    public interface INavChat {
+        void goToChat(DocumentSnapshot doc);
     }
+
 
     @NonNull
     @Override
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_container_user, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_user, parent, false);
         return new ContactViewHolder(view);
     }
 
     @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        Contact contact = listContacts.get(position);
-        DocumentReference dof = contact.getUser();
-        dof.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        DocumentSnapshot doc = list.get(position);
+        Contact contact = doc.toObject(Contact.class);
+
+        new UserRepository().getDocRf(contact.getUser().getId()).get().addOnSuccessListener(documentSnapshot -> {
+            this.user = documentSnapshot.toObject(User.class);
+            String path = user.getAvatar();
+            Glide.with(context).load(path).into(holder.imageView);
+            holder.textViewName.setText(user.getFullName());
+            holder.textViewDesc.setText(user.getEmail());
+        });
+
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                User user = value.toObject(User.class);
-                holder.textViewName.setText(user.getFullName());
-                holder.textViewDesc.setText("Last recently");
-                Glide.with(context).load(user.getAvatar()).into(holder.imageView);
-                holder.linearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        listener.onClick(user);
-                    }
-                });
+            public void onClick(View view) {
+                iNavChat.goToChat(doc);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return listContacts.size();
+        return list.size();
     }
 
     public class ContactViewHolder extends RecyclerView.ViewHolder {
@@ -87,12 +92,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             textViewName = itemView.findViewById(R.id.nameContact);
             textViewDesc = itemView.findViewById(R.id.descContact);
             linearLayout = itemView.findViewById(R.id.contactLayout);
-//            itemView.findViewById(R.id.btnLike).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Log.d("ViewHolder", "Like button " + contact.getNickName());
-//                }
-//            });
         }
     }
 }

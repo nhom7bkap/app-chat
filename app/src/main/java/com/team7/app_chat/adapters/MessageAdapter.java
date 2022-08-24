@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.team7.app_chat.R;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.team7.app_chat.Util.CurrentUser;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.User;
@@ -30,6 +30,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private List<DocumentSnapshot> list;
     private Context context;
     private int member;
+    private User user;
 
     public MessageAdapter(List<DocumentSnapshot> list, Context context, int member) {
         this.list = list;
@@ -116,9 +117,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public int getItemViewType(int position) {
-        User currentUser = CurrentUser.user;
+        new UserRepository().get(FirebaseAuth.getInstance().getUid()).addOnSuccessListener(user -> {
+            this.user = user;
+        });
         Message message = list.get(position).toObject(Message.class);
-        if (message.getSendBy().getId().equals(currentUser.getId())) {
+        if (message.getSendBy().getId().equals(user.getId())) {
             return TYPE_MESSAGE_SEND;
         } else {
             return TYPE_MESSAGE_RECEIVE;

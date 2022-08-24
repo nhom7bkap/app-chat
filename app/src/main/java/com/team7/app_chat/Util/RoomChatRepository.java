@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.team7.app_chat.models.FriendRequest;
+import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.RoomChat;
 
 
@@ -26,13 +27,14 @@ public class RoomChatRepository {
     private final Class<RoomChat> entityClass;
 
     private final CollectionReference collectionReference;
-    private final String collectionName = "RoomChat";
+    private final String collectionName = "roomChat";
     private final String userId;
+    private final FirebaseFirestore db;
 
 
     public RoomChatRepository(String userId) {
         this.entityClass = RoomChat.class;
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        this.db = FirebaseFirestore.getInstance();
         this.userId = userId;
         this.collectionReference = db.collection(collectionName);
     }
@@ -75,8 +77,9 @@ public class RoomChatRepository {
     }
 
     public DocumentReference getDocRf(String id) {
-        DocumentReference documentReference = collectionReference.document(id);
-        Log.i(TAG, "Getting '" + id + "' in '" + collectionName + "'.");
+        final String documentName = id;
+        DocumentReference documentReference = collectionReference.document(documentName);
+        Log.i(TAG, "Getting '" + documentName + "' in '" + collectionName + "'.");
         return documentReference;
     }
 
@@ -91,7 +94,18 @@ public class RoomChatRepository {
         });
     }
 
-    public Task<Void> update(RoomChat entity,String id) {
+    public Task<Void> createMessage(String roomId, Message entity) {
+       DocumentReference documentReference = db.collection("roomChat").document(roomId).collection("messages").document();
+        Log.i(TAG, "Creating '" + "Random id" + "' in '" + "messages" + "'.");
+        return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "There was an error creating '" + "Random id" + "' in '" + "messages" + "'!", e);
+            }
+        });
+    }
+
+    public Task<Void> update(RoomChat entity, String id) {
         DocumentReference documentReference = collectionReference.document(id);
         Log.i(TAG, "Updating '" + id + "' in '" + collectionName + "'.");
 

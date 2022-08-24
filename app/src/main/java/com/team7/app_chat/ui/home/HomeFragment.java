@@ -2,6 +2,7 @@ package com.team7.app_chat.ui.home;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -11,9 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.R;
+import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.ViewPagerAdapter;
 import com.team7.app_chat.databinding.ActivityMainBinding;
+import com.team7.app_chat.models.User;
 import com.team7.app_chat.ui.chat.ChatRoomFragment;
 import com.team7.app_chat.ui.contacts.ContactsFragment;
 import com.team7.app_chat.ui.settings.SettingsFragment;
@@ -25,8 +30,14 @@ public class HomeFragment extends Fragment {
     private BottomNavigationView bottomNavBar;
     private ViewPager2 viewPager;
 
-    public HomeFragment() {
-        // Required empty public constructor
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        new UserRepository().getByEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail()).addSnapshotListener((value, error) -> {
+            if (error != null) return;
+            User user = value.getDocuments().get(0).toObject(User.class);
+            CurrentUser.user = user;
+        });
     }
 
     @Override

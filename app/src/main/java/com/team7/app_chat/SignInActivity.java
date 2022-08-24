@@ -2,10 +2,7 @@ package com.team7.app_chat;
 
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -24,7 +21,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.team7.app_chat.Util.Helper;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.components.ProgressButton;
-import com.team7.app_chat.components.ProgressDialogActivity;
 import com.team7.app_chat.models.User;
 
 
@@ -34,12 +30,14 @@ public class SignInActivity extends AppCompatActivity {
     private ProgressButton progressButton;
     private View view;
     private TextView layout_forgot_password;
+    private UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         view = findViewById(R.id.signInButton);
+        userRepository = new UserRepository();
         layout_forgot_password = findViewById(R.id.layout_forgot_password);
         progressButton = new ProgressButton(SignInActivity.this, findViewById(R.id.signInButton), "Sign In");
         layout_forgot_password.setOnClickListener(new View.OnClickListener() {
@@ -70,9 +68,10 @@ public class SignInActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                new UserRepository().get(user.getUid()).addOnSuccessListener(new OnSuccessListener<User>() {
+                                userRepository.get(user.getUid()).addOnSuccessListener(new OnSuccessListener<User>() {
                                     @Override
                                     public void onSuccess(User user) {
+                                        CurrentUser.user = user;
                                         Intent it;
                                         if (user.isFirstTime())
                                             it = new Intent(SignInActivity.this, SetupProfileActivity.class);

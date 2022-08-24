@@ -19,17 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.makeramen.roundedimageview.RoundedImageView;
 import com.team7.app_chat.R;
-import com.team7.app_chat.Util.CurrentUser;
-import com.team7.app_chat.models.Contact;
+import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.models.Member;
 import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.RoomChat;
 import com.team7.app_chat.models.User;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +37,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     private List<DocumentReference> list;
     private IChatScreen callback;
 
-    public interface IChatScreen{
+    public interface IChatScreen {
         void goToChatScreen(String id);
     }
 
@@ -64,18 +61,20 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DocumentReference doc = list.get(position);
         doc.addSnapshotListener((value, error) -> {
-            if(error != null){
+            if (error != null) {
                 return;
             }
             setData(value, holder);
         });
     }
+
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setData(DocumentSnapshot doc, ViewHolder holder){
+    private void setData(DocumentSnapshot doc, ViewHolder holder) {
         RoomChat chatRoom = doc.toObject(RoomChat.class);
+
         User currentUser = CurrentUser.user;
-        if(chatRoom.getLastMessage() != null){
+        if (chatRoom.getLastMessage() != null) {
             chatRoom.getLastMessage().get().addOnSuccessListener(documentSnapshot -> {
                 String time;
                 Message message = documentSnapshot.toObject(Message.class);
@@ -94,7 +93,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                 } else {
                     time = new SimpleDateFormat("MMM dd, yyyy").format(createdDate);
                 }
-                if(message.getViewer() != null && message.getViewer().size() > 0){
+                if (message.getViewer() != null && message.getViewer().size() > 0) {
                     boolean seen = message.getViewer().stream().filter(viewer -> viewer.getId().equals(currentUser.getId())).count() == 0;
                     if (seen) {
                         int color = ContextCompat.getColor(context, R.color.black);
@@ -109,14 +108,14 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
             });
         }
 
-        if(chatRoom.getName() == null){
+        if (chatRoom.getName() == null) {
             doc.getReference().collection("members").get().addOnSuccessListener(queryDocumentSnapshots -> {
                 List<DocumentSnapshot> memberList = queryDocumentSnapshots.getDocuments();
                 memberList.forEach(member -> {
-                    member.toObject(Member.class).getUser().get().addOnSuccessListener(user -> {
-                        if(!user.getId().equals(currentUser.getId())){
+                    member.toObject(Member.class).getUser().get().addOnSuccessListener(user1 -> {
+                        if (!user1.getId().equals(currentUser.getId())) {
                             Log.e("tag", "compare");
-                            User userChat = user.toObject(User.class);
+                            User userChat = user1.toObject(User.class);
                             String fullName = userChat.getFullName();
                             holder.name.setText(fullName);
                             Glide.with(context).load(currentUser.getAvatar()).into(holder.avatar);
@@ -124,7 +123,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                     });
                 });
             });
-        }else {
+        } else {
             holder.name.setText(chatRoom.getName());
             Glide.with(context).load(chatRoom.getAvatar()).into(holder.avatar);
         }
@@ -140,7 +139,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView avatar;
         private TextView name;
         private TextView message;

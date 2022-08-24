@@ -80,8 +80,12 @@ public class ContactRepository {
         return documentReference;
     }
 
-    public Task<Void> create(Contact entity) {
-        DocumentReference documentReference = collectionReference.document(userId).collection(collectionName).document(entity.getId());
+    public Task<Void> create(Contact entity, String id) {
+        DocumentReference documentReference = collectionReference.document(userId).collection(collectionName).document();
+        if (id != "") {
+            documentReference = collectionReference.document(userId).collection(collectionName).document(id);
+        }
+
         Log.i(TAG, "Creating '" + "Random id" + "' in '" + collectionName + "'.");
         return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -92,7 +96,7 @@ public class ContactRepository {
     }
 
     public Task<Void> update(Contact entity) {
-        final String id = entity.getId();
+        final String id = entity.getUser().getId();
         DocumentReference documentReference = collectionReference.document(userId).collection(collectionName).document(id);
         Log.i(TAG, "Updating '" + id + "' in '" + collectionName + "'.");
 

@@ -124,15 +124,13 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
                 // add contact to sender user
                 DocumentReference Docf = userRepository.getDocRf(currentUser.getUid());
                 contact.setUser(Docf);
-                contact.setId(currentUser.getUid());
                 contact.setCreated(new Date());
-                contactRepository.create(contact);
+                contactRepository.create(contact,currentUser.getUid());
                 // add contact to current user
                 contactRepository = new ContactRepository(currentUser.getUid());
                 Docf = userRepository.getDocRf(user.getId());
                 contact.setUser(Docf);
-                contact.setId(user.getId());
-                contactRepository.create(contact);
+                contactRepository.create(contact,user.getId());
                 requestRepository = new FriendRequestRepository(currentUser.getUid());
                 requestRepository.delete(friendRequest.getSenderId());
             }

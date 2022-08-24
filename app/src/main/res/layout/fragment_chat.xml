@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.chat.ChatFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".ui.chat.ChatFragment">
 
     <LinearLayout
         android:id="@+id/chatHeader"
@@ -39,6 +39,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/chatName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -76,87 +77,146 @@
         android:id="@+id/chatBody"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/chatBar"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chatHeader"
-        android:orientation="vertical">
+        app:layout_constraintTop_toBottomOf="@id/chatHeader">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/_20sdp"
-            />
+            android:padding="@dimen/_20sdp" />
 
-<!--        <ProgressBar-->
-<!--            android:id="@+id/progessBar"-->
-<!--            android:layout_width="@dimen/_25sdp"-->
-<!--            android:layout_height="@dimen/_25sdp"-->
-<!--            android:layout_gravity="center" />-->
+        <!--        <ProgressBar-->
+        <!--            android:id="@+id/progessBar"-->
+        <!--            android:layout_width="@dimen/_25sdp"-->
+        <!--            android:layout_height="@dimen/_25sdp"-->
+        <!--            android:layout_gravity="center" />-->
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/chatBar"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout4"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-        <ImageView
+
+        <Button
+            android:id="@+id/btnAttachment"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="24dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="15dp"
+            android:includeFontPadding="false"
+            android:paddingLeft="0dp"
+            app:icon="@drawable/ic_attachment_svgrepo_com"
+            app:iconPadding="0dp"
+            app:iconSize="26dp"
+            app:iconTint="@color/theme_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnEmoji"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="24dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="15dp"
+            android:paddingLeft="0dp"
+            app:icon="@drawable/ic_emoji_svgrepo_com"
+            app:iconSize="24dp"
+            app:iconTint="@color/theme_color"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.527" />
+
+        <Button
             android:id="@+id/btnChoosePic"
-            android:src="@drawable/ic_attachment_svgrepo_com"
-            android:background="@drawable/send_bg"
-            android:layout_marginStart="9dp"
-            android:padding="12dp"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:tint="@color/white" />
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="24dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="15dp"
+            android:paddingLeft="0dp"
+            app:icon="@drawable/ic_take_a_picture"
+            android:visibility="gone"
+
+            app:iconSize="26dp"
+            app:iconTint="@color/theme_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnEmoji"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.555" />
+
+        <Button
+            android:id="@+id/btnSend"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="24dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="15dp"
+            android:paddingLeft="0dp"
+            app:icon="@drawable/ic_send_svgrepo_com"
+            app:iconSize="24dp"
+            app:iconTint="@color/theme_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnChoosePic"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/editCardView"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="2"
             app:cardCornerRadius="8dp"
-            app:cardElevation="10dp"
-            app:cardUseCompatPadding="true">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSend"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/button2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.444">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:padding="8dp">
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:textAlignment="center"
-                    android:gravity="center"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:textAlignment="center">
 
                     <EditText
                         android:id="@+id/edtMessage"
-                        android:inputType="textPersonName"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:gravity="start"
-                        android:hint="Type a message"
-                        android:padding="5dp"
+                        android:layout_height="match_parent"
                         android:layout_marginStart="5dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="start|center"
+                        android:hint="Type a message"
+                        android:inputType="textPersonName"
+                        android:padding="5dp"
                         android:paddingStart="5dp"
                         android:paddingEnd="1dp"
                         android:textColorHint="#424242"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
+
                 <ImageView
                     android:id="@+id/btnTakePic"
                     android:layout_width="match_parent"
@@ -168,16 +228,5 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <ImageView
-            android:id="@+id/btnSend"
-            android:src="@drawable/ic_send_svgrepo_com"
-            android:background="@drawable/send_bg"
-            android:layout_marginEnd="9dp"
-            android:padding="12dp"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:tint="@color/white" />
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

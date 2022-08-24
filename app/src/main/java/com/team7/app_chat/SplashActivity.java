@@ -17,11 +17,14 @@ import com.team7.app_chat.models.User;
 
 public class SplashActivity extends AppCompatActivity {
     private final String TAG = "SlashActivity";
+    private UserRepository userRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         checkAuth();
+        userRepository = new UserRepository();
     }
 
     @Override
@@ -31,7 +34,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void checkAuth() {
-        Log.d(TAG,"CheckAuth");
+        Log.d(TAG, "CheckAuth");
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -44,8 +47,7 @@ public class SplashActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } finally {
                     if (currentUser != null) {
-                        Log.e("bug",currentUser.getUid());
-                        new UserRepository().get(currentUser.getUid()).addOnSuccessListener(user -> {
+                        userRepository.get(currentUser.getUid()).addOnSuccessListener(user -> {
                             Intent it;
                             if (user.isFirstTime()) {
                                 it = new Intent(SplashActivity.this, SetupProfileActivity.class);
@@ -56,11 +58,11 @@ public class SplashActivity extends AppCompatActivity {
                         }).addOnFailureListener(e -> {
                             Toast.makeText(SplashActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            Log.e(TAG,"CurrentUser Error: "+  e.getMessage());
+                            Log.e(TAG, "CurrentUser Error: " + e.getMessage());
                         }).addOnCompleteListener(new OnCompleteListener<User>() {
                             @Override
                             public void onComplete(@NonNull Task<User> task) {
-                                Log.e(TAG,"User "+  task.getResult().getUserName());
+                                Log.e(TAG, "User " + task.getResult().getUserName());
                             }
                         });
                     } else {

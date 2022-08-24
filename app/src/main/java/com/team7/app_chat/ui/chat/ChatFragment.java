@@ -1,9 +1,15 @@
 package com.team7.app_chat.ui.chat;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,35 +22,82 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.team7.app_chat.MainActivity;
 import com.team7.app_chat.R;
+import com.team7.app_chat.Util.RoomChatRepository;
+import com.team7.app_chat.Util.UserRepository;
+import com.team7.app_chat.adapters.MessageAdapter;
 import com.team7.app_chat.adapters.UsersAdapter;
 import com.team7.app_chat.models.Contact;
+import com.team7.app_chat.models.Message;
+import com.team7.app_chat.models.RoomChat;
+import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChatFragment extends Fragment {
+    private RoomChatRepository repository;
+    private DocumentReference roomRef;
+    private RoomChat chatRoom;
+    private User currentUser ;
+    private String roomId;
+    private String userId;
+    private int member;
+
+    private View roomView;
+    private RecyclerView recyclerView;
+    private ImageView avatarView;
+
+    private ActivityResultLauncher<String[]> permissionContract;
+    private ActivityResultLauncher<Uri> takePhotoContract;
+    private ActivityResultLauncher<String> pickImageContract;
+
+    private Uri sourceUri;
+    private StorageReference storageRef;
+    private boolean isCapture;
+
+    private DocumentReference currentUserRef;
+    private DocumentReference friendRef;
+    private UserRepository userRepository;
+
     private FirebaseAuth mAuth;
     private UsersAdapter usersAdapter;
     private final List<Contact> mListContact = new ArrayList<>();
     private View mView;
-    ImageView bottomsheet;
+    Button bottomsheet;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat,
+        roomView = inflater.inflate(R.layout.fragment_chat,
                 container, false);
-        mView = view.getRootView();
 
-        bottomsheet = view.getRootView().findViewById(R.id.btnChoosePic);
+        bottomsheet = roomView.findViewById(R.id.btnAttachment);
         bottomsheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +109,7 @@ public class ChatFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        return view;
+        return roomView;
     }
 
 
@@ -118,5 +171,247 @@ public class ChatFragment extends Fragment {
         dialog.getWindow().setGravity(Gravity.BOTTOM);
 
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        currentUserRef = userRepository.getDocRf(currentUser.getId());
+        if(roomId != null){
+
+            roomRef = repository.get().document(roomId);
+            storageRef = FirebaseStorage.getInstance().getReference();
+            roomRef.addSnapshotListener((value, error) -> {
+                if(error != null) return;
+                ((DocumentReference) value.get("lastMessage")).update("viewer", FieldValue.arrayUnion(currentUserRef));
+            });
+//            checkMember();
+        } else if(userId != null){
+            userRepository.getDocRf(userId).get().addOnSuccessListener(documentSnapshot -> {
+                friendRef = documentSnapshot.getReference();
+                User user = documentSnapshot.toObject(User.class);
+                Glide.with(this).load(user.getAvatar()).into(avatarView);
+                ((TextView) roomView.findViewById(R.id.chatName)).setText(user.getFullName());
+            });
+        }
+    }
+
+//    private void createContract(){
+//
+//        takePhotoContract = registerForActivityResult(new ActivityResultContracts.TakePicture(), status -> {
+//            if(status){
+//                uploadImages();
+//            }
+//        });
+//
+//        permissionContract = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                AtomicBoolean status = new AtomicBoolean(true);
+//                result.forEach((key, val) -> {
+//                    if(!val){
+//                        status.set(false);
+//                    }
+//                });
+//                if(!status.get()){
+//                    Toast.makeText(getActivity(), "Please allow permission to use this feature!", Toast.LENGTH_SHORT).show();
+//                } else{
+//                    if(isCapture){
+//                        if(checkCameraPermission()){
+//                            sourceUri = createImageUri();
+//                            takePhotoContract.launch(sourceUri);
+//                        }
+//                    } else {
+//                        if(checkStoragePermission()){
+//                            pickImageContract.launch("image/*");
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//
+//        pickImageContract = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+//            sourceUri = uri;
+//            uploadImages();
+//        });
+//    }
+    private boolean checkStoragePermission(){
+        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return result && result1;
+    }
+    private boolean checkCameraPermission(){
+        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return result && result1;
+    }
+    private void pickImageContract(){
+        String permission[] = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        isCapture = false;
+        permissionContract.launch(permission);
+
+    }
+    private void captureImageContract(){
+        String permission[] = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        isCapture = true;
+        permissionContract.launch(permission);
+
+    }
+    private Uri createImageUri(){
+        Uri imageCollection;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        } else{
+            imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+        String imageName = String.valueOf(System.currentTimeMillis());
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, imageName);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        Uri finalUri = getActivity().getContentResolver().insert(imageCollection, contentValues);
+        return finalUri;
+    }
+//
+//    private void uploadImages(){
+//        Toast.makeText(getActivity(), "Uploading...", Toast.LENGTH_SHORT).show();
+//        String fileName = String.valueOf(System.currentTimeMillis());
+//        StorageReference imgRef = storageRef.child("images/" + fileName);
+//        imgRef.putFile(sourceUri).addOnSuccessListener(taskSnapshot ->{
+//            imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
+//                Message message = new Message();
+//                ArrayList<DocumentReference> list = new ArrayList<>();
+//                list.add(currentUserRef);
+//                message.setViewer(list);
+//                message.setText(currentUser.getLastName() + " sent a image");
+//                message.setFile(true);
+//                message.setFileUrl(uri.toString());
+//                message.setCreatedDate(new Date());
+//                message.setSendBy(currentUserRef);
+//                roomRef.collection("messages").add(message).addOnSuccessListener(documentReference -> {
+//                    ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
+//                    roomRef.update("lastMessage", documentReference);
+//                    roomRef.update("updateAt", new Date());
+//                    Toast.makeText(getActivity(), "Completed!", Toast.LENGTH_SHORT).show();
+//                });
+//            });
+//        });
+//    }
+//
+//    @RequiresApi(api = Build.VERSION_CODES.N)
+//    private void checkMember(){
+//        roomRef.collection("members").addSnapshotListener((value, error) -> {
+//            if(error != null) return;
+//            member = value.size();
+//            int count = (int) value.getDocuments().stream().filter(val -> val.getId().equals(currentUser.getId())).count();
+//            if(getActivity() != null){
+//                if(count == 0) {
+//                    NavHostFragment.findNavController(this).popBackStack();
+//                    Toast.makeText(getActivity(), "You has been banned from the chat room", Toast.LENGTH_SHORT).show();
+//                } else{
+//                    roomRef.get().addOnSuccessListener(documentSnapshot -> {
+//                        chatRoom = documentSnapshot.toObject(ChatRoom.class);
+//                        if(chatRoom.getName() == null){
+//                            getFriendInfo(value.getDocuments());
+//                        } else{
+//                            Glide.with(getActivity()).load(chatRoom.getAvatarPath()).into(avatarView);
+//                            ((TextView) roomView.findViewById(R.id.chatName)).setText(chatRoom.getName());
+//                        }
+//                    });
+//                    loadMessage();
+//                }
+//            }
+//        });
+//    }
+//
+//    @RequiresApi(api = Build.VERSION_CODES.N)
+//    private void getFriendInfo(List<DocumentSnapshot> documents) {
+//        DocumentSnapshot member = documents.stream()
+//                .filter(doc -> !doc.toObject(Member.class).getUser().getId().equals(currentUser.getId()))
+//                .findFirst().get();
+//        member.toObject(Member.class).getUser().addSnapshotListener((value, error) -> {
+//            if(error != null) return;
+//            UserChat user = value.toObject(UserChat.class);
+//            Glide.with(this).load(user.getAvatarPath()).into(avatarView);
+//            String fullName = user.getFirstName() + " " + user.getLastName();
+//            ((TextView) roomView.findViewById(R.id.chatName)).setText(fullName);
+//        });
+//    }
+//    private void loadMessage(){
+//        List<DocumentSnapshot> list = new ArrayList<>();
+//        MessageAdapter adapter = new MessageAdapter(list, getContext(), member);
+//
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+//        linearLayoutManager.setStackFromEnd(true);
+//
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//        recyclerView.setAdapter(adapter);
+//
+//        roomRef.collection("messages")
+//                .orderBy("createdDate")
+//                .addSnapshotListener((value, error) -> {
+//                    for (DocumentChange dc: value.getDocumentChanges()){
+//                        switch ((dc.getType())){
+//                            case ADDED:
+//                                list.add(dc.getDocument());
+//
+//                                adapter.notifyDataSetChanged();
+//                                recyclerView.scrollToPosition(list.size() - 1);
+//
+//                                break;
+//                        }
+//                    }
+//
+//                });
+//    }
+//
+//    @RequiresApi(api = Build.VERSION_CODES.N)
+//    private void sendMessage(){
+//        Message message = new Message();
+//        message.setCreatedDate(new Date());
+//        String text = ((TextView) roomView.findViewById(R.id.edtMessage)).getText().toString();
+//        message.setText(text);
+//        message.setSendBy(currentUserRef);
+//
+//        try{
+//            ArrayList<DocumentReference> viewers = new ArrayList<>();
+//            viewers.add(currentUserRef);
+//            message.setViewer(viewers);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//        if(roomId != null){
+//            ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
+//            repository.createMessage(roomId, message);
+//
+//        } else{
+//            ChatRoom chatRoom = new ChatRoom();
+//            chatRoom.setPublic(false);
+//
+//            Member current = new Member();
+//            current.setMod(true);
+//            current.setUser(currentUserRef);
+//
+//            Member friend = new Member();
+//            friend.setMod(true);
+//            friend.setUser(friendRef);
+//
+//            repository.getCollection().add(chatRoom).addOnSuccessListener(documentReference -> {
+//                ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
+//                roomRef = documentReference;
+//                documentReference.collection("members").document(currentUserRef.getId()).set(current);
+//                documentReference.collection("members").document(friendRef.getId()).set(friend);
+//                documentReference.collection("messages").add(message).addOnSuccessListener(doc -> {
+//                    documentReference.update("lastMessage", doc);
+//                });
+//                Map<String, Object> room = new HashMap<>();
+//                room.put("room", documentReference);
+//                room.put("updatedAt", new Date());
+//                currentUserRef.collection("chatRooms").document(roomRef.getId()).set(room);
+//                friendRef.collection("chatRooms").document(roomRef.getId()).set(room);
+//                checkMember();
+//            });
+//        }
+//    }
 
 }
