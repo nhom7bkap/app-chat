@@ -62,7 +62,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         new UserRepository().getDocRf(contact.getUser().getId()).get().addOnSuccessListener(documentSnapshot -> {
             this.user = documentSnapshot.toObject(User.class);
             String path = user.getAvatar();
-            Glide.with(context).load(path).into(holder.imageView);
+            if (path != null) {
+                Glide.with(context).load(path).into(holder.imageView);
+            }
             holder.textViewName.setText(user.getFullName());
             holder.textViewDesc.setText(user.getEmail());
         });

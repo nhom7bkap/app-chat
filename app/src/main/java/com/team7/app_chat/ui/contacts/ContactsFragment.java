@@ -2,7 +2,6 @@ package com.team7.app_chat.ui.contacts;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,11 +45,11 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
     private UserRepository userRepository;
     private RoomChatRepository roomRepository;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userRepository = new UserRepository();
+        roomRepository = new RoomChatRepository();
         this.mAuth = FirebaseAuth.getInstance();
         currentUser = CurrentUser.user;
         userRepository.getDocRf(currentUser.getId()).addSnapshotListener((value, error) -> {
@@ -73,7 +72,6 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         return mView;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -116,13 +114,13 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void goToChat(DocumentSnapshot doc) {
         DocumentReference user = doc.toObject(Contact.class).getUser();
-
-        userRepository.getChatRoom(currentUser.getId()).get().addOnSuccessListener(snapshot -> {
+        userRepository.getChatRoom().get().addOnSuccessListener(snapshot -> {
             List<String> myRoom = snapshot.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
-            user.collection("chatRooms").get().addOnSuccessListener(snapshot1 -> {
+            user.collection("chatRoom").get().addOnSuccessListener(snapshot1 -> {
                 List<String> friendRoom = snapshot1.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
                 myRoom.retainAll(friendRoom);
                 for (String id : myRoom) {
@@ -142,4 +140,5 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         });
 
     }
+
 }

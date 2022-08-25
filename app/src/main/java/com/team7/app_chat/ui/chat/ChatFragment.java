@@ -3,6 +3,7 @@ package com.team7.app_chat.ui.chat;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -10,6 +11,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +46,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.MainActivity;
 import com.team7.app_chat.R;
 import com.team7.app_chat.Util.RoomChatRepository;
@@ -53,6 +58,7 @@ import com.team7.app_chat.models.Member;
 import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.RoomChat;
 import com.team7.app_chat.models.User;
+import com.team7.app_chat.ui.contacts.ContactsFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,7 +71,7 @@ public class ChatFragment extends Fragment {
     private RoomChatRepository repository;
     private DocumentReference roomRef;
     private RoomChat chatRoom;
-    private User currentUser ;
+    private User currentUser;
     private String roomId;
     private String userId;
     private int member;
@@ -88,13 +94,30 @@ public class ChatFragment extends Fragment {
 
     private Button bottomsheet;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        createContract();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        currentUser = CurrentUser.user;
+        repository = new RoomChatRepository();
+        userRepository = new UserRepository();
+        storageRef = FirebaseStorage.getInstance().getReference();
+        roomId = getArguments().getString("id");
+        userId = getArguments().getString("userId");
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         roomView = inflater.inflate(R.layout.fragment_chat,
                 container, false);
-
         bottomsheet = roomView.findViewById(R.id.btnAttachment);
+        recyclerView = roomView.findViewById(R.id.listMessage);
+        avatarView = roomView.findViewById(R.id.chatAvatar);
         bottomsheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +126,53 @@ public class ChatFragment extends Fragment {
 
             }
         });
+        roomView.findViewById(R.id.btnBackChat).setOnClickListener(view -> {
+            NavHostFragment.findNavController(ChatFragment.this).navigate(R.id.action_chat_room_to_chat);
+        });
+        ((EditText) roomView.findViewById(R.id.edtMessage)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().trim().length() > 0) {
+                    roomView.findViewById(R.id.btnTakePic).setVisibility(View.GONE);
+                    roomView.findViewById(R.id.btnChoosePic).setVisibility(View.GONE);
+//                    roomView.findViewById(R.id.btnEmoji).setVisibility(View.GONE);
+                    roomView.findViewById(R.id.btnSend).setVisibility(View.VISIBLE);
+                } else {
+                    roomView.findViewById(R.id.btnTakePic).setVisibility(View.VISIBLE);
+                    roomView.findViewById(R.id.btnChoosePic).setVisibility(View.VISIBLE);
+//                    roomView.findViewById(R.id.btnEmoji).setVisibility(View.VISIBLE);
+                    roomView.findViewById(R.id.btnSend).setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        roomView.findViewById(R.id.btnSend).setOnClickListener(view -> sendMessage());
+        roomView.findViewById(R.id.btnChoosePic).setOnClickListener(view -> {
+            pickImageContract();
+        });
+        roomView.findViewById(R.id.btnTakePic).setOnClickListener(view -> {
+            captureImageContract();
+        });
+//        ConstraintLayout rootLayout = roomView.findViewById(R.id.layoutChat);
+//        EditText edMessage = roomView.findViewById(R.id.edtMessage);
+//        EmojiPopup popup = new EmojiPopup(rootLayout, edMessage);
+        roomView.findViewById(R.id.btnEmoji).setOnClickListener(view -> {
+//            popup.toggle();
+        });
+//        roomView.findViewById(R.id.btInfo).setOnClickListener(view -> {
+//            Bundle bundle = new Bundle();
+//            bundle.putString("roomId", roomId);
+//            NavHostFragment.findNavController(this).navigate(R.id.action_chatFragment_to_roomSettingFragment, bundle);
+//        });
 
         return roomView;
     }
@@ -125,7 +194,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(roomView.getContext(),"Edit is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(), "Edit is Clicked", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -135,7 +204,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(roomView.getContext(),"Share is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(), "Share is Clicked", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -145,7 +214,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(roomView.getContext(),"Upload is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(), "Upload is Clicked", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -155,34 +224,31 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
 
                 dialog.dismiss();
-                Toast.makeText(roomView.getContext(),"Print is Clicked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(roomView.getContext(), "Print is Clicked", Toast.LENGTH_SHORT).show();
 
             }
         });
 
         dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         currentUserRef = userRepository.getDocRf(currentUser.getId());
-        if(roomId != null){
-
+        if (roomId != null) {
             roomRef = repository.get().document(roomId);
-            storageRef = FirebaseStorage.getInstance().getReference();
             roomRef.addSnapshotListener((value, error) -> {
-                if(error != null) return;
+                if (error != null) return;
                 ((DocumentReference) value.get("lastMessage")).update("viewer", FieldValue.arrayUnion(currentUserRef));
             });
-//            checkMember();
-        } else if(userId != null){
+            checkMember();
+        } else if (userId != null) {
             userRepository.getDocRf(userId).get().addOnSuccessListener(documentSnapshot -> {
                 friendRef = documentSnapshot.getReference();
                 User user = documentSnapshot.toObject(User.class);
@@ -192,10 +258,10 @@ public class ChatFragment extends Fragment {
         }
     }
 
-    private void createContract(){
+    private void createContract() {
 
         takePhotoContract = registerForActivityResult(new ActivityResultContracts.TakePicture(), status -> {
-            if(status){
+            if (status) {
                 uploadImages();
             }
         });
@@ -204,20 +270,20 @@ public class ChatFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 AtomicBoolean status = new AtomicBoolean(true);
                 result.forEach((key, val) -> {
-                    if(!val){
+                    if (!val) {
                         status.set(false);
                     }
                 });
-                if(!status.get()){
+                if (!status.get()) {
                     Toast.makeText(getActivity(), "Please allow permission to use this feature!", Toast.LENGTH_SHORT).show();
-                } else{
-                    if(isCapture){
-                        if(checkCameraPermission()){
+                } else {
+                    if (isCapture) {
+                        if (checkCameraPermission()) {
                             sourceUri = createImageUri();
                             takePhotoContract.launch(sourceUri);
                         }
                     } else {
-                        if(checkStoragePermission()){
+                        if (checkStoragePermission()) {
                             pickImageContract.launch("image/*");
                         }
                     }
@@ -230,33 +296,38 @@ public class ChatFragment extends Fragment {
             uploadImages();
         });
     }
-    private boolean checkStoragePermission(){
+
+    private boolean checkStoragePermission() {
         boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         return result && result1;
     }
-    private boolean checkCameraPermission(){
+
+    private boolean checkCameraPermission() {
         boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
         boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         return result && result1;
     }
-    private void pickImageContract(){
+
+    private void pickImageContract() {
         String permission[] = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         isCapture = false;
         permissionContract.launch(permission);
 
     }
-    private void captureImageContract(){
+
+    private void captureImageContract() {
         String permission[] = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         isCapture = true;
         permissionContract.launch(permission);
 
     }
-    private Uri createImageUri(){
+
+    private Uri createImageUri() {
         Uri imageCollection;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-        } else{
+        } else {
             imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         }
         String imageName = String.valueOf(System.currentTimeMillis());
@@ -268,11 +339,11 @@ public class ChatFragment extends Fragment {
         return finalUri;
     }
 
-    private void uploadImages(){
+    private void uploadImages() {
         Toast.makeText(getActivity(), "Uploading...", Toast.LENGTH_SHORT).show();
         String fileName = String.valueOf(System.currentTimeMillis());
-        StorageReference imgRef = storageRef.child("images/" + fileName);
-        imgRef.putFile(sourceUri).addOnSuccessListener(taskSnapshot ->{
+        StorageReference imgRef = storageRef.child("images").child(fileName);
+        imgRef.putFile(sourceUri).addOnSuccessListener(taskSnapshot -> {
             imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 Message message = new Message();
                 ArrayList<DocumentReference> list = new ArrayList<>();
@@ -293,22 +364,22 @@ public class ChatFragment extends Fragment {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void checkMember(){
+    private void checkMember() {
+        roomRef.getId();
         roomRef.collection("members").addSnapshotListener((value, error) -> {
-            if(error != null) return;
+            if (error != null) return;
             member = value.size();
             int count = (int) value.getDocuments().stream().filter(val -> val.getId().equals(currentUser.getId())).count();
-            if(getActivity() != null){
-                if(count == 0) {
+            if (getActivity() != null) {
+                if (count == 0) {
                     NavHostFragment.findNavController(this).popBackStack();
                     Toast.makeText(getActivity(), "You has been banned from the chat room", Toast.LENGTH_SHORT).show();
-                } else{
+                } else {
                     roomRef.get().addOnSuccessListener(documentSnapshot -> {
                         chatRoom = documentSnapshot.toObject(RoomChat.class);
-                        if(chatRoom.getName() == null){
+                        if (chatRoom.getName() == null) {
                             getFriendInfo(value.getDocuments());
-                        } else{
+                        } else {
                             Glide.with(getActivity()).load(chatRoom.getAvatar()).into(avatarView);
                             ((TextView) roomView.findViewById(R.id.chatName)).setText(chatRoom.getName());
                         }
@@ -324,14 +395,15 @@ public class ChatFragment extends Fragment {
                 .filter(doc -> !doc.toObject(Member.class).getUser().getId().equals(currentUser.getId()))
                 .findFirst().get();
         member.toObject(Member.class).getUser().addSnapshotListener((value, error) -> {
-            if(error != null) return;
+            if (error != null) return;
             User user = value.toObject(User.class);
             Glide.with(this).load(user.getAvatar()).into(avatarView);
             String fullName = user.getFullName();
             ((TextView) roomView.findViewById(R.id.chatName)).setText(fullName);
         });
     }
-    private void loadMessage(){
+
+    private void loadMessage() {
         List<DocumentSnapshot> list = new ArrayList<>();
         MessageAdapter adapter = new MessageAdapter(list, getContext(), member);
 
@@ -344,8 +416,8 @@ public class ChatFragment extends Fragment {
         roomRef.collection("messages")
                 .orderBy("createdDate")
                 .addSnapshotListener((value, error) -> {
-                    for (DocumentChange dc: value.getDocumentChanges()){
-                        switch ((dc.getType())){
+                    for (DocumentChange dc : value.getDocumentChanges()) {
+                        switch ((dc.getType())) {
                             case ADDED:
                                 list.add(dc.getDocument());
 
@@ -360,26 +432,26 @@ public class ChatFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void sendMessage(){
+    private void sendMessage() {
         Message message = new Message();
         message.setCreatedDate(new Date());
         String text = ((TextView) roomView.findViewById(R.id.edtMessage)).getText().toString();
         message.setText(text);
         message.setSendBy(currentUserRef);
 
-        try{
+        try {
             ArrayList<DocumentReference> viewers = new ArrayList<>();
             viewers.add(currentUserRef);
             message.setViewer(viewers);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if(roomId != null){
+        if (roomId != null) {
             ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
             repository.createMessage(roomId, message);
 
-        } else{
+        } else {
             RoomChat chatRoom = new RoomChat();
             chatRoom.setPublic(false);
 
@@ -402,8 +474,8 @@ public class ChatFragment extends Fragment {
                 Map<String, Object> room = new HashMap<>();
                 room.put("room", documentReference);
                 room.put("updatedAt", new Date());
-                currentUserRef.collection("chatRooms").document(roomRef.getId()).set(room);
-                friendRef.collection("chatRooms").document(roomRef.getId()).set(room);
+                currentUserRef.collection("chatRoom").document(roomRef.getId()).set(room);
+                friendRef.collection("chatRoom").document(roomRef.getId()).set(room);
                 checkMember();
             });
         }

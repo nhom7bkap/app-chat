@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.User;
 
@@ -117,8 +118,8 @@ public class UserRepository {
         });
     }
 
-    public CollectionReference getChatRoom(String userId) {
-        return collectionReference.document(userId).collection("RoomChat");
+    public CollectionReference getChatRoom() {
+        return collectionReference.document(CurrentUser.user.getId()).collection("chatRoom");
     }
 
     public Task<Void> create(User entity) {

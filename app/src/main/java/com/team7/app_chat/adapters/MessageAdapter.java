@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.team7.app_chat.Util.UserRepository;
@@ -30,7 +31,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private List<DocumentSnapshot> list;
     private Context context;
     private int member;
-    private User user;
 
     public MessageAdapter(List<DocumentSnapshot> list, Context context, int member) {
         this.list = list;
@@ -43,10 +43,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_MESSAGE_RECEIVE:
-                View receive = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_received_message, parent, false);
+                View receive = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_received, parent, false);
                 return new ReceiveViewHolder(receive);
             case TYPE_MESSAGE_SEND:
-                View send = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_sent_message, parent, false);
+                View send = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_send, parent, false);
                 return new SendViewHolder(send);
         }
         return null;
@@ -117,11 +117,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public int getItemViewType(int position) {
-        new UserRepository().get(FirebaseAuth.getInstance().getUid()).addOnSuccessListener(user -> {
-            this.user = user;
-        });
+
         Message message = list.get(position).toObject(Message.class);
-        if (message.getSendBy().getId().equals(user.getId())) {
+        if (message.getSendBy().getId().equals(CurrentUser.user.getId())) {
             return TYPE_MESSAGE_SEND;
         } else {
             return TYPE_MESSAGE_RECEIVE;

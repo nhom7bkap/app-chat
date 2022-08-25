@@ -22,13 +22,13 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/btnBackChat"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
                 android:padding="@dimen/_5sdp"
                 android:src="@drawable/ic_back"
-                android:tint="@color/white" />
+                app:tint="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -43,7 +43,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Andrew"
                 android:textColor="#F6F5F5"
                 android:textSize="21dp" />
 
@@ -62,13 +61,13 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/chatAvatar"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginHorizontal="@dimen/_10sdp"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_user_profile_svgrepo_com" />
+                android:background="@drawable/background_image"
+                android:padding="@dimen/_4sdp" />
         </LinearLayout>
     </LinearLayout>
 

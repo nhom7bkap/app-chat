@@ -12,6 +12,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.models.FriendRequest;
 import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.RoomChat;
@@ -27,15 +28,15 @@ public class RoomChatRepository {
     private final Class<RoomChat> entityClass;
 
     private final CollectionReference collectionReference;
-    private final String collectionName = "roomChat";
+    private final String collectionName = "chatRooms";
     private final String userId;
     private final FirebaseFirestore db;
 
 
-    public RoomChatRepository(String userId) {
+    public RoomChatRepository() {
         this.entityClass = RoomChat.class;
         this.db = FirebaseFirestore.getInstance();
-        this.userId = userId;
+        this.userId = CurrentUser.user.getId();
         this.collectionReference = db.collection(collectionName);
     }
 
@@ -95,7 +96,7 @@ public class RoomChatRepository {
     }
 
     public Task<Void> createMessage(String roomId, Message entity) {
-       DocumentReference documentReference = db.collection("roomChat").document(roomId).collection("messages").document();
+        DocumentReference documentReference = collectionReference.document(roomId).collection("messages").document();
         Log.i(TAG, "Creating '" + "Random id" + "' in '" + "messages" + "'.");
         return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
             @Override
