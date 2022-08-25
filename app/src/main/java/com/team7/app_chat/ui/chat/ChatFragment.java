@@ -66,8 +66,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements MessageAdapter.INavMessage {
     private RoomChatRepository repository;
     private DocumentReference roomRef;
     private RoomChat chatRoom;
@@ -93,6 +94,8 @@ public class ChatFragment extends Fragment {
     private UserRepository userRepository;
 
     private Button bottomsheet;
+    private MessageAdapter messageAdapter;
+    private  List<DocumentSnapshot> list;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -121,9 +124,7 @@ public class ChatFragment extends Fragment {
         bottomsheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 showDialog();
-
             }
         });
         roomView.findViewById(R.id.btnBackChat).setOnClickListener(view -> {
@@ -178,6 +179,7 @@ public class ChatFragment extends Fragment {
     }
 
 
+
     private void showDialog() {
 
         final Dialog dialog = new Dialog(roomView.getContext());
@@ -185,7 +187,6 @@ public class ChatFragment extends Fragment {
         dialog.setContentView(R.layout.bottom_sheet);
 
         LinearLayout editLayout = dialog.findViewById(R.id.layoutEdit);
-        LinearLayout shareLayout = dialog.findViewById(R.id.layoutShare);
         LinearLayout uploadLayout = dialog.findViewById(R.id.layoutUpload);
         LinearLayout printLayout = dialog.findViewById(R.id.layoutPrint);
 
@@ -195,16 +196,6 @@ public class ChatFragment extends Fragment {
 
                 dialog.dismiss();
                 Toast.makeText(roomView.getContext(), "Edit is Clicked", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        shareLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                dialog.dismiss();
-                Toast.makeText(roomView.getContext(), "Share is Clicked", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -380,6 +371,7 @@ public class ChatFragment extends Fragment {
                         if (chatRoom.getName() == null) {
                             getFriendInfo(value.getDocuments());
                         } else {
+
                             Glide.with(getActivity()).load(chatRoom.getAvatar()).into(avatarView);
                             ((TextView) roomView.findViewById(R.id.chatName)).setText(chatRoom.getName());
                         }
@@ -397,21 +389,24 @@ public class ChatFragment extends Fragment {
         member.toObject(Member.class).getUser().addSnapshotListener((value, error) -> {
             if (error != null) return;
             User user = value.toObject(User.class);
-            Glide.with(this).load(user.getAvatar()).into(avatarView);
+            if (user.getAvatar() != null){
+                Glide.with(this).load(user.getAvatar()).into(avatarView);
+            }
             String fullName = user.getFullName();
             ((TextView) roomView.findViewById(R.id.chatName)).setText(fullName);
         });
     }
 
     private void loadMessage() {
-        List<DocumentSnapshot> list = new ArrayList<>();
-        MessageAdapter adapter = new MessageAdapter(list, getContext(), member);
+        Log.e("load","Message");
+        list = new ArrayList<>();
+        messageAdapter = new MessageAdapter(list, getContext(), member,this);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(messageAdapter);
 
         roomRef.collection("messages")
                 .orderBy("createdDate")
@@ -419,11 +414,21 @@ public class ChatFragment extends Fragment {
                     for (DocumentChange dc : value.getDocumentChanges()) {
                         switch ((dc.getType())) {
                             case ADDED:
+                                Log.e("Message","message change");
                                 list.add(dc.getDocument());
-
-                                adapter.notifyDataSetChanged();
+                                messageAdapter.notifyDataSetChanged();
                                 recyclerView.scrollToPosition(list.size() - 1);
-
+                                break;
+                            case REMOVED:
+                                Log.e("Message","message removed");
+                                list.removeIf(new Predicate<DocumentSnapshot>() {
+                                    @Override
+                                    public boolean test(DocumentSnapshot documentSnapshot) {
+                                        return documentSnapshot.getId().equals(dc.getDocument().getId());
+                                    }
+                                });
+                                messageAdapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(list.size() - 1);
                                 break;
                         }
                     }
@@ -481,4 +486,50 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    @Override
+    public void DeleteMessage(DocumentSnapshot doc,int position) {
+        final Dialog dialog = new Dialog(roomView.getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottom_sheet_edit_mes);
+
+        LinearLayout deleteLayout = dialog.findViewById(R.id.layoutDelete);
+        LinearLayout shareLayout = dialog.findViewById(R.id.layoutShare);
+        LinearLayout replyLayout = dialog.findViewById(R.id.layoutReply);
+
+        deleteLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                repository.deleteMessage(roomId,doc.getId());
+                dialog.dismiss();
+                Toast.makeText(roomView.getContext(), "Delete is Clicked", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        shareLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+                Toast.makeText(roomView.getContext(), "Share is Clicked", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        replyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+                Toast.makeText(roomView.getContext(), "Reply is Clicked", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
 }

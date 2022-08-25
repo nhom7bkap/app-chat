@@ -45,6 +45,7 @@
             android:background="@drawable/bg_my_message"
             android:minWidth="38dp"
             android:padding="8dp"
+            android:gravity="center"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"

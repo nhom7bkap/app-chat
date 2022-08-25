@@ -10,8 +10,6 @@ public class User {
     @Exclude private String id;
     private String userName;
     private String email;
-    private String password;
-    private String confirmPassword;
     private String fullName;
     private int gender;
     private Date DOB;
@@ -29,12 +27,10 @@ public class User {
 
 
 
-    public User(String id, String userName, String email, String password, String confirmPassword, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, int type, int status, Date created_at, Date updated_at) {
+    public User(String id, String userName, String email, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, int type, int status, Date created_at, Date updated_at) {
         this.id = id;
         this.userName = userName;
         this.email = email;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
         this.fullName = fullName;
         this.gender = gender;
         this.DOB = DOB;
@@ -70,22 +66,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public String getFullName() {
@@ -182,8 +162,6 @@ public class User {
         return "User{" +
                 ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", confirmPassword='" + confirmPassword + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", gender=" + gender +
                 ", DOB='" + DOB + '\'' +

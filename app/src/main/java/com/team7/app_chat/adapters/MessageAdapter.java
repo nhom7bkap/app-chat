@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -29,13 +30,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private static final int TYPE_MESSAGE_RECEIVE = 1;
     private static final int TYPE_MESSAGE_SEND = 2;
     private List<DocumentSnapshot> list;
+    private INavMessage navMessage;
     private Context context;
     private int member;
 
-    public MessageAdapter(List<DocumentSnapshot> list, Context context, int member) {
+    public interface INavMessage {
+        void DeleteMessage(DocumentSnapshot doc,int position);
+    }
+
+    public MessageAdapter(List<DocumentSnapshot> list, Context context, int member, INavMessage navMessage) {
         this.list = list;
         this.context = context;
         this.member = member;
+        this.navMessage = navMessage;
     }
 
     @NonNull
@@ -55,6 +62,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+        DocumentSnapshot doc = list.get(position);
         Message message = list.get(position).toObject(Message.class);
 
         if (!message.isNotify()) {
@@ -110,8 +118,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             if (holder instanceof ReceiveViewHolder) {
                 ((ReceiveViewHolder) holder).avatar.setVisibility(View.GONE);
             }
-
         }
+
+        holder.mLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                navMessage.DeleteMessage(doc,position);
+                return true;
+            }
+        });
 
     }
 
@@ -151,6 +166,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         private TextView message;
         private TextView name;
         private ImageView image;
+        private ConstraintLayout mLayout;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -158,6 +174,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             message = itemView.findViewById(R.id.tvMessage);
             name = itemView.findViewById(R.id.tvName);
             image = itemView.findViewById(R.id.ivImageMessage);
+            mLayout = itemView.findViewById(R.id.layoutMess);
         }
     }
 }

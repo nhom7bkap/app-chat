@@ -130,4 +130,15 @@ public class RoomChatRepository {
         });
     }
 
+    public Task<Void> deleteMessage(String roomId,String messageId) {
+        DocumentReference documentReference = collectionReference.document(roomId).collection("messages").document(messageId);
+        Log.i(TAG, "Deleting '" + messageId + "' in '" + "Messages" + "'.");
+        return documentReference.delete().addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "There was an error deleting '" + messageId + "' in '" + "Messages" + "'.", e);
+            }
+        });
+    }
+
 }

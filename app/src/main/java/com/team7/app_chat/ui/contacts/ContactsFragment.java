@@ -123,19 +123,22 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
             user.collection("chatRoom").get().addOnSuccessListener(snapshot1 -> {
                 List<String> friendRoom = snapshot1.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
                 myRoom.retainAll(friendRoom);
-                for (String id : myRoom) {
-                    roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
-                        RoomChat room = documentSnapshot.toObject(RoomChat.class);
-                        if (room.getName() == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("id", documentSnapshot.getId());
-                            NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
-                        }
-                    });
+                if (myRoom.size() > 0) {
+                    for (String id : myRoom) {
+                        roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
+                            RoomChat room = documentSnapshot.toObject(RoomChat.class);
+                            if (room.getName() == null) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString("id", documentSnapshot.getId());
+                                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
+                            }
+                        });
+                    }
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("userId", user.getId());
+                    NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
                 }
-                Bundle bundle = new Bundle();
-                bundle.putString("userId", user.getId());
-                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
             });
         });
 
