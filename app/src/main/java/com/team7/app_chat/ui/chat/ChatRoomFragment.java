@@ -51,6 +51,7 @@ public class ChatRoomFragment extends Fragment implements UserRepository.IContac
 
         mAuth = FirebaseAuth.getInstance();
         return view;
+
     }
 
     private void showDialog() {
