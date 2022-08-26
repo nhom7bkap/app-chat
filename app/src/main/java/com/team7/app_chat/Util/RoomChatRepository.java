@@ -52,6 +52,19 @@ public class RoomChatRepository {
         });
     }
 
+    public Task<Boolean> checkMessages(final String id) {
+        DocumentReference documentReference = collectionReference.document(id).collection("messages").document();
+        Log.i(TAG, "Checking existence of '" + id + "' in '" + collectionName + "'.");
+
+        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
+            @Override
+            public Boolean then(@NonNull Task<DocumentSnapshot> task) {
+                Log.d(TAG, "Checking if '" + id + "' exists in '" + collectionName + "'.");
+                return task.getResult().exists();
+            }
+        });
+    }
+
     public CollectionReference get() {
         return collectionReference;
     }

@@ -73,9 +73,9 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setData(DocumentSnapshot doc, ViewHolder holder) {
         RoomChats chatRoom = doc.toObject(RoomChats.class);
-
         User currentUser = CurrentUser.user;
-        if (chatRoom.getLastMessage() != null) {
+
+        if (chatRoom.getLastMessage() != null ) {
             chatRoom.getLastMessage().get().addOnSuccessListener(documentSnapshot -> {
                 String time;
                 Message message = documentSnapshot.toObject(Message.class);

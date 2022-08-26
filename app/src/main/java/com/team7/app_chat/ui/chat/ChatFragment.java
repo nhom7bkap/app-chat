@@ -88,8 +88,8 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     private UserRepository userRepository;
 
     private Button bottomsheet;
-    private MessageAdapter messageAdapter;
-    private  List<DocumentSnapshot> list;
+    private List<DocumentSnapshot> list;
+    private MessageAdapter adapter;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -173,7 +173,6 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     }
 
 
-
     private void showDialog() {
 
         final Dialog dialog = new Dialog(roomView.getContext());
@@ -227,10 +226,15 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         super.onViewCreated(view, savedInstanceState);
         currentUserRef = userRepository.getDocRf(currentUser.getId());
         if (roomId != null) {
+
             roomRef = repository.get().document(roomId);
-            roomRef.addSnapshotListener((value, error) -> {
-                if (error != null) return;
-                ((DocumentReference) value.get("lastMessage")).update("viewer", FieldValue.arrayUnion(currentUserRef));
+            repository.checkMessages(roomId).addOnSuccessListener(aBoolean -> {
+                if (aBoolean){
+                    roomRef.addSnapshotListener((value, error) -> {
+                        if (error != null) return;
+                        ((DocumentReference) value.get("lastMessage")).update("viewer", FieldValue.arrayUnion(currentUserRef));
+                    });
+                }
             });
             checkMember();
         } else if (userId != null) {
@@ -350,7 +354,6 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     }
 
     private void checkMember() {
-        roomRef.getId();
         roomRef.collection("members").addSnapshotListener((value, error) -> {
             if (error != null) return;
             member = value.size();
@@ -383,7 +386,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         member.toObject(Member.class).getUser().addSnapshotListener((value, error) -> {
             if (error != null) return;
             User user = value.toObject(User.class);
-            if (user.getAvatar() != null){
+            if (user.getAvatar() != null) {
                 Glide.with(this).load(user.getAvatar()).into(avatarView);
             }
             String fullName = user.getFullName();
@@ -392,15 +395,15 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     }
 
     private void loadMessage() {
-        Log.e("load","Message");
+        Log.e("load", "Message");
         list = new ArrayList<>();
-        messageAdapter = new MessageAdapter(list, getContext(), member,this);
+        adapter = new MessageAdapter(list, getContext(), member, this);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(messageAdapter);
+        recyclerView.setAdapter(adapter);
 
         roomRef.collection("messages")
                 .orderBy("createdDate")
@@ -408,26 +411,36 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                     for (DocumentChange dc : value.getDocumentChanges()) {
                         switch ((dc.getType())) {
                             case ADDED:
-                                Log.e("Message","message change");
+                                Log.e("Message", "message change");
                                 list.add(dc.getDocument());
-                                messageAdapter.notifyDataSetChanged();
+                                adapter.notifyDataSetChanged();
                                 recyclerView.scrollToPosition(list.size() - 1);
                                 break;
                             case REMOVED:
-                                Log.e("Message","message removed");
+                                Log.e("Message", "message removed");
                                 list.removeIf(new Predicate<DocumentSnapshot>() {
                                     @Override
                                     public boolean test(DocumentSnapshot documentSnapshot) {
                                         return documentSnapshot.getId().equals(dc.getDocument().getId());
                                     }
                                 });
-                                messageAdapter.notifyDataSetChanged();
+                                adapter.notifyDataSetChanged();
                                 recyclerView.scrollToPosition(list.size() - 1);
+                                checkLastMessage();
                                 break;
                         }
                     }
 
                 });
+    }
+
+    public void checkLastMessage() {
+        if (!list.isEmpty()){
+            DocumentReference docf = roomRef.collection("messages").document(list.get(list.size()-1).getId());
+            roomRef.update("lastMessage", docf);
+        }else {
+            roomRef.update("lastMessage", null);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -448,8 +461,9 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
 
         if (roomId != null) {
             ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
-            repository.createMessage(roomId, message);
-
+            roomRef.collection("messages").add(message).addOnSuccessListener(doc -> {
+                roomRef.update("lastMessage", doc);
+            });
         } else {
             RoomChats chatRoom = new RoomChats();
             chatRoom.setPublic(false);
@@ -465,6 +479,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
             repository.get().add(chatRoom).addOnSuccessListener(documentReference -> {
                 ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
                 roomRef = documentReference;
+                roomId = roomRef.getId();
                 documentReference.collection("members").document(currentUserRef.getId()).set(current);
                 documentReference.collection("members").document(friendRef.getId()).set(friend);
                 documentReference.collection("messages").add(message).addOnSuccessListener(doc -> {
@@ -482,7 +497,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     }
 
     @Override
-    public void DeleteMessage(DocumentSnapshot doc,int position) {
+    public void DeleteMessage(DocumentSnapshot doc, int position) {
         final Dialog dialog = new Dialog(roomView.getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottom_sheet_edit_mes);
@@ -494,7 +509,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         deleteLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                repository.deleteMessage(roomId,doc.getId());
+                repository.deleteMessage(roomId, doc.getId());
                 dialog.dismiss();
                 Toast.makeText(roomView.getContext(), "Delete is Clicked", Toast.LENGTH_SHORT).show();
 
