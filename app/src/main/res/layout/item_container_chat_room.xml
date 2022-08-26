@@ -12,14 +12,13 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="1.5">
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/roomAvatar"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
             android:background="@drawable/background_image"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_user_profile_svgrepo_com" />
+            android:scaleType="centerCrop" />
     </LinearLayout>
 
     <LinearLayout
@@ -33,7 +32,6 @@
             android:id="@+id/roomName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nick Name"
             android:textColor="#373737"
             android:textSize="@dimen/_13sdp"
             android:textStyle="bold" />
@@ -42,7 +40,6 @@
             android:id="@+id/lastMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description"
             android:textSize="@dimen/_11sdp" />
     </LinearLayout>
 
@@ -50,12 +47,11 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_weight="1.7">
+        android:layout_weight="1">
         <TextView
             android:id="@+id/lastMessageTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="20/8/2022"
             />
 
     </LinearLayout>

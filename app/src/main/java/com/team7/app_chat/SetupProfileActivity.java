@@ -252,6 +252,9 @@ public class SetupProfileActivity extends AppCompatActivity {
         user.setFullName(fullname);
         user.setDOB(birthday);
         user.setFirstTime(false);
+        if (user.getAvatar() == null){
+            user.setAvatar("https://firebasestorage.googleapis.com/v0/b/chat-app-4aa49.appspot.com/o/user-pngrepo-com.png?alt=media&token=e3dc0dd4-61d2-47e7-88f3-f727ed8b18e8");
+        }
         RadioGroup radioButton = findViewById(R.id.radioGenderGroup);
         switch (radioButton.getCheckedRadioButtonId()) {
             case R.id.female_btn:

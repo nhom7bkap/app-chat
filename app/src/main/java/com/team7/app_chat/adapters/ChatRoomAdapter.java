@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,7 +24,7 @@ import com.team7.app_chat.R;
 import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.models.Member;
 import com.team7.app_chat.models.Message;
-import com.team7.app_chat.models.RoomChat;
+import com.team7.app_chat.models.RoomChats;
 import com.team7.app_chat.models.User;
 
 import java.text.SimpleDateFormat;
@@ -41,7 +42,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         void goToChatScreen(String id);
     }
 
-    public ChatRoomAdapter(Context context, IChatScreen callback, List<DocumentReference> list) {
+    public ChatRoomAdapter(Context context, List<DocumentReference> list, IChatScreen callback) {
         this.context = context;
         this.list = list;
         this.callback = callback;
@@ -71,7 +72,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setData(DocumentSnapshot doc, ViewHolder holder) {
-        RoomChat chatRoom = doc.toObject(RoomChat.class);
+        RoomChats chatRoom = doc.toObject(RoomChats.class);
 
         User currentUser = CurrentUser.user;
         if (chatRoom.getLastMessage() != null) {
@@ -144,7 +145,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         private TextView name;
         private TextView message;
         private TextView time;
-        private ConstraintLayout layout;
+        private LinearLayout layout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -38,8 +38,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -47,18 +45,14 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.team7.app_chat.CurrentUser;
-import com.team7.app_chat.MainActivity;
 import com.team7.app_chat.R;
 import com.team7.app_chat.Util.RoomChatRepository;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.MessageAdapter;
-import com.team7.app_chat.adapters.UsersAdapter;
-import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.Member;
 import com.team7.app_chat.models.Message;
-import com.team7.app_chat.models.RoomChat;
+import com.team7.app_chat.models.RoomChats;
 import com.team7.app_chat.models.User;
-import com.team7.app_chat.ui.contacts.ContactsFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,7 +65,7 @@ import java.util.function.Predicate;
 public class ChatFragment extends Fragment implements MessageAdapter.INavMessage {
     private RoomChatRepository repository;
     private DocumentReference roomRef;
-    private RoomChat chatRoom;
+    private RoomChats chatRoom;
     private User currentUser;
     private String roomId;
     private String userId;
@@ -367,7 +361,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                     Toast.makeText(getActivity(), "You has been banned from the chat room", Toast.LENGTH_SHORT).show();
                 } else {
                     roomRef.get().addOnSuccessListener(documentSnapshot -> {
-                        chatRoom = documentSnapshot.toObject(RoomChat.class);
+                        chatRoom = documentSnapshot.toObject(RoomChats.class);
                         if (chatRoom.getName() == null) {
                             getFriendInfo(value.getDocuments());
                         } else {
@@ -457,7 +451,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
             repository.createMessage(roomId, message);
 
         } else {
-            RoomChat chatRoom = new RoomChat();
+            RoomChats chatRoom = new RoomChats();
             chatRoom.setPublic(false);
 
             Member current = new Member();
@@ -478,6 +472,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                 });
                 Map<String, Object> room = new HashMap<>();
                 room.put("room", documentReference);
+                room.put("created_at", new Date());
                 room.put("updatedAt", new Date());
                 currentUserRef.collection("chatRoom").document(roomRef.getId()).set(room);
                 friendRef.collection("chatRoom").document(roomRef.getId()).set(room);

@@ -7,15 +7,13 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.team7.app_chat.CurrentUser;
-import com.team7.app_chat.models.FriendRequest;
 import com.team7.app_chat.models.Message;
-import com.team7.app_chat.models.RoomChat;
+import com.team7.app_chat.models.RoomChats;
 
 
 /**
@@ -25,7 +23,7 @@ public class RoomChatRepository {
 
     private static final String TAG = "FirestoreRepository";
 
-    private final Class<RoomChat> entityClass;
+    private final Class<RoomChats> entityClass;
 
     private final CollectionReference collectionReference;
     private final String collectionName = "chatRooms";
@@ -34,7 +32,7 @@ public class RoomChatRepository {
 
 
     public RoomChatRepository() {
-        this.entityClass = RoomChat.class;
+        this.entityClass = RoomChats.class;
         this.db = FirebaseFirestore.getInstance();
         this.userId = CurrentUser.user.getId();
         this.collectionReference = db.collection(collectionName);
@@ -58,13 +56,13 @@ public class RoomChatRepository {
         return collectionReference;
     }
 
-    public Task<RoomChat> get(String id) {
+    public Task<RoomChats> get(String id) {
         DocumentReference documentReference = collectionReference.document(id);
         Log.i(TAG, "Getting '" + id + "' in '" + collectionName + "'.");
 
-        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, RoomChat>() {
+        return documentReference.get().continueWith(new Continuation<DocumentSnapshot, RoomChats>() {
             @Override
-            public RoomChat then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+            public RoomChats then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (documentSnapshot.exists()) {
                     Log.d(TAG, "Success");
@@ -84,7 +82,7 @@ public class RoomChatRepository {
         return documentReference;
     }
 
-    public Task<Void> create(RoomChat entity) {
+    public Task<Void> create(RoomChats entity) {
         DocumentReference documentReference = collectionReference.document();
         Log.i(TAG, "Creating '" + "Random id" + "' in '" + collectionName + "'.");
         return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
@@ -106,7 +104,7 @@ public class RoomChatRepository {
         });
     }
 
-    public Task<Void> update(RoomChat entity, String id) {
+    public Task<Void> update(RoomChats entity, String id) {
         DocumentReference documentReference = collectionReference.document(id);
         Log.i(TAG, "Updating '" + id + "' in '" + collectionName + "'.");
 

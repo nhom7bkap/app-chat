@@ -25,7 +25,7 @@ import com.team7.app_chat.Util.RoomChatRepository;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.ContactAdapter;
 import com.team7.app_chat.models.Contact;
-import com.team7.app_chat.models.RoomChat;
+import com.team7.app_chat.models.RoomChats;
 import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
@@ -123,22 +123,19 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
             user.collection("chatRoom").get().addOnSuccessListener(snapshot1 -> {
                 List<String> friendRoom = snapshot1.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
                 myRoom.retainAll(friendRoom);
-                if (myRoom.size() > 0) {
-                    for (String id : myRoom) {
-                        roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
-                            RoomChat room = documentSnapshot.toObject(RoomChat.class);
-                            if (room.getName() == null) {
-                                Bundle bundle = new Bundle();
-                                bundle.putString("id", documentSnapshot.getId());
-                                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
-                            }
-                        });
-                    }
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("userId", user.getId());
-                    NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
+                for (String id : myRoom) {
+                    roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
+                        RoomChats room = documentSnapshot.toObject(RoomChats.class);
+                        if (room.getName() == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("id", documentSnapshot.getId());
+                            NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
+                        }
+                    });
                 }
+                Bundle bundle = new Bundle();
+                bundle.putString("userId", user.getId());
+                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
             });
         });
 
