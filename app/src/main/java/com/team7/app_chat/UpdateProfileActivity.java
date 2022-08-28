@@ -1,128 +1,101 @@
 package com.team7.app_chat;
 
-import static androidx.fragment.app.FragmentManager.TAG;
-
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.InputType;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-import com.team7.app_chat.Util.FiresBaseRepository;
 import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.models.User;
-import com.team7.app_chat.ui.settings.SettingsFragment;
 
-import java.io.InputStream;
-import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UpdateProfileActivity extends AppCompatActivity {
     EditText dateTime_in, editTextName, editTextAddress;
 
-    TextInputEditText edtAddress,edtFullname;
-    String textFullName,textAddress;
+    TextInputEditText edtAddress, edtFullname;
+    String textFullName, textAddress;
     String textDob;
     RadioGroup radioButton;
     RadioButton female_btn, male_btn;
     ImageView profileImage;
     FirebaseAuth firebaseProfile;
-    FirebaseUser firebaseUser;
     FirebaseFirestore fStore;
     UserRepository userRepository;
     StorageReference storageReference;
     Button btnUpdate;
     private User user;
+    private Context mCtx;
+
+    private ActivityResultLauncher<String[]> permissionContract;
+    private ActivityResultLauncher<Uri> takePhotoContract;
+    private ActivityResultLauncher<String> pickImageContract;
+
+    private Uri sourceUri;
+    private boolean isCapture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_profile);
+        createContract();
         firebaseProfile = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        firebaseUser = firebaseProfile.getCurrentUser();
-
+        mCtx = getApplicationContext();
         userRepository = new UserRepository();
-        userRepository.get(firebaseUser.getUid()).addOnSuccessListener(this, user -> {
-            this.user = user;
-            this.user.setId(firebaseUser.getUid());
-        });
+        user = CurrentUser.user;
         female_btn = findViewById(R.id.female_btn);
         male_btn = findViewById(R.id.male_btn);
         radioButton = findViewById(R.id.radioGenderGroup);
         storageReference = FirebaseStorage.getInstance().getReference();
         editTextName = findViewById(R.id.userName);
-        profileImage = findViewById(R.id.profileImgView);
+        profileImage = findViewById(R.id.imgAvatar);
         edtAddress = findViewById(R.id.userAddress);
         edtFullname = findViewById(R.id.userName);
         btnUpdate = findViewById(R.id.btnUpdate);
-
         editTextAddress = findViewById(R.id.userAddress);
-
-        StorageReference profileRef = storageReference.child("users").child(firebaseProfile.getCurrentUser().getUid()).child("profile.jpg");
-        profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Handler handler = new Handler(Looper.getMainLooper());
-            ExecutorService pool = Executors.newSingleThreadExecutor();
-            pool.execute(() -> {
-                try {
-                    InputStream url = new URL(uri.toString()).openStream();
-                    Bitmap bitmap = BitmapFactory.decodeStream(url);
-                    handler.post(() -> ((ImageView) findViewById(R.id.profileImgView)).setImageBitmap(bitmap));
-                } catch (Exception e) {
-
-                }
-            });
-        });
+        dateTime_in = findViewById(R.id.dateTime);
+        showProfile();
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,8 +103,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 startActivityForResult(openGalleryIntent, 1000);
             }
         });
-        showProfile();
-        dateTime_in = findViewById(R.id.dateTime);
         dateTime_in.setInputType(InputType.TYPE_NULL);
         dateTime_in.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,87 +118,109 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         calendar.set(Calendar.YEAR, year);
                         calendar.set(Calendar.MONTH, month);
                         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
                         dateTime_in.setText(simpleDateFormat.format(calendar.getTime()));
                     }
                 };
                 new DatePickerDialog(UpdateProfileActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-
-
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!validateUser() || !validateAdd() || !validateDOB()){
-                    return;
-                }
-                textFullName = ((EditText) findViewById(R.id.userName)).getText().toString();
-                textAddress = ((EditText) findViewById(R.id.userAddress)).getText().toString();
-                String date = ((EditText) findViewById(R.id.dateTime)).getText().toString();
-                Date birthday = null;
-                try {
-                    birthday = new SimpleDateFormat("dd-MM-yyyy").parse(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                user.setUserName(textFullName);
-                user.setAddress(textAddress);
-                user.setDOB(birthday);
-                RadioGroup radioButton = findViewById(R.id.radioGenderGroup);
-                switch (radioButton.getCheckedRadioButtonId()) {
-                    case R.id.female_btn:
-                        user.setGender(1);
-                        break;
-                    case R.id.male_btn:
-                        user.setGender(2);
-                        break;
-                    default:
-                        user.setGender(0);
-                        break;
-                }
-                userRepository.update(user).addOnSuccessListener(unused -> {
-                    Toast.makeText(UpdateProfileActivity.this, "Update Success", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(UpdateProfileActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }).addOnFailureListener(e -> {
-                    Toast.makeText(UpdateProfileActivity.this, "Update fails", Toast.LENGTH_SHORT).show();
-                });
+                submitForm();
             }
         });
     }
 
-    private boolean validateAdd(){
+    public void submitForm() {
+        if (!validateUser() || !validateAdd() || !validateDOB()) {
+            return;
+        }
+        textFullName = ((EditText) findViewById(R.id.userName)).getText().toString();
         textAddress = ((EditText) findViewById(R.id.userAddress)).getText().toString();
-        if (textAddress.isEmpty()){
+        String date = ((EditText) findViewById(R.id.dateTime)).getText().toString();
+        Date birthday = null;
+        try {
+            birthday = new SimpleDateFormat("dd/MM/yyyy").parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        user.setFullName(textFullName);
+        user.setAddress(textAddress);
+        user.setDOB(birthday);
+        RadioGroup radioButton = findViewById(R.id.radioGenderGroup);
+        switch (radioButton.getCheckedRadioButtonId()) {
+            case R.id.female_btn:
+                user.setGender(1);
+                break;
+            case R.id.male_btn:
+                user.setGender(2);
+                break;
+            default:
+                user.setGender(0);
+                break;
+        }
+        String fileName = String.valueOf(System.currentTimeMillis());
+        final StorageReference fileRef = storageReference.child("users/" + fileName);
+        fileRef.putFile(sourceUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        user.setAvatar(uri.toString());
+                        userRepository.update(user).addOnSuccessListener(unused -> {
+                            Toast.makeText(UpdateProfileActivity.this, "Update Success", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(UpdateProfileActivity.this, "Update fails", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean validateAdd() {
+        textAddress = ((EditText) findViewById(R.id.userAddress)).getText().toString();
+        if (textAddress.isEmpty()) {
             edtAddress.setError("Enter FullAddress");
             return false;
-        }else {
+        } else {
             edtAddress.setError(null);
             return true;
         }
     }
-    private boolean validateUser(){
+
+    private boolean validateUser() {
         textFullName = ((EditText) findViewById(R.id.userName)).getText().toString();
-        if (textFullName.isEmpty()){
+        if (textFullName.isEmpty()) {
             edtFullname.setError("Enter FullName");
             return false;
-        }else {
+        } else {
             edtFullname.setError(null);
             return true;
         }
     }
-    private boolean validateDOB(){
+
+    private boolean validateDOB() {
         String date = ((EditText) findViewById(R.id.dateTime)).getText().toString();
-        if (date.isEmpty()){
+        if (date.isEmpty()) {
             dateTime_in.setError("Enter FullName");
             return false;
-        }else {
+        } else {
             dateTime_in.setError(null);
             return true;
         }
     }
+
     private void showProfile() {
+        Glide.with(this).load(user.getAvatar()).into(profileImage);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         FirestoreRepository<User> repository = new FirestoreRepository<>(User.class, "User");
         repository.get(currentUser.getUid()).addOnCompleteListener(new OnCompleteListener<User>() {
@@ -237,13 +230,15 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 if (user == null) {
                     return;
                 } else {
-                    textFullName = task.getResult().getUserName();
-                    textDob = task.getResult().getDOB() + "";
+                    textFullName = task.getResult().getFullName();
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String strDate = dateFormat.format(task.getResult().getDOB());
+                    textDob =  strDate;
                     textAddress = task.getResult().getAddress();
-                    if(task.getResult().getGender() == 1){
+                    if (task.getResult().getGender() == 1) {
                         female_btn.setChecked(true);
                         male_btn.setChecked(false);
-                    }else {
+                    } else {
                         female_btn.setChecked(false);
                         male_btn.setChecked(true);
                     }
@@ -256,39 +251,90 @@ public class UpdateProfileActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1000) {
-            if (resultCode == Activity.RESULT_OK) {
-                Uri imageUri = data.getData();
-                uploadImageToFirebase(imageUri);
 
+    private void createContract() {
 
+        takePhotoContract = registerForActivityResult(new ActivityResultContracts.TakePicture(), status -> {
+            if (status) {
+                loadImage(sourceUri);
             }
-        }
+        });
+
+        permissionContract = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                AtomicBoolean status = new AtomicBoolean(true);
+                result.forEach((key, val) -> {
+                    if (!val) {
+                        status.set(false);
+                    }
+                });
+                if (!status.get()) {
+                    Toast.makeText(mCtx, "Please allow permission to use this feature!", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (isCapture) {
+                        if (checkCameraPermission()) {
+                            sourceUri = createImageUri();
+                            takePhotoContract.launch(sourceUri);
+                        }
+                    } else {
+                        if (checkStoragePermission()) {
+                            pickImageContract.launch("image/*");
+                        }
+                    }
+                }
+            }
+        });
+
+        pickImageContract = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            sourceUri = uri;
+            loadImage(sourceUri);
+        });
+    }
+
+    private boolean checkStoragePermission() {
+        boolean result = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean result1 = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return result && result1;
+    }
+
+    private boolean checkCameraPermission() {
+        boolean result = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean result1 = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return result && result1;
+    }
+
+    private void pickImageContract() {
+        String permission[] = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        isCapture = false;
+        permissionContract.launch(permission);
 
     }
 
-    private void uploadImageToFirebase(Uri imageUri) {
-        // uplaod image to firebase storage
-        final StorageReference fileRef = storageReference.child("users/" + firebaseProfile.getCurrentUser().getUid() + "/profile.jpg");
-        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        user.setAvatar(uri.toString());
-                        Picasso.get().load(uri).into(profileImage);
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void captureImageContract() {
+        String permission[] = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        isCapture = true;
+        permissionContract.launch(permission);
+
+    }
+
+
+    private Uri createImageUri() {
+        Uri imageCollection;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        } else {
+            imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+        String imageName = String.valueOf(System.currentTimeMillis());
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, imageName);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        Uri finalUri = mCtx.getContentResolver().insert(imageCollection, contentValues);
+        return finalUri;
+    }
+
+    private void loadImage(Uri uri) {
+        Glide.with(mCtx).load(uri.toString()).into(profileImage);
     }
 }

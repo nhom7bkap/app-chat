@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageUser"
+        android:layout_width="@dimen/_72sdp"
+        android:layout_height="@dimen/_72sdp"
+        android:layout_marginVertical="@dimen/_20sdp"
+        android:background="@drawable/background_image"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSave"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Done"
+        android:textColor="@color/theme_color"
+        android:textSize="@dimen/_14sdp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toEndOf="@+id/imageUser"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Cancel"
+        android:textColor="@color/theme_color"
+        android:textSize="@dimen/_14sdp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/imageUser"
+        app:layout_constraintHorizontal_bias="0.056"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/formEdit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/background_input"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageUser">
+
+        <EditText
+            android:id="@+id/editName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@android:color/transparent"
+            android:gravity="start|center"
+            android:hint="Fullname"
+            android:inputType="textPersonName"
+            android:padding="5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="1dp"
+            android:textColorHint="#636363"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+<!--    <Button-->
+<!--        android:id="@+id/btnDelete"-->
+<!--        style="@style/Widget.Material3.Button.TextButton"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_marginHorizontal="@dimen/_10sdp"-->
+<!--        android:layout_marginTop="@dimen/_20sdp"-->
+<!--        android:backgroundTint="@color/input_background"-->
+<!--        android:textColor="#DD3434"-->
+<!--        android:text="Delete Contact"-->
+<!--        android:textSize="@dimen/_15sdp"-->
+<!--        android:drawableLeft="@drawable/ic_trash_bin_svgrepo_com"-->
+<!--        android:drawableTint="#DD3434"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/formEdit" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>

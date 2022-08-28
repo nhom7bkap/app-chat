@@ -512,7 +512,6 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                 repository.deleteMessage(roomId, doc.getId());
                 dialog.dismiss();
                 Toast.makeText(roomView.getContext(), "Delete is Clicked", Toast.LENGTH_SHORT).show();
-
             }
         });
 

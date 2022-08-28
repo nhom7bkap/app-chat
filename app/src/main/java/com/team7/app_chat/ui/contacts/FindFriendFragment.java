@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 
 public class FindFriendFragment extends Fragment implements UsersAdapter.SelectListstener {
     private RecyclerView recyclerView;
@@ -96,7 +97,6 @@ public class FindFriendFragment extends Fragment implements UsersAdapter.SelectL
                                 if (doc.getType() == DocumentChange.Type.ADDED) {
                                     ContactRepository contactRepository = new ContactRepository(user.getId());
                                     FriendRequestRepository requestRepository = new FriendRequestRepository(user.getId());
-//                    ExecutorService es = Executors.newFixedThreadPool(5);
                                     contactRepository.exists(currentUser.getUid()).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                                         @Override
                                         public void onSuccess(Boolean aBoolean) {

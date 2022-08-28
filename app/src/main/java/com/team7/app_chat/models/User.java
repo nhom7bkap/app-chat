@@ -8,7 +8,6 @@ import java.util.List;
 
 public class User {
     @Exclude private String id;
-    private String userName;
     private String email;
     private String fullName;
     private int gender;
@@ -16,7 +15,7 @@ public class User {
     private String address;
     private String avatar;
     private boolean verification;
-    private boolean firstTime;
+    private boolean firstTime = true;
     private int type;
     private int status;
     private Date created_at;
@@ -27,9 +26,8 @@ public class User {
 
 
 
-    public User(String id, String userName, String email, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, int type, int status, Date created_at, Date updated_at) {
+    public User(String id, String email, String fullName, int gender, Date DOB, String address, String avatar, boolean verification, boolean firstTime, int type, int status, Date created_at, Date updated_at) {
         this.id = id;
-        this.userName = userName;
         this.email = email;
         this.fullName = fullName;
         this.gender = gender;
@@ -50,14 +48,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getEmail() {
@@ -160,7 +150,6 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", gender=" + gender +

@@ -43,6 +43,7 @@ import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.function.Predicate;
 
 public class FriendRequestFragment extends Fragment implements FriendRequestAdapter.SelectListstener {
     private RecyclerView recyclerView;
@@ -84,19 +85,29 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
                 if (task.isSuccessful()) {
                     mProgressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
-                    requestRepository.get().addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    requestRepository.get().orderBy("created_at").addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (error != null) {
-                                Log.e("FirestoreError", error.getMessage());
-                            }
+                            for (DocumentChange dc : value.getDocumentChanges()) {
+                                FriendRequest fRequest = dc.getDocument().toObject(FriendRequest.class);
+                                switch ((dc.getType())) {
+                                    case ADDED:
+                                        Log.e("Message", "message change");
+                                        requestArrayList.add(fRequest);
+                                        requestAdapter.notifyDataSetChanged();
 
-                            for (DocumentChange doc : value.getDocumentChanges()) {
-                                FriendRequest fRequest = doc.getDocument().toObject(FriendRequest.class);
-                                if (doc.getType() == DocumentChange.Type.ADDED) {
-                                    requestArrayList.add(fRequest);
+                                        break;
+                                    case REMOVED:
+                                        Log.e("Message", "message removed");
+                                        requestArrayList.removeIf(new Predicate<FriendRequest>() {
+                                            @Override
+                                            public boolean test(FriendRequest friendRequest) {
+                                                return friendRequest.getSenderId().equals(dc.getDocument().getId());
+                                            }
+                                        });
+                                        requestAdapter.notifyDataSetChanged();
+                                        break;
                                 }
-                                requestAdapter.notifyDataSetChanged();
                             }
                         }
                     });
@@ -112,8 +123,6 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
 
     @Override
     public void onAccept(FriendRequest friendRequest, int position) {
-        requestArrayList.remove(position);
-        requestAdapter.notifyDataSetChanged();
         friendRequest.getSender().addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -137,13 +146,10 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         });
         Toast.makeText(mView.getContext(), "Accepted",
                 Toast.LENGTH_SHORT).show();
-        initialFun();
     }
 
     @Override
     public void onDeAccept(FriendRequest friendRequest, int position) {
-        requestArrayList.remove(position);
-        requestAdapter.notifyDataSetChanged();
         friendRequest.getSender().addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -153,6 +159,5 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         });
         Toast.makeText(mView.getContext(), "DeAccept",
                 Toast.LENGTH_SHORT).show();
-        initialFun();
     }
 }

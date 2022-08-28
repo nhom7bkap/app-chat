@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.Util.Helper;
 import com.team7.app_chat.components.ProgressButton;

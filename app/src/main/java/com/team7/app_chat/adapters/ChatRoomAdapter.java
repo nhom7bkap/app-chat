@@ -74,12 +74,10 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     private void setData(DocumentSnapshot doc, ViewHolder holder) {
         RoomChats chatRoom = doc.toObject(RoomChats.class);
         User currentUser = CurrentUser.user;
-
         if (chatRoom.getLastMessage() != null ) {
             chatRoom.getLastMessage().get().addOnSuccessListener(documentSnapshot -> {
                 String time;
                 Message message = documentSnapshot.toObject(Message.class);
-
                 Date createdDate = message.getCreatedDate();
                 long diff = System.currentTimeMillis() - createdDate.getTime();
                 long diff_in_hour = TimeUnit.MILLISECONDS.toHours(diff);
@@ -105,6 +103,11 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                     }
                 }
                 holder.message.setText(message.getText());
+                if (message.getText() != null && !message.isFile()){
+                    if (message.getText().length() > 20){
+                        holder.message.setText(message.getText().substring(0,20));
+                    }
+                }
                 holder.time.setText(time);
             });
         }
@@ -119,7 +122,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                             User userChat = user1.toObject(User.class);
                             String fullName = userChat.getFullName();
                             holder.name.setText(fullName);
-                            Glide.with(context).load(currentUser.getAvatar()).into(holder.avatar);
+                            Glide.with(context).load(userChat.getAvatar()).into(holder.avatar);
                         }
                     });
                 });

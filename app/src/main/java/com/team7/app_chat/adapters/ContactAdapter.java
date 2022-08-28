@@ -43,6 +43,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     public interface INavChat {
         void goToChat(DocumentSnapshot doc);
+        void onHold(DocumentSnapshot doc);
     }
 
 
@@ -68,7 +69,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             holder.textViewName.setText(user.getFullName());
             holder.textViewDesc.setText(user.getEmail());
         });
-
+        holder.linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                iNavChat.onHold(doc);
+                return true;
+            }
+        });
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -43,7 +43,7 @@ public class SignInActivity extends AppCompatActivity {
         layout_forgot_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SignInActivity.this,ForgotPassActivity.class);
+                Intent intent = new Intent(SignInActivity.this, ForgotPassActivity.class);
                 startActivity(intent);
             }
         });
@@ -67,10 +67,11 @@ public class SignInActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                userRepository.get(user.getUid()).addOnSuccessListener(new OnSuccessListener<User>() {
+                                FirebaseUser currentUser = mAuth.getCurrentUser();
+                                userRepository.get(currentUser.getUid()).addOnSuccessListener(new OnSuccessListener<User>() {
                                     @Override
                                     public void onSuccess(User user) {
+                                        user.setId(currentUser.getUid());
                                         CurrentUser.user = user;
                                         Intent it;
                                         if (user.isFirstTime())

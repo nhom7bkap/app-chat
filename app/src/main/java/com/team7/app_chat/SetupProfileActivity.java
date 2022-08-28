@@ -1,17 +1,25 @@
 package com.team7.app_chat;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
@@ -30,11 +39,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.components.ProgressButton;
 import com.team7.app_chat.models.User;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
@@ -43,66 +52,57 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SetupProfileActivity extends AppCompatActivity {
 
-    public ImageView avatarImg;
     private ProgressButton progressButton;
-    private Uri sourceUri;
-    private Uri destinationUri;
-    private ActivityResultLauncher<String[]> permissionContract;
-    private ActivityResultLauncher<Uri> takePhotoContract;
-    private ActivityResultLauncher<String> pickImageContract;
     private UserRepository userRepository;
     private User user;
     private TextInputLayout editName;
     private EditText edtBirthday;
     private ImageView imgAvatar;
+    private Context mCtx;
     FirebaseAuth firebaseProfile;
     StorageReference storageReference;
+
+    private ActivityResultLauncher<String[]> permissionContract;
+    private ActivityResultLauncher<Uri> takePhotoContract;
+    private ActivityResultLauncher<String> pickImageContract;
+
+    private Uri sourceUri;
+    private boolean isCapture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup_profile);
+        createContract();
         Toolbar toolbar = findViewById(R.id.toolbar);
         edtBirthday = findViewById(R.id.edtBirthday);
         editName = findViewById(R.id.editName);
         imgAvatar = findViewById(R.id.imgAvatar);
+        mCtx = getApplicationContext();
         firebaseProfile = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         progressButton = new ProgressButton(SetupProfileActivity.this, findViewById(R.id.btnSetupProfile), "Setup Profile");
         userRepository = new UserRepository();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        userRepository.get(currentUser.getUid()).addOnSuccessListener(this, user -> {
-            this.user = user;
-            this.user.setId(currentUser.getUid());
-        });
+        user = CurrentUser.user;
         initComponents();
-        //load anh
-        StorageReference profileRef = storageReference.child("users").child(firebaseProfile.getCurrentUser().getUid()).child("profile.jpg");
-        profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//                Picasso.get().load(uri).fit().centerCrop().into(profileImage);
-            Handler handler = new Handler(Looper.getMainLooper());
-            ExecutorService pool = Executors.newSingleThreadExecutor();
-            pool.execute(() -> {
-                try {
-                    InputStream url = new URL(uri.toString()).openStream();
-                    Bitmap bitmap = BitmapFactory.decodeStream(url);
-                    handler.post(() -> ((ImageView) findViewById(R.id.imgAvatar)).setImageBitmap(bitmap));
-                } catch (Exception e) {
-
-                }
-            });
+//        findViewById(R.id.btnPickImg).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(openGalleryIntent, 1000);
+//            }
+//        });
+        imgAvatar.setOnClickListener(view -> {
+            pickImageContract();
         });
-        imgAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(openGalleryIntent, 1000);
-            }
+        findViewById(R.id.btnPickImg).setOnClickListener(view -> {
+            captureImageContract();
         });
     }
 
@@ -178,16 +178,32 @@ public class SetupProfileActivity extends AppCompatActivity {
                 user.setGender(0);
                 break;
         }
-        userRepository.update(user).addOnSuccessListener(unused -> {
-            progressButton.buttonFinished();
-
-            userRepository.get(user.getId()).addOnSuccessListener(this, user -> {
-                CurrentUser.user = user;
-            });
-            goToHomePage();
-        }).addOnFailureListener(e -> {
-            progressButton.buttonFailed();
+        String fileName = String.valueOf(System.currentTimeMillis());
+        final StorageReference fileRef = storageReference.child("users/" + fileName);
+        fileRef.putFile(sourceUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        user.setAvatar(uri.toString());
+                        userRepository.update(user).addOnSuccessListener(unused -> {
+                            Toast.makeText(mCtx, "Completed!", Toast.LENGTH_SHORT).show();
+                            progressButton.buttonFinished();
+                            goToHomePage();
+                        }).addOnFailureListener(e -> {
+                            progressButton.buttonFailed();
+                        });
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
+            }
         });
+
     }
 
     public void openDatePicker(View view) {
@@ -213,42 +229,89 @@ public class SetupProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1000) {
-            if (resultCode == Activity.RESULT_OK) {
-                Uri imageUri = data.getData();
+    private void createContract() {
 
-                //profileImage.setImageURI(imageUri);
-
-                uploadImageToFirebase(imageUri);
-
-
-            }
-        }
-
-    }
-
-    private void uploadImageToFirebase(Uri imageUri) {
-        // uplaod image to firebase storage
-        final StorageReference fileRef = storageReference.child("users/" + firebaseProfile.getCurrentUser().getUid() + "/profile.jpg");
-        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.get().load(uri).into(imgAvatar);
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
+        takePhotoContract = registerForActivityResult(new ActivityResultContracts.TakePicture(), status -> {
+            if (status) {
+                loadImage(sourceUri);
             }
         });
 
+        permissionContract = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                AtomicBoolean status = new AtomicBoolean(true);
+                result.forEach((key, val) -> {
+                    if (!val) {
+                        status.set(false);
+                    }
+                });
+                if (!status.get()) {
+                    Toast.makeText(mCtx, "Please allow permission to use this feature!", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (isCapture) {
+                        if (checkCameraPermission()) {
+                            sourceUri = createImageUri();
+                            takePhotoContract.launch(sourceUri);
+                        }
+                    } else {
+                        if (checkStoragePermission()) {
+                            pickImageContract.launch("image/*");
+                        }
+                    }
+                }
+            }
+        });
+
+        pickImageContract = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            sourceUri = uri;
+            loadImage(sourceUri);
+        });
+    }
+
+    private boolean checkStoragePermission() {
+        boolean result = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean result1 = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return result && result1;
+    }
+
+    private boolean checkCameraPermission() {
+        boolean result = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean result1 = ContextCompat.checkSelfPermission(mCtx, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return result && result1;
+    }
+
+    private void pickImageContract() {
+        String permission[] = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        isCapture = false;
+        permissionContract.launch(permission);
+
+    }
+
+    private void captureImageContract() {
+        String permission[] = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        isCapture = true;
+        permissionContract.launch(permission);
+
+    }
+
+
+    private Uri createImageUri() {
+        Uri imageCollection;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        } else {
+            imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+        String imageName = String.valueOf(System.currentTimeMillis());
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, imageName);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        Uri finalUri = mCtx.getContentResolver().insert(imageCollection, contentValues);
+        return finalUri;
+    }
+
+    private void loadImage(Uri uri){
+        Glide.with(mCtx).load(uri.toString()).into(imgAvatar);
     }
 }

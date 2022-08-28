@@ -17,8 +17,7 @@
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
             android:background="@drawable/background_image"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_user_profile_svgrepo_com" />
+            android:scaleType="centerCrop"/>
     </LinearLayout>
 
     <LinearLayout
@@ -32,7 +31,6 @@
             android:id="@+id/nameUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nick Name"
             android:textColor="#373737"
             android:textSize="@dimen/_14sdp"
             android:textStyle="bold" />
@@ -41,7 +39,6 @@
             android:id="@+id/descUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description"
             android:textSize="@dimen/_12sdp" />
     </LinearLayout>
 

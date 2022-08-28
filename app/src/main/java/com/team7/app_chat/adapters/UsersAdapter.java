@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.team7.app_chat.R;
 import com.team7.app_chat.models.User;
@@ -48,7 +49,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
         holder.textViewName.setText(user.getFullName());
         holder.textViewDesc.setText(user.getEmail());
-        holder.imageView.setImageResource(R.drawable.ic_user_profile_svgrepo_com);
+        String path = user.getAvatar();
+        if (path != null) {
+            Glide.with(context).load(path).into(holder.imageView);
+        }
         holder.position = position;
         holder.user = user;
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {

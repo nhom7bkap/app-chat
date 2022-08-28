@@ -34,8 +34,6 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void checkAuth() {
-        Log.d(TAG, "CheckAuth");
-        // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Thread thread = new Thread() {
@@ -48,6 +46,8 @@ public class SplashActivity extends AppCompatActivity {
                 } finally {
                     if (currentUser != null) {
                         userRepository.get(currentUser.getUid()).addOnSuccessListener(user -> {
+                            CurrentUser.user.setId(currentUser.getUid());
+                            CurrentUser.user.setEmail(currentUser.getEmail());
                             Intent it;
                             if (user.isFirstTime()) {
                                 it = new Intent(SplashActivity.this, SetupProfileActivity.class);
@@ -62,7 +62,7 @@ public class SplashActivity extends AppCompatActivity {
                         }).addOnCompleteListener(new OnCompleteListener<User>() {
                             @Override
                             public void onComplete(@NonNull Task<User> task) {
-                                Log.e(TAG, "User " + task.getResult().getUserName());
+                                Log.e(TAG, "User " + task.getResult().getFullName());
                             }
                         });
                     } else {
