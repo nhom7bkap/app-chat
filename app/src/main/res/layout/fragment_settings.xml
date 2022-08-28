@@ -28,7 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleType="fitXY"
-                    app:layout_constraintBottom_toTopOf="@+id/imageView4"
+                    app:layout_constraintBottom_toTopOf="@+id/profileAvatar"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -36,8 +36,8 @@
                     app:layout_constraintVertical_bias="0.388"
                     app:srcCompat="@drawable/img_1" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imageView4"
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/profileAvatar"
                     android:layout_width="0dp"
                     android:layout_height="122dp"
                     android:layout_centerVertical="true"
@@ -58,7 +58,7 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+                    app:layout_constraintTop_toBottomOf="@+id/profileAvatar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
