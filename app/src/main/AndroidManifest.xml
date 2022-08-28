@@ -49,7 +49,9 @@
             android:theme="@style/Theme.Appchat.NoActionBar" />
         <activity
             android:name=".UpdateProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Appchat.NoActionBar"
+            />
         <activity
             android:name=".SignUpActivity"
             android:exported="false"

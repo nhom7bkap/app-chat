@@ -291,6 +291,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
             <Button
                 android:id="@+id/btnLogout"
+                android:backgroundTint="@color/theme_color"
                 android:layout_width="300dp"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content"

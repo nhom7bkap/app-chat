@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -67,13 +68,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class UpdateProfileActivity extends AppCompatActivity {
-    EditText dateTime_in, editTextName, editTextEmail, editTextAddress;
+    EditText dateTime_in, editTextName, editTextAddress;
 
-    String textFullName;
+    TextInputEditText edtAddress,edtFullname;
+    String textFullName,textAddress;
     String textDob;
     RadioGroup radioButton;
     RadioButton female_btn, male_btn;
-    String textAddress;
     ImageView profileImage;
     FirebaseAuth firebaseProfile;
     FirebaseUser firebaseUser;
@@ -102,7 +103,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         editTextName = findViewById(R.id.userName);
         profileImage = findViewById(R.id.profileImgView);
-
+        edtAddress = findViewById(R.id.userAddress);
+        edtFullname = findViewById(R.id.userName);
         btnUpdate = findViewById(R.id.btnUpdate);
 
         editTextAddress = findViewById(R.id.userAddress);
@@ -157,6 +159,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!validateUser() || !validateAdd() || !validateDOB()){
+                    return;
+                }
                 textFullName = ((EditText) findViewById(R.id.userName)).getText().toString();
                 textAddress = ((EditText) findViewById(R.id.userAddress)).getText().toString();
                 String date = ((EditText) findViewById(R.id.dateTime)).getText().toString();
@@ -192,7 +197,36 @@ public class UpdateProfileActivity extends AppCompatActivity {
         });
     }
 
-
+    private boolean validateAdd(){
+        textAddress = ((EditText) findViewById(R.id.userAddress)).getText().toString();
+        if (textAddress.isEmpty()){
+            edtAddress.setError("Enter FullAddress");
+            return false;
+        }else {
+            edtAddress.setError(null);
+            return true;
+        }
+    }
+    private boolean validateUser(){
+        textFullName = ((EditText) findViewById(R.id.userName)).getText().toString();
+        if (textFullName.isEmpty()){
+            edtFullname.setError("Enter FullName");
+            return false;
+        }else {
+            edtFullname.setError(null);
+            return true;
+        }
+    }
+    private boolean validateDOB(){
+        String date = ((EditText) findViewById(R.id.dateTime)).getText().toString();
+        if (date.isEmpty()){
+            dateTime_in.setError("Enter FullName");
+            return false;
+        }else {
+            dateTime_in.setError(null);
+            return true;
+        }
+    }
     private void showProfile() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         FirestoreRepository<User> repository = new FirestoreRepository<>(User.class, "User");
@@ -245,6 +279,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+                        user.setAvatar(uri.toString());
                         Picasso.get().load(uri).into(profileImage);
                     }
                 });
