@@ -63,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void onSignUp() {
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         String email = ((EditText) findViewById(R.id.formEmail)).getText().toString();
         String password = ((EditText) findViewById(R.id.formPassword)).getText().toString();
@@ -79,6 +80,8 @@ public class SignUpActivity extends AppCompatActivity {
                     ur.setEmail(user.getEmail());
                     FirestoreRepository<User> repository = new FirestoreRepository<>(User.class,"User");
                     repository.create(ur,user.getUid());
+                    CurrentUser.user.setId(user.getUid());
+                    CurrentUser.user.setEmail(user.getEmail());
                     Intent it = new Intent(SignUpActivity.this, SetupProfileActivity.class);
                     startActivity(it);
                 } else {

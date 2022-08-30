@@ -36,6 +36,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -147,6 +150,7 @@ public class SetupProfileActivity extends AppCompatActivity {
     private void submitForm() {
         progressButton.buttonActivated();
         if (!validateName() || !validateDOB()) {
+            progressButton.buttonFailed();
             return;
         }
         String fullname = ((TextInputLayout) findViewById(R.id.editName)).getEditText().getText().toString();
@@ -156,9 +160,6 @@ public class SetupProfileActivity extends AppCompatActivity {
             birthday = new SimpleDateFormat("dd/MM/yyyy").parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
-        }
-        if (fullname.isEmpty()) {
-
         }
         user.setFullName(fullname);
         user.setDOB(birthday);
@@ -205,6 +206,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         });
 
     }
+
 
     public void openDatePicker(View view) {
         Calendar calendar = Calendar.getInstance();

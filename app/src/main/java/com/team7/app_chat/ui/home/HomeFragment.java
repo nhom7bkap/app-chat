@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.R;
 import com.team7.app_chat.Util.UserRepository;
@@ -38,10 +41,13 @@ public class HomeFragment extends Fragment {
     }
 
     public void loadUser() {
-        new UserRepository().getByEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail()).addSnapshotListener((value, error) -> {
-            if (error != null) return;
-            User user = value.getDocuments().get(0).toObject(User.class);
-            CurrentUser.user = user;
+        new UserRepository().getDocRf(FirebaseAuth.getInstance().getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) return;
+                User user = value.toObject(User.class);
+                CurrentUser.user = user;
+            }
         });
     }
 
