@@ -35,14 +35,14 @@ import java.util.concurrent.TimeUnit;
 
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHolder> {
     private Context context;
-    private List<DocumentReference> list;
+    private List<DocumentSnapshot> list;
     private IChatScreen callback;
 
     public interface IChatScreen {
         void goToChatScreen(String id);
     }
 
-    public ChatRoomAdapter(Context context, List<DocumentReference> list, IChatScreen callback) {
+    public ChatRoomAdapter(Context context, List<DocumentSnapshot> list, IChatScreen callback) {
         this.context = context;
         this.list = list;
         this.callback = callback;
@@ -52,29 +52,29 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View item = LayoutInflater.from(context).inflate(R.layout.item_container_chat_room, parent, false);
-        ViewHolder viewHolder = new ViewHolder(item);
-        return viewHolder;
+        return new ViewHolder(item);
     }
 
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        DocumentReference doc = list.get(position);
+        DocumentSnapshot snapshot = list.get(position);
+        DocumentReference doc = (DocumentReference) snapshot.get("room");
         doc.addSnapshotListener((value, error) -> {
-            if (error != null) {
+            if(error != null){
                 return;
             }
+            assert value != null;
             setData(value, holder);
         });
     }
 
     @SuppressLint("ResourceAsColor")
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setData(DocumentSnapshot doc, ViewHolder holder) {
         RoomChats chatRoom = doc.toObject(RoomChats.class);
         User currentUser = CurrentUser.user;
-        if (chatRoom.getLastMessage() != null ) {
+        if (chatRoom.getLastMessage() != null) {
             chatRoom.getLastMessage().get().addOnSuccessListener(documentSnapshot -> {
                 String time;
                 Message message = documentSnapshot.toObject(Message.class);

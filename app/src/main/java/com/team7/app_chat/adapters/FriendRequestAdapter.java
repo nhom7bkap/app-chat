@@ -85,7 +85,7 @@ public interface SelectListstener {
 
 
 public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
-    RoundedImageView imageView;
+    ImageView imageView;
     TextView textViewName;
     TextView textViewDesc;
     ImageView btnAccept;

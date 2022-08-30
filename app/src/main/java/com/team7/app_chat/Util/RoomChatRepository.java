@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.RoomChats;
+import com.team7.app_chat.models.User;
 
 
 /**
@@ -27,14 +28,14 @@ public class RoomChatRepository {
 
     private final CollectionReference collectionReference;
     private final String collectionName = "chatRooms";
-    private final String userId;
+    private final User user;
     private final FirebaseFirestore db;
 
 
     public RoomChatRepository() {
         this.entityClass = RoomChats.class;
         this.db = FirebaseFirestore.getInstance();
-        this.userId = CurrentUser.user.getId();
+        this.user = CurrentUser.user;
         this.collectionReference = db.collection(collectionName);
     }
 
@@ -139,6 +140,14 @@ public class RoomChatRepository {
                 Log.d(TAG, "There was an error deleting '" + id + "' in '" + collectionName + "'.", e);
             }
         });
+    }
+
+    public void removeMessage(String roomId, String messageId){
+
+        DocumentReference messageRef = collectionReference.document(roomId).collection("messages")
+                .document(messageId);
+        messageRef.update("text", user.getFullName() + " removed this message");
+        messageRef.update("removed", true);
     }
 
     public Task<Void> deleteMessage(String roomId,String messageId) {

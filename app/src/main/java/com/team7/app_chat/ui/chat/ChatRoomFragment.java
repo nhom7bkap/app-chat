@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.R;
@@ -27,11 +29,12 @@ import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ChatRoomFragment extends Fragment implements ChatRoomAdapter.IChatScreen {
 
     private ChatRoomAdapter chatRoomAdapter;
-    private List<DocumentReference> list;
+    private List<DocumentSnapshot> list;
     private View mView;
     private RecyclerView recyclerView;
     private User currentUser;
@@ -62,22 +65,41 @@ public class ChatRoomFragment extends Fragment implements ChatRoomAdapter.IChatS
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(chatRoomAdapter);
-        userRepository.getChatRoom().get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot snapshot) {
-                snapshot.getDocuments();
-                for (DocumentChange dc : snapshot.getDocumentChanges()) {
-                    switch ((dc.getType())) {
-                        case ADDED:
-                            Log.e("Room", "Room change");
-                            list.add(dc.getDocument().toObject(RoomChat.class).getRoom());
-                            chatRoomAdapter.notifyDataSetChanged();
-                            break;
-                    }
+        userRepository.getChatRoom().orderBy("updatedAt").addSnapshotListener((value, error) -> {
+            if(error != null) return;
+            for (DocumentChange doc: value.getDocumentChanges()
+            ) {
+                switch (doc.getType()){
+                    case ADDED:
+                        DocumentSnapshot element = doc.getDocument();
+                        if(!list.contains(element)){
+                            list.add(0,element);
+                            chatRoomAdapter.notifyItemInserted(0);
+                        }
+                        break;
+                    case MODIFIED:
+                        QueryDocumentSnapshot element2 = doc.getDocument();
+                        Optional<DocumentSnapshot> optional0 = list.stream().filter(val -> val.getId().equals(element2.getId())).findFirst();
+                        if (optional0.isPresent()){
+                            int index = list.indexOf(optional0.get());
+                            list.remove(index);
+                            list.add(0, element2);
+                            chatRoomAdapter.notifyItemMoved(index, 0);
+                        }
+                        break;
+                    case REMOVED:
+                        QueryDocumentSnapshot element3 = doc.getDocument();
+                        Optional<DocumentSnapshot> optional = list.stream().filter(val -> val.getId().equals(element3.getId())).findFirst();
+                        if(optional.isPresent()){
+                            int index = list.indexOf(optional.get());
+                            list.remove(index);
+                            chatRoomAdapter.notifyItemRemoved(index);
+                        }
+                        break;
                 }
             }
-        });
 
+        });
     }
 
 

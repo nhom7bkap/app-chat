@@ -15,23 +15,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        loadUser();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-       loadUser();
-    }
-
-    public void loadUser(){
-        String id = FirebaseAuth.getInstance().getUid();
-        new UserRepository().get(id).addOnSuccessListener(new OnSuccessListener<User>() {
-            @Override
-            public void onSuccess(User user) {
-                user.setId(id);
-                CurrentUser.user = user;
-            }
-        });
     }
 }

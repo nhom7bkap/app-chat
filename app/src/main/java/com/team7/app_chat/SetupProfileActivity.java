@@ -111,7 +111,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         findViewById(R.id.edtBirthday).setOnClickListener(view -> openDatePicker(view));
 
 
-        findViewById(R.id.btnSkip).setOnClickListener(view -> goToHomePage());
+//        findViewById(R.id.btnSkip).setOnClickListener(view -> goToHomePage());
         findViewById(R.id.btnBack).setOnClickListener(view -> finish());
         findViewById(R.id.btnSetupProfile).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -82,5 +82,4 @@ public class Message {
     public void setViewer(ArrayList<DocumentReference> viewer) {
         this.viewer = viewer;
     }
-
 }

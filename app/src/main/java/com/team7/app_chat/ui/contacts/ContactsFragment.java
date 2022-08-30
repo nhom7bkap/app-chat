@@ -112,17 +112,17 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
                     contactAdapter.notifyDataSetChanged();
                 }
             });
-            documentSnapshot.getReference().collection("friend_request").addSnapshotListener((value, error) -> {
-                if (error != null) return;
-                int count = value.size();
-                TextView tvCount = view.findViewById(R.id.tvRequestCount);
-                if (count > 0) {
-                    tvCount.setText(String.valueOf(count));
-                    tvCount.setVisibility(View.VISIBLE);
-                } else {
-                    tvCount.setVisibility(View.GONE);
-                }
-            });
+//            documentSnapshot.getReference().collection("friend_request").addSnapshotListener((value, error) -> {
+//                if (error != null) return;
+//                int count = value.size();
+//                TextView tvCount = view.findViewById(R.id.tvRequestCount);
+//                if (count > 0) {
+//                    tvCount.setText(String.valueOf(count));
+//                    tvCount.setVisibility(View.VISIBLE);
+//                } else {
+//                    tvCount.setVisibility(View.GONE);
+//                }
+//            });
         });
     }
 
@@ -135,19 +135,23 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
             user.collection("chatRoom").get().addOnSuccessListener(snapshot1 -> {
                 List<String> friendRoom = snapshot1.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
                 myRoom.retainAll(friendRoom);
-                for (String id : myRoom) {
-                    roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
-                        RoomChats room = documentSnapshot.toObject(RoomChats.class);
-                        if (room.getName() == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("id", documentSnapshot.getId());
-                            NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
-                        }
-                    });
+
+                if (myRoom != null){
+                    for (String id : myRoom) {
+                        roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
+                            RoomChats room = documentSnapshot.toObject(RoomChats.class);
+                            if (room.getName() == null) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString("id", documentSnapshot.getId());
+                                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
+                            }
+                        });
+                    }
+                }else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("userId", user.getId());
+                    NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
                 }
-                Bundle bundle = new Bundle();
-                bundle.putString("userId", user.getId());
-                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
             });
         });
 
@@ -171,6 +175,7 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
 
         LinearLayout viewLayout = dialog.findViewById(R.id.layoutViewProfile);
         LinearLayout editLayout = dialog.findViewById(R.id.layoutEditContact);
+        LinearLayout blockLayout = dialog.findViewById(R.id.layoutBlock);
         LinearLayout deleteLayout = dialog.findViewById(R.id.layoutDelete);
 
 
@@ -189,12 +194,18 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
                 dialog.dismiss();
             }
         });
+        blockLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userRepository.blockFriend(doc.getId(), true);
+                dialog.dismiss();
+            }
+        });
 
         deleteLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ContactRepository(currentUser.getId()).delete(doc.getId());
-                new ContactRepository(doc.getId()).delete(currentUser.getId());
+                userRepository.removeFriend(doc.getId());
                 dialog.dismiss();
                 Toast.makeText(mView.getContext(), "Deleted contact", Toast.LENGTH_SHORT).show();
 

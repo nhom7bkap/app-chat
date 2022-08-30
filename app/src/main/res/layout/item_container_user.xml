@@ -13,12 +13,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1">
-        <com.makeramen.roundedimageview.RoundedImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageContact"
-            android:layout_width="@dimen/_42sdp"
-            android:layout_height="@dimen/_42sdp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:background="@drawable/background_image"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"  />
     </LinearLayout>
 
     <LinearLayout
@@ -33,14 +33,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#373737"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="15dp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/descContact"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/_14sdp" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 <!--    <LinearLayout-->

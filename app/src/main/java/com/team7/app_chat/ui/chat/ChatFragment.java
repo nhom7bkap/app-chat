@@ -31,6 +31,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -42,6 +43,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.team7.app_chat.CurrentUser;
@@ -49,6 +51,7 @@ import com.team7.app_chat.R;
 import com.team7.app_chat.Util.RoomChatRepository;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.MessageAdapter;
+import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.Member;
 import com.team7.app_chat.models.Message;
 import com.team7.app_chat.models.RoomChats;
@@ -59,8 +62,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ChatFragment extends Fragment implements MessageAdapter.INavMessage {
     private RoomChatRepository repository;
@@ -68,12 +73,17 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     private RoomChats chatRoom;
     private User currentUser;
     private String roomId;
-    private String userId;
-    private int member;
+    private String friendId;
+    private int memberCount;
+    private boolean isMod;
+    private String roomName;
 
     private View roomView;
     private RecyclerView recyclerView;
     private ImageView avatarView;
+    private ConstraintLayout layoutInputMess;
+    private LinearLayout layoutBlock;
+    private ConstraintLayout layoutUnavailable;
 
     private ActivityResultLauncher<String[]> permissionContract;
     private ActivityResultLauncher<Uri> takePhotoContract;
@@ -105,7 +115,8 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         userRepository = new UserRepository();
         storageRef = FirebaseStorage.getInstance().getReference();
         roomId = getArguments().getString("id");
-        userId = getArguments().getString("userId");
+        friendId = getArguments().getString("userId");
+        currentUserRef = userRepository.getDocRf(currentUser.getId());
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -115,6 +126,9 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         bottomsheet = roomView.findViewById(R.id.btnAttachment);
         recyclerView = roomView.findViewById(R.id.listMessage);
         avatarView = roomView.findViewById(R.id.chatAvatar);
+        layoutInputMess = roomView.findViewById(R.id.clInputMess);
+        layoutBlock = roomView.findViewById(R.id.clBlocked);
+        layoutUnavailable = roomView.findViewById(R.id.clUnavailable);
         bottomsheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,18 +171,12 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         roomView.findViewById(R.id.btnTakePic).setOnClickListener(view -> {
             captureImageContract();
         });
-//        ConstraintLayout rootLayout = roomView.findViewById(R.id.layoutChat);
-//        EditText edMessage = roomView.findViewById(R.id.edtMessage);
-//        EmojiPopup popup = new EmojiPopup(rootLayout, edMessage);
+        roomView.findViewById(R.id.btUnblock).setOnClickListener(view -> {
+            userRepository.blockFriend(friendId, false);
+        });
         roomView.findViewById(R.id.btnEmoji).setOnClickListener(view -> {
 //            popup.toggle();
         });
-//        roomView.findViewById(R.id.btInfo).setOnClickListener(view -> {
-//            Bundle bundle = new Bundle();
-//            bundle.putString("roomId", roomId);
-//            NavHostFragment.findNavController(this).navigate(R.id.action_chatFragment_to_roomSettingFragment, bundle);
-//        });
-
         return roomView;
     }
 
@@ -224,26 +232,34 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        currentUserRef = userRepository.getDocRf(currentUser.getId());
+        storageRef = FirebaseStorage.getInstance().getReference();
         if (roomId != null) {
-
             roomRef = repository.get().document(roomId);
-            repository.checkMessages(roomId).addOnSuccessListener(aBoolean -> {
-                if (aBoolean){
-                    roomRef.addSnapshotListener((value, error) -> {
-                        if (error != null) return;
-                        ((DocumentReference) value.get("lastMessage")).update("viewer", FieldValue.arrayUnion(currentUserRef));
-                    });
+            roomRef.addSnapshotListener((value, error) -> {
+                if (error != null) return;
+                if (value.get("lastMessage") != null) {
+                    ((DocumentReference) value.get("lastMessage")).update("viewer", FieldValue.arrayUnion(currentUserRef));
                 }
             });
             checkMember();
-        } else if (userId != null) {
-            userRepository.getDocRf(userId).get().addOnSuccessListener(documentSnapshot -> {
-                friendRef = documentSnapshot.getReference();
+        } else if (friendId != null) {
+            repository.get().addSnapshotListener((value, error) -> {
+                if (error != null) return;
+                for (DocumentChange doc : value.getDocumentChanges()) {
+                    switch (doc.getType()) {
+                        case ADDED:
+                            checkRoom(doc.getDocument());
+                            break;
+                    }
+                }
+            });
+            getFriendRef();
+            userRepository.getDocRf(friendId).get().addOnSuccessListener(documentSnapshot -> {
                 User user = documentSnapshot.toObject(User.class);
                 Glide.with(this).load(user.getAvatar()).into(avatarView);
                 ((TextView) roomView.findViewById(R.id.chatName)).setText(user.getFullName());
             });
+            checkBlock(friendId);
         }
     }
 
@@ -353,27 +369,96 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         });
     }
 
+    private void checkBlock(String id) {
+        currentUserRef.collection("contacts")
+                .document(id).addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+                    Contact friend = value.toObject(Contact.class);
+                    if (friend != null) {
+                        if (friend.isBlocked()) {
+                            layoutInputMess.setVisibility(View.GONE);
+                            layoutUnavailable.setVisibility(View.GONE);
+                            layoutBlock.setVisibility(View.VISIBLE);
+                        } else {
+                            friend.getUser().collection("contacts").document(currentUser.getId()).addSnapshotListener((value1, error1) -> {
+                                if (error1 != null) return;
+                                Contact current = value1.toObject(Contact.class);
+                                if (current != null) {
+                                    if (current.isBlocked()) {
+                                        layoutInputMess.setVisibility(View.GONE);
+                                        layoutUnavailable.setVisibility(View.VISIBLE);
+                                    } else {
+                                        layoutInputMess.setVisibility(View.VISIBLE);
+                                        layoutUnavailable.setVisibility(View.GONE);
+                                    }
+                                    layoutBlock.setVisibility(View.GONE);
+                                }
+                            });
+                        }
+                    } else {
+                        layoutInputMess.setVisibility(View.GONE);
+                        layoutUnavailable.setVisibility(View.VISIBLE);
+                        layoutBlock.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void checkRoom(QueryDocumentSnapshot document) {
+        document.getReference().collection("members").addSnapshotListener((value, error) -> {
+            if (error != null) return;
+            if (value.size() > 1) {
+                RoomChats chatRoom = document.toObject(RoomChats.class);
+                ArrayList<String> currentIdList = new ArrayList<>();
+                currentIdList.add(friendId);
+                currentIdList.add(currentUser.getId());
+                if (chatRoom.getName() == null) {
+
+                    document.getReference().collection("members")
+                            .get().addOnSuccessListener(snapshot -> {
+                                List<String> userIdList = snapshot.getDocuments()
+                                        .stream().map(val -> val.toObject(Member.class).getUser().getId())
+                                        .collect(Collectors.toList());
+                                boolean isContain = userIdList.containsAll(currentIdList);
+                                if (isContain) {
+                                    roomRef = document.getReference();
+                                    roomId = roomRef.getId();
+                                    checkMember();
+                                }
+                                ;
+                            });
+                }
+            }
+        });
+
+    }
+
     private void checkMember() {
         roomRef.collection("members").addSnapshotListener((value, error) -> {
             if (error != null) return;
-            member = value.size();
+            memberCount = value.size();
             int count = (int) value.getDocuments().stream().filter(val -> val.getId().equals(currentUser.getId())).count();
             if (getActivity() != null) {
                 if (count == 0) {
                     NavHostFragment.findNavController(this).popBackStack();
                     Toast.makeText(getActivity(), "You has been banned from the chat room", Toast.LENGTH_SHORT).show();
                 } else {
+                    DocumentSnapshot member = value.getDocuments().stream()
+                            .filter(val -> val.getId().equals(currentUser.getId()))
+                            .findFirst().get();
+                    isMod = member.toObject(Member.class).isMod();
                     roomRef.get().addOnSuccessListener(documentSnapshot -> {
                         chatRoom = documentSnapshot.toObject(RoomChats.class);
                         if (chatRoom.getName() == null) {
                             getFriendInfo(value.getDocuments());
                         } else {
-
+                            layoutInputMess.setVisibility(View.VISIBLE);
                             Glide.with(getActivity()).load(chatRoom.getAvatar()).into(avatarView);
                             ((TextView) roomView.findViewById(R.id.chatName)).setText(chatRoom.getName());
                         }
+                        roomName = chatRoom.getName();
+                        loadMessage();
                     });
-                    loadMessage();
                 }
             }
         });
@@ -383,21 +468,28 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         DocumentSnapshot member = documents.stream()
                 .filter(doc -> !doc.toObject(Member.class).getUser().getId().equals(currentUser.getId()))
                 .findFirst().get();
+
         member.toObject(Member.class).getUser().addSnapshotListener((value, error) -> {
             if (error != null) return;
+
             User user = value.toObject(User.class);
-            if (user.getAvatar() != null) {
-                Glide.with(this).load(user.getAvatar()).into(avatarView);
-            }
+            friendId = user.getId();
+            getFriendRef();
+            checkBlock(user.getId());
+            if (getActivity() != null) Glide.with(this).load(user.getAvatar()).into(avatarView);
             String fullName = user.getFullName();
             ((TextView) roomView.findViewById(R.id.chatName)).setText(fullName);
         });
     }
 
+    private void getFriendRef() {
+        friendRef = userRepository.getDocRf(friendId);
+    }
+
     private void loadMessage() {
         Log.e("load", "Message");
         list = new ArrayList<>();
-        adapter = new MessageAdapter(list, getContext(), member, this);
+        adapter = new MessageAdapter(list, getContext(), memberCount, this, roomId, isMod, roomName);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
@@ -411,9 +503,8 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                     for (DocumentChange dc : value.getDocumentChanges()) {
                         switch ((dc.getType())) {
                             case ADDED:
-                                Log.e("Message", "message change");
                                 list.add(dc.getDocument());
-                                adapter.notifyDataSetChanged();
+                                adapter.notifyItemInserted(list.indexOf(dc.getDocument()));
                                 recyclerView.scrollToPosition(list.size() - 1);
                                 break;
                             case REMOVED:
@@ -430,15 +521,14 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                                 break;
                         }
                     }
-
                 });
     }
 
     public void checkLastMessage() {
-        if (!list.isEmpty()){
-            DocumentReference docf = roomRef.collection("messages").document(list.get(list.size()-1).getId());
+        if (!list.isEmpty()) {
+            DocumentReference docf = roomRef.collection("messages").document(list.get(list.size() - 1).getId());
             roomRef.update("lastMessage", docf);
-        }else {
+        } else {
             roomRef.update("lastMessage", null);
         }
     }
@@ -528,7 +618,6 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
         replyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 dialog.dismiss();
                 Toast.makeText(roomView.getContext(), "Reply is Clicked", Toast.LENGTH_SHORT).show();
 

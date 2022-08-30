@@ -76,7 +76,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
 
     public class UserViewHolder extends RecyclerView.ViewHolder {
-        RoundedImageView imageView;
+        ImageView imageView;
         TextView textViewName;
         TextView textViewDesc;
         ImageView btnAdd;

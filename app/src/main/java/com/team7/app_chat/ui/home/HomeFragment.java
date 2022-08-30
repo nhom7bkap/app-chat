@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.team7.app_chat.CurrentUser;
@@ -33,6 +34,10 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadUser();
+    }
+
+    public void loadUser() {
         new UserRepository().getByEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail()).addSnapshotListener((value, error) -> {
             if (error != null) return;
             User user = value.getDocuments().get(0).toObject(User.class);

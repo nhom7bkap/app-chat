@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -33,16 +34,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private INavMessage navMessage;
     private Context context;
     private int member;
+    private String roomId;
+    private boolean isMod;
+    private String roomName;
 
     public interface INavMessage {
-        void DeleteMessage(DocumentSnapshot doc,int position);
+        void DeleteMessage(DocumentSnapshot doc, int position);
     }
 
-    public MessageAdapter(List<DocumentSnapshot> list, Context context, int member, INavMessage navMessage) {
+    public MessageAdapter(List<DocumentSnapshot> list, Context context, int member, INavMessage navMessage,
+                          String roomId,
+                          boolean isMod, String roomName) {
         this.list = list;
         this.context = context;
         this.member = member;
         this.navMessage = navMessage;
+        this.roomId = roomId;
+        this.isMod = isMod;
+        this.roomName = roomName;
     }
 
     @NonNull
@@ -64,7 +73,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         DocumentSnapshot doc = list.get(position);
         Message message = list.get(position).toObject(Message.class);
-
+        int pos = position;
         if (!message.isNotify()) {
             Date createdDate = message.getCreatedDate();
             if (position > 0) {
@@ -110,6 +119,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 }
             }
 
+            holder.mLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    navMessage.DeleteMessage(doc, pos);
+                    return true;
+                }
+            });
+
         } else {
             holder.time.setText(message.getText());
             holder.time.setVisibility(View.VISIBLE);
@@ -120,19 +137,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
         }
 
-        holder.mLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                navMessage.DeleteMessage(doc,position);
-                return true;
-            }
-        });
 
     }
 
     @Override
     public int getItemViewType(int position) {
-
         Message message = list.get(position).toObject(Message.class);
         if (message.getSendBy().getId().equals(CurrentUser.user.getId())) {
             return TYPE_MESSAGE_SEND;

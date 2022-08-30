@@ -31,6 +31,7 @@
                 android:textStyle="bold"
                 android:textSize="24dp"
                 android:text="Contacts"
+                android:textColor="#373737"
                 android:layout_height="wrap_content"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,20 +49,20 @@
                     android:layout_height="26dp"
                     app:tint="@color/theme_color" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/tvRequestCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
-                    android:backgroundTint="@color/colo_bgs"
-                    android:text="6"
-                    android:textColor="@color/error_2"
-                    app:layout_constraintBottom_toTopOf="@id/imAddFriend"
-                    app:layout_constraintStart_toStartOf="@id/imAddFriend"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.3"
-                    android:visibility="gone"
-                    />
+<!--                <com.google.android.material.chip.Chip-->
+<!--                    android:id="@+id/tvRequestCount"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="38dp"-->
+<!--                    android:layout_marginStart="10dp"-->
+<!--                    android:backgroundTint="@color/colo_bgs"-->
+<!--                    android:text="6"-->
+<!--                    android:textColor="@color/error_2"-->
+<!--                    app:layout_constraintBottom_toTopOf="@id/imAddFriend"-->
+<!--                    app:layout_constraintStart_toStartOf="@id/imAddFriend"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:layout_constraintVertical_bias="0.3"-->
+<!--                    android:visibility="gone"-->
+<!--                    />-->
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

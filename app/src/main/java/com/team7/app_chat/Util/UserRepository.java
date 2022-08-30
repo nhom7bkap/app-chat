@@ -31,6 +31,7 @@ public class UserRepository {
 
     private final CollectionReference collectionReference;
     private final String collectionName = "User";
+    private User user;
 
     private IContactCallback callback;
 
@@ -46,6 +47,7 @@ public class UserRepository {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         this.collectionReference = db.collection(this.collectionName);
+        this.user = CurrentUser.user;
     }
 
     public UserRepository(IContactCallback callback) {
@@ -53,7 +55,7 @@ public class UserRepository {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         this.collectionReference = db.collection(this.collectionName);
-
+        this.user = CurrentUser.user;
         this.callback = callback;
     }
 
@@ -119,7 +121,7 @@ public class UserRepository {
     }
 
     public CollectionReference getChatRoom() {
-        return collectionReference.document(CurrentUser.user.getId()).collection("chatRoom");
+        return collectionReference.document(user.getId()).collection("chatRoom");
     }
 
     public Task<Void> create(User entity) {
@@ -147,6 +149,18 @@ public class UserRepository {
                 Log.d(TAG, "There was an error updating '" + documentName + "' in '" + collectionName + "'.", e);
             }
         });
+    }
+
+    public Task<Void> blockFriend(String id, boolean status) {
+        return collectionReference.document(user.getId()).collection("contacts")
+                .document(id).update("blocked", status);
+    }
+
+    public void removeFriend(String friendId){
+        collectionReference.document(friendId).collection("contacts")
+                .document(user.getId()).delete();
+        collectionReference.document(user.getId()).collection("contacts")
+                .document(friendId).delete();
     }
 
     public Task<Void> delete(final String documentName) {

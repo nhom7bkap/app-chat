@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutChat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/layoutChat"
-    android:visibility="visible"
     android:orientation="vertical"
+    android:visibility="visible"
     tools:context=".ui.chat.ChatFragment">
 
     <LinearLayout
@@ -16,6 +16,7 @@
         android:background="@color/theme_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -48,13 +49,13 @@
                 android:textColor="#F6F5F5"
                 android:textSize="16dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Last seen recently"
-                android:textColor="#EFEEEE"
-                android:textSize="16dp" />
+            <!--            <TextView-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:gravity="center"-->
+            <!--                android:text="Last seen recently"-->
+            <!--                android:textColor="#EFEEEE"-->
+            <!--                android:textSize="16dp" />-->
         </LinearLayout>
 
         <LinearLayout
@@ -63,12 +64,11 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/chatAvatar"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginHorizontal="@dimen/_10sdp"
-                android:src="@drawable/background_image"
                 android:padding="@dimen/_4sdp" />
         </LinearLayout>
     </LinearLayout>
@@ -79,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout4"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chatHeader">
@@ -91,144 +91,213 @@
             android:orientation="vertical"
             android:padding="@dimen/_20sdp" />
 
-<!--        <ProgressBar-->
-<!--            android:id="@+id/progessBar"-->
-<!--            android:layout_width="@dimen/_25sdp"-->
-<!--            android:layout_height="@dimen/_25sdp"-->
-<!--            android:layout_gravity="center" />-->
+        <!--        <ProgressBar-->
+        <!--            android:id="@+id/progessBar"-->
+        <!--            android:layout_width="@dimen/_25sdp"-->
+        <!--            android:layout_height="@dimen/_25sdp"-->
+        <!--            android:layout_gravity="center" />-->
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout4"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/btnAttachment"
-            android:layout_width="24dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="15dp"
-            android:includeFontPadding="false"
-            android:paddingLeft="0dp"
-            app:icon="@drawable/ic_attachment_svgrepo_com"
-            app:iconPadding="0dp"
-            app:iconSize="26dp"
-            app:iconTint="@color/theme_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="@style/Widget.Material3.Button.TextButton"
-            />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clInputMess"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:visibility="gone">
 
-        <Button
-            android:id="@+id/btnTakePic"
-            android:layout_width="24dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="15dp"
-            android:paddingLeft="0dp"
-            app:icon="@drawable/ic_baseline_photo_camera_24"
-            app:iconSize="28dp"
-            app:iconTint="@color/theme_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.527"
-            style="@style/Widget.Material3.Button.TextButton"
-            />
+            <Button
+                android:id="@+id/btnAttachment"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="15dp"
+                android:includeFontPadding="false"
+                android:paddingLeft="0dp"
+                app:icon="@drawable/ic_attachment_svgrepo_com"
+                app:iconPadding="0dp"
+                app:iconSize="26dp"
+                app:iconTint="@color/theme_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btnChoosePic"
-            android:layout_width="24dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="15dp"
-            android:paddingLeft="0dp"
-            app:icon="@drawable/ic_take_a_picture"
-            app:iconSize="26dp"
-            app:iconTint="@color/theme_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnTakePic"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.555"
-            style="@style/Widget.Material3.Button.TextButton"
-            />
+            <Button
+                android:id="@+id/btnTakePic"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="15dp"
+                android:paddingLeft="0dp"
+                app:icon="@drawable/ic_baseline_photo_camera_24"
+                app:iconSize="28dp"
+                app:iconTint="@color/theme_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.527" />
 
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="24dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="15dp"
-            android:paddingLeft="0dp"
-            android:visibility="gone"
-            app:icon="@drawable/ic_send_svgrepo_com"
-            app:iconSize="24dp"
-            app:iconTint="@color/theme_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnChoosePic"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            style="@style/Widget.Material3.Button.TextButton"
-            />
+            <Button
+                android:id="@+id/btnChoosePic"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="15dp"
+                android:paddingLeft="0dp"
+                app:icon="@drawable/ic_take_a_picture"
+                app:iconSize="26dp"
+                app:iconTint="@color/theme_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnTakePic"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.555" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/editCardView"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginHorizontal="5dp"
-            android:layout_weight="2"
-            app:cardCornerRadius="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSend"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/btnAttachment"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.444">
+            <Button
+                android:id="@+id/btnSend"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="15dp"
+                android:paddingLeft="0dp"
+                android:visibility="gone"
+                app:icon="@drawable/ic_send_svgrepo_com"
+                app:iconSize="24dp"
+                app:iconTint="@color/theme_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnChoosePic"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/editCardView"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="2"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnSend"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/btnAttachment"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.444">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:textAlignment="center">
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/edtMessage"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:background="@android:color/transparent"
-                        android:gravity="start|center"
-                        android:hint="Type a message"
-                        android:inputType="textPersonName"
-                        android:padding="5dp"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="1dp"
-                        android:textColorHint="#424242"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:textAlignment="center">
 
-                <ImageView
-                    android:id="@+id/btnEmoji"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:padding="9dp"
-                    android:src="@drawable/ic_emoji_svgrepo_com"
-                    app:tint="#5C5C5C" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                        <EditText
+                            android:id="@+id/edtMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="5dp"
+                            android:background="@android:color/transparent"
+                            android:gravity="start|center"
+                            android:hint="Type a message"
+                            android:inputType="textPersonName"
+                            android:padding="5dp"
+                            android:paddingStart="5dp"
+                            android:paddingEnd="1dp"
+                            android:textColorHint="#424242"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/btnEmoji"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="5"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_emoji_svgrepo_com"
+                        app:tint="#5C5C5C" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/clBlocked"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            >
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:id="@+id/textView34"
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="You've blocked this user !"
+                android:textColor="@color/secondary_text"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/btUnblock"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginVertical="10dp"
+                android:backgroundTint="#CF3232"
+                android:text="Unblock"
+                android:textSize="16sp"
+                android:layout_marginHorizontal="20dp"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clUnavailable"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@color/theme_color"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/textView36"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You can't reply this conversation."
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/divider5"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
