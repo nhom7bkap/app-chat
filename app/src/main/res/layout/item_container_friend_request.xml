@@ -45,13 +45,13 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_weight="1.7">
+        android:layout_weight="1.4">
         <ImageView
             android:id="@+id/btnUnAccept"
             android:src="@drawable/ic_delete_remove_uncheck_svgrepo_com"
             android:backgroundTint="#F6BBBB"
             android:background="@drawable/send_bg"
-            android:padding="8dp"
+            android:padding="6dp"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
             android:backgroundTint="#CBF6CD"
             android:background="@drawable/send_bg"
             android:layout_marginStart="@dimen/_8sdp"
-            android:padding="8dp"
+            android:padding="6dp"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

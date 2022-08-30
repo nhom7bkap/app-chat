@@ -104,8 +104,8 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                 }
                 holder.message.setText(message.getText());
                 if (message.getText() != null && !message.isFile()){
-                    if (message.getText().length() > 20){
-                        holder.message.setText(message.getText().substring(0,20));
+                    if (message.getText().length() > 30){
+                        holder.message.setText(message.getText().substring(0,30)+"....");
                     }
                 }
                 holder.time.setText(time);

@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="#F6F5F5"
-                android:textSize="16dp" />
+                android:textSize="18dp" />
 
             <!--            <TextView-->
             <!--                android:layout_width="match_parent"-->
