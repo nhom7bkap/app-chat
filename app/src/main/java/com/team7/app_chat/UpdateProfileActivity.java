@@ -35,12 +35,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.team7.app_chat.Util.FirestoreRepository;
 import com.team7.app_chat.Util.UserRepository;
+import com.team7.app_chat.components.ProgressButton;
 import com.team7.app_chat.models.User;
 
 import java.text.DateFormat;
@@ -48,6 +50,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UpdateProfileActivity extends AppCompatActivity {
@@ -63,10 +66,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
     FirebaseFirestore fStore;
     UserRepository userRepository;
     StorageReference storageReference;
-    Button btnUpdate;
+    private ProgressButton progressButton;
     private User user;
     private Context mCtx;
-
     private ActivityResultLauncher<String[]> permissionContract;
     private ActivityResultLauncher<Uri> takePhotoContract;
     private ActivityResultLauncher<String> pickImageContract;
@@ -92,16 +94,15 @@ public class UpdateProfileActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.imgAvatar);
         edtAddress = findViewById(R.id.userAddress);
         edtFullname = findViewById(R.id.userName);
-        btnUpdate = findViewById(R.id.btnUpdate);
         editTextAddress = findViewById(R.id.userAddress);
         dateTime_in = findViewById(R.id.dateTime);
+        progressButton = new ProgressButton(UpdateProfileActivity.this, findViewById(R.id.btnUpdate), "Update");
         showProfile();
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(openGalleryIntent, 1000);
-            }
+        findViewById(R.id.imgAvatar).setOnClickListener(view -> {
+            pickImageContract();
+        });
+        findViewById(R.id.btnPickImg).setOnClickListener(view -> {
+            captureImageContract();
         });
         dateTime_in.setInputType(InputType.TYPE_NULL);
         dateTime_in.setOnClickListener(new View.OnClickListener() {
@@ -125,16 +126,18 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 new DatePickerDialog(UpdateProfileActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnUpdate).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                progressButton.buttonActivated();
                 submitForm();
             }
         });
     }
 
     public void submitForm() {
-        if (!validateUser() || !validateAdd() || !validateDOB()) {
+        if (!validateUser() || !validateDOB()) {
+            progressButton.buttonFailed();
             return;
         }
         textFullName = ((EditText) findViewById(R.id.userName)).getText().toString();
@@ -163,38 +166,39 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }
         String fileName = String.valueOf(System.currentTimeMillis());
         final StorageReference fileRef = storageReference.child("users/" + fileName);
-        fileRef.putFile(sourceUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        user.setAvatar(uri.toString());
-                        userRepository.update(user).addOnSuccessListener(unused -> {
-                            Toast.makeText(UpdateProfileActivity.this, "Update Success", Toast.LENGTH_SHORT).show();
-                        }).addOnFailureListener(e -> {
-                            Toast.makeText(UpdateProfileActivity.this, "Update fails", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
-    private boolean validateAdd() {
-        textAddress = ((EditText) findViewById(R.id.userAddress)).getText().toString();
-        if (textAddress.isEmpty()) {
-            edtAddress.setError("Enter FullAddress");
-            return false;
+        if (sourceUri == null) {
+            userRepository.update(user).addOnSuccessListener(unused -> {
+                Toast.makeText(UpdateProfileActivity.this, "Update Success", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener(e -> {
+                Toast.makeText(UpdateProfileActivity.this, "Update fails", Toast.LENGTH_SHORT).show();
+            });
         } else {
-            edtAddress.setError(null);
-            return true;
+            fileRef.putFile(sourceUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            user.setAvatar(uri.toString());
+                            userRepository.update(user).addOnSuccessListener(unused -> {
+                                Toast.makeText(UpdateProfileActivity.this, "Update Success", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(UpdateProfileActivity.this, "Update fails", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
+        Intent it;
+        it = new Intent(UpdateProfileActivity.this, MainActivity.class);
+        startActivity(it);
     }
 
     private boolean validateUser() {
@@ -233,7 +237,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     textFullName = task.getResult().getFullName();
                     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                     String strDate = dateFormat.format(task.getResult().getDOB());
-                    textDob =  strDate;
+                    textDob = strDate;
                     textAddress = task.getResult().getAddress();
                     if (task.getResult().getGender() == 1) {
                         female_btn.setChecked(true);

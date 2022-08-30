@@ -30,16 +30,10 @@ import com.team7.app_chat.models.User;
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "FirebaseAuth";
      private ProgressButton progressButton;
-//    ImageView imgAvatar;
-//    FirebaseAuth firebaseProfile;
-//    StorageReference storageReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-//        imgAvatar = findViewById(R.id.imgAvatar);
-//        storageReference = FirebaseStorage.getInstance().getReference();
-//        firebaseProfile = FirebaseAuth.getInstance();
         progressButton = new ProgressButton(SignUpActivity.this, findViewById(R.id.signUpButton), "Sign Up");
         findViewById(R.id.signUpButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,13 +42,6 @@ public class SignUpActivity extends AppCompatActivity {
                 onSignUp();
             }
         });
-//        imgAvatar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(openGalleryIntent, 1000);
-//            }
-//        });
     }
 
     public void signIn(View view) {
@@ -81,7 +68,6 @@ public class SignUpActivity extends AppCompatActivity {
                     FirestoreRepository<User> repository = new FirestoreRepository<>(User.class,"User");
                     repository.create(ur,user.getUid());
                     CurrentUser.user.setId(user.getUid());
-                    CurrentUser.user.setEmail(user.getEmail());
                     Intent it = new Intent(SignUpActivity.this, SetupProfileActivity.class);
                     startActivity(it);
                 } else {
@@ -99,45 +85,5 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(SignUpActivity.this, "Email or Password not match !",
                     Toast.LENGTH_SHORT).show();
         }
-
-
     }
-
-//    protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 1000) {
-//            if (resultCode == Activity.RESULT_OK) {
-//                Uri imageUri = data.getData();
-//
-//                //profileImage.setImageURI(imageUri);
-//
-//                uploadImageToFirebase(imageUri);
-//
-//
-//            }
-//        }
-//
-//    }
-//
-//    private void uploadImageToFirebase(Uri imageUri) {
-//        // uplaod image to firebase storage
-//        final StorageReference fileRef = storageReference.child("users/" + firebaseProfile.getCurrentUser().getUid() + "/profile.jpg");
-//        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        Picasso.get().load(uri).into(imgAvatar);
-//                    }
-//                });
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//    }
 }

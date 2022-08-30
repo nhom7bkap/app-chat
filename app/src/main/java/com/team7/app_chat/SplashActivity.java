@@ -2,6 +2,7 @@ package com.team7.app_chat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +13,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.models.User;
+
+import java.util.List;
 
 public class SplashActivity extends AppCompatActivity {
     private final String TAG = "SlashActivity";
@@ -34,8 +38,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void checkAuth() {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -45,27 +48,23 @@ public class SplashActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } finally {
                     if (currentUser != null) {
-                        userRepository.get(currentUser.getUid()).addOnSuccessListener(user -> {
-                            CurrentUser.user = user;
-                            if (user.getEmail() == null){
-                                CurrentUser.user.setId(currentUser.getUid());
+                         userRepository.getByEmail(currentUser.getEmail()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                            try {
+                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                                User user = list.get(0).toObject(User.class);
+                                user.setId(currentUser.getUid());
+                                CurrentUser.user = user;
+                                Intent it;
+                                if (user.isFirstTime()) {
+                                    it = new Intent(SplashActivity.this, SetupProfileActivity.class);
+                                } else {
+                                    it = new Intent(SplashActivity.this, MainActivity.class);
+                                }
+                                startActivity(it);
+                            }catch (Exception e){
+                                Exception a = e;
                             }
-                            Intent it;
-                            if (user.isFirstTime()) {
-                                it = new Intent(SplashActivity.this, SetupProfileActivity.class);
-                            } else {
-                                it = new Intent(SplashActivity.this, MainActivity.class);
-                            }
-                            startActivity(it);
-                        }).addOnFailureListener(e -> {
-                            Toast.makeText(SplashActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, "CurrentUser Error: " + e.getMessage());
-                        }).addOnCompleteListener(new OnCompleteListener<User>() {
-                            @Override
-                            public void onComplete(@NonNull Task<User> task) {
-                                Log.e(TAG, "User " + task.getResult().getFullName());
-                            }
+
                         });
                     } else {
                         startActivity(new Intent(SplashActivity.this, SignInActivity.class));

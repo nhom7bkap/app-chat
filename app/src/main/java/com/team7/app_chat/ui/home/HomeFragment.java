@@ -1,11 +1,14 @@
 package com.team7.app_chat.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +17,18 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.team7.app_chat.CurrentUser;
+import com.team7.app_chat.MainActivity;
 import com.team7.app_chat.R;
+import com.team7.app_chat.SetupProfileActivity;
+import com.team7.app_chat.SignInActivity;
+import com.team7.app_chat.SplashActivity;
 import com.team7.app_chat.Util.UserRepository;
 import com.team7.app_chat.adapters.ViewPagerAdapter;
 import com.team7.app_chat.databinding.ActivityMainBinding;
@@ -26,6 +36,8 @@ import com.team7.app_chat.models.User;
 import com.team7.app_chat.ui.chat.ChatRoomFragment;
 import com.team7.app_chat.ui.contacts.ContactsFragment;
 import com.team7.app_chat.ui.settings.SettingsFragment;
+
+import java.util.List;
 
 
 public class HomeFragment extends Fragment {
@@ -37,18 +49,27 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loadUser();
-    }
-
-    public void loadUser() {
-        new UserRepository().getDocRf(FirebaseAuth.getInstance().getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) return;
-                User user = value.toObject(User.class);
-                CurrentUser.user = user;
-            }
-        });
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            new UserRepository().getByEmail(currentUser.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if (error != null) return;
+                    try {
+                        User user = value.getDocuments().get(0).toObject(User.class);
+                        switch (value.getDocumentChanges().get(0).getType()) {
+                            case ADDED:
+                            case MODIFIED:
+                                user.setId(value.getDocuments().get(0).getId());
+                                CurrentUser.user = user;
+                                break;
+                        }
+                    } catch (Exception e) {
+                        Exception a = e;
+                    }
+                }
+            });
+        }
     }
 
     @Override

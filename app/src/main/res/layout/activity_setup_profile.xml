@@ -118,19 +118,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Full Name"
-                    android:textColorHint="@color/theme_color"
-                    app:boxBackgroundColor="@color/theme_color"
-                    app:boxStrokeColor="@color/theme_color"
-                    app:counterTextColor="@color/theme_color"
-                    app:errorEnabled="true"
-                    app:helperTextTextColor="@color/theme_color"
-                    app:placeholderTextColor="@color/theme_color">
+                    app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/setup_pr_bg"
-                        android:inputType="textCapCharacters" />
+                        android:inputType="textPersonName" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!--        <com.google.android.material.textfield.TextInputLayout-->

@@ -80,6 +80,7 @@ public class SetupProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup_profile);
+        user = CurrentUser.user;
         createContract();
         Toolbar toolbar = findViewById(R.id.toolbar);
         edtBirthday = findViewById(R.id.edtBirthday);
@@ -92,15 +93,8 @@ public class SetupProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         progressButton = new ProgressButton(SetupProfileActivity.this, findViewById(R.id.btnSetupProfile), "Setup Profile");
         userRepository = new UserRepository();
-        user = CurrentUser.user;
         initComponents();
-//        findViewById(R.id.btnPickImg).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(openGalleryIntent, 1000);
-//            }
-//        });
+
         imgAvatar.setOnClickListener(view -> {
             pickImageContract();
         });
