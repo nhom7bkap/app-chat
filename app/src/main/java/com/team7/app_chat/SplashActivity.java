@@ -53,6 +53,7 @@ public class SplashActivity extends AppCompatActivity {
                                 List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                                 User user = list.get(0).toObject(User.class);
                                 user.setId(currentUser.getUid());
+                                user.setEmail(currentUser.getEmail());
                                 CurrentUser.user = user;
                                 Intent it;
                                 if (user.isFirstTime()) {
@@ -67,6 +68,7 @@ public class SplashActivity extends AppCompatActivity {
 
                         });
                     } else {
+                        CurrentUser.user = new User();
                         startActivity(new Intent(SplashActivity.this, SignInActivity.class));
                     }
                 }

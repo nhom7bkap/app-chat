@@ -72,6 +72,7 @@ public class SignInActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(User user) {
                                         user.setId(currentUser.getUid());
+                                        user.setEmail(currentUser.getEmail());
                                         CurrentUser.user = user;
                                         Intent it;
                                         if (user.isFirstTime())

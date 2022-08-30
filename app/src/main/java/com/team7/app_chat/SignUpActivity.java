@@ -68,12 +68,12 @@ public class SignUpActivity extends AppCompatActivity {
                     FirestoreRepository<User> repository = new FirestoreRepository<>(User.class,"User");
                     repository.create(ur,user.getUid());
                     CurrentUser.user.setId(user.getUid());
+                    CurrentUser.user.setId(user.getEmail());
                     Intent it = new Intent(SignUpActivity.this, SetupProfileActivity.class);
                     startActivity(it);
                 } else {
                     progressButton.buttonFailed();
                     Toast.makeText(SignUpActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-//                                updateUI(null);
                 }
             }).addOnFailureListener(e -> {
                 progressButton.buttonFailed();
