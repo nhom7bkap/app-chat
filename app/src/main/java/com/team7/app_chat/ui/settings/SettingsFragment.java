@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,26 +65,10 @@ public class SettingsFragment extends Fragment {
         });
         showUserProfile();
 
-//        StorageReference profileRef = storageReference.child("users").child(firebaseProfile.getCurrentUser().getUid()).child("profile.jpg");
-//        profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-////                Picasso.get().load(uri).fit().centerCrop().into(profileImage);
-//            Handler handler = new Handler(Looper.getMainLooper());
-//            ExecutorService pool = Executors.newSingleThreadExecutor();
-//            pool.execute(() -> {
-//                try {
-//                    InputStream url = new URL(uri.toString()).openStream();
-//                    Bitmap bitmap = BitmapFactory.decodeStream(url);
-//                    handler.post(() -> ((ImageView) view.findViewById(R.id.imageView4)).setImageBitmap(bitmap));
-//                } catch (Exception e) {
-//
-//                }
-//            });
-//        });
         view.findViewById(R.id.textView4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(view.getContext(), ChangePassActivity.class);
-                startActivity(intent);
+                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_change_password);
             }
         });
         view.findViewById(R.id.textView6).setOnClickListener(new View.OnClickListener() {
@@ -97,7 +82,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showUserProfile() {
-        ((TextView)view.findViewById(R.id.txtEmail)).setText(user.getEmail());
+        ((TextView) view.findViewById(R.id.txtEmail)).setText(user.getEmail());
         ImageView imageView = view.findViewById(R.id.profileAvatar);
         Glide.with(view.getContext()).load(user.getAvatar()).into(imageView);
     }

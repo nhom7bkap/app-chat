@@ -2,9 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.contacts.UserProfileFragment">
 
-    <com.makeramen.roundedimageview.RoundedImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageUser"
         android:layout_width="@dimen/_72sdp"
         android:layout_height="@dimen/_72sdp"
@@ -28,34 +30,22 @@
         app:layout_constraintTop_toBottomOf="@+id/imageUser">
 
        <TextView
+           android:id="@+id/txtName"
            android:layout_width="wrap_content"
-           android:text="Username"
            android:textStyle="bold"
-           android:textSize="24dp"
+           android:textSize="19dp"
            android:textColor="#1B1B1B"
-           android:layout_height="wrap_content"/>
+           android:layout_height="wrap_content"
+           android:layout_marginBottom="8dp"/>
         <TextView
+            android:id="@+id/txtEmail"
             android:layout_width="wrap_content"
-            android:text="email@gmail.com"
             android:textSize="18dp"
             android:textColor="#1B1B1B"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnSave"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Edit"
-        android:textColor="@color/theme_color"
-        android:textSize="@dimen/_14sdp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintStart_toEndOf="@+id/imageUser"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnCancel"
@@ -72,33 +62,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/formEdit"
+    <Button
+        android:id="@+id/btnBlock"
+        style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_38sdp"
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_20sdp"
-        android:background="@drawable/background_input"
+        android:backgroundTint="@color/input_background"
+        android:textColor="@color/secondary_text"
+        android:text="Block"
+        android:textSize="@dimen/_15sdp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/infoLayout">
-
-        <EditText
-            android:id="@+id/editName"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_38sdp"
-            android:layout_marginHorizontal="8dp"
-            android:background="@android:color/transparent"
-            android:gravity="start|center"
-            android:hint="Fullname"
-            android:inputType="textPersonName"
-            android:padding="5dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="1dp"
-            android:textColorHint="#636363"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/infoLayout" />
 
     <Button
         android:id="@+id/btnDelete"
@@ -111,10 +89,9 @@
         android:textColor="#DD3434"
         android:text="Delete Contact"
         android:textSize="@dimen/_15sdp"
-        android:drawableLeft="@drawable/ic_trash_bin_svgrepo_com"
         android:drawableTint="#DD3434"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/formEdit" />
+        app:layout_constraintTop_toBottomOf="@+id/btnBlock" />
 </androidx.constraintlayout.widget.ConstraintLayout>

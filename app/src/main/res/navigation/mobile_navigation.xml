@@ -31,6 +31,20 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             />
+        <action
+            android:id="@+id/action_home_to_user_profile"
+            app:destination="@id/navigation_user_profile"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_home_to_change_password"
+            app:destination="@id/navigation_change_password"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -41,12 +55,26 @@
         tools:layout="@layout/fragment_chat_room" >
     </fragment>
 
+    <fragment
+        android:id="@+id/navigation_change_password"
+        android:name="com.team7.app_chat.ui.settings.ChangePasswordFragment"
+        android:label="Chat Room"
+        app:defaultNavHost="true"
+        tools:layout="@layout/fragment_change_password" >
+    </fragment>
+
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.team7.app_chat.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/navigation_user_profile"
+        android:name="com.team7.app_chat.ui.contacts.UserProfileFragment"
+        android:label="Contact Profile"
+        tools:layout="@layout/fragment_user_profiles" />
 
     <fragment
         android:id="@+id/navigation_chat"

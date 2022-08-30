@@ -64,7 +64,7 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         roomRepository = new RoomChatRepository();
         this.mAuth = FirebaseAuth.getInstance();
         currentUser = CurrentUser.user;
-        userRepository.getDocRf(currentUser.getId()).addSnapshotListener((value, error) -> {
+        userRepository.getDocRf(mAuth.getUid()).addSnapshotListener((value, error) -> {
             currentUserRef = value.getReference();
         });
     }
@@ -95,7 +95,7 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         recyclerView.setAdapter(contactAdapter);
 
 
-        userRepository.getDocRf(currentUser.getId()).get().addOnSuccessListener(documentSnapshot -> {
+        userRepository.getDocRf(mAuth.getUid()).get().addOnSuccessListener(documentSnapshot -> {
             documentSnapshot.getReference().collection("contacts").addSnapshotListener((value, error) -> {
                 if (error != null) return;
                 for (DocumentChange doc : value.getDocumentChanges()) {
@@ -182,7 +182,9 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         viewLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Bundle bundle = new Bundle();
+                bundle.putString("userId", doc.getId());
+                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_user_profile, bundle);
                 dialog.dismiss();
             }
         });
