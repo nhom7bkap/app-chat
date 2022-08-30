@@ -581,7 +581,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                 room.put("updatedAt", new Date());
                 currentUserRef.collection("chatRoom").document(roomRef.getId()).set(room);
                 friendRef.collection("chatRoom").document(roomRef.getId()).set(room);
-                checkMember();
+//                checkMember();
             });
         }
     }

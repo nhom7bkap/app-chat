@@ -136,7 +136,7 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
                 List<String> friendRoom = snapshot1.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
                 myRoom.retainAll(friendRoom);
 
-                if (myRoom != null){
+                if (myRoom.size() > 0) {
                     for (String id : myRoom) {
                         roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
                             RoomChats room = documentSnapshot.toObject(RoomChats.class);
@@ -147,7 +147,7 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
                             }
                         });
                     }
-                }else {
+                } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("userId", user.getId());
                     NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
