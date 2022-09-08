@@ -80,8 +80,8 @@ public class HomeFragment extends Fragment {
         bottomNavBar.setOnNavigationItemSelectedListener(item -> navigation(item));
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
-        viewPagerAdapter.addFragment(new ContactsFragment());
         viewPagerAdapter.addFragment(new ChatRoomFragment());
+        viewPagerAdapter.addFragment(new ContactsFragment());
         viewPagerAdapter.addFragment(new SettingsFragment());
 
         viewPager = view.findViewById(R.id.viewPagerMain);
@@ -92,10 +92,10 @@ public class HomeFragment extends Fragment {
                 super.onPageSelected(position);
                 switch (position) {
                     case 0:
-                        bottomNavBar.setSelectedItemId(R.id.menu_contacts);
+                        bottomNavBar.setSelectedItemId(R.id.menu_chat_room);
                         break;
                     case 1:
-                        bottomNavBar.setSelectedItemId(R.id.menu_chat_room);
+                        bottomNavBar.setSelectedItemId(R.id.menu_contacts);
                         break;
                     case 2:
                         bottomNavBar.setSelectedItemId(R.id.menu_settings);
@@ -108,10 +108,10 @@ public class HomeFragment extends Fragment {
 
     private boolean navigation(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.menu_contacts:
+            case R.id.menu_chat_room:
                 viewPager.setCurrentItem(0);
                 return true;
-            case R.id.menu_chat_room:
+            case R.id.menu_contacts:
                 viewPager.setCurrentItem(1);
                 return true;
             case R.id.menu_settings:

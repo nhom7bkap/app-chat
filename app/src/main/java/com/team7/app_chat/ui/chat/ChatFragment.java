@@ -149,12 +149,10 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                 if (charSequence.toString().trim().length() > 0) {
                     roomView.findViewById(R.id.btnTakePic).setVisibility(View.GONE);
                     roomView.findViewById(R.id.btnChoosePic).setVisibility(View.GONE);
-//                    roomView.findViewById(R.id.btnEmoji).setVisibility(View.GONE);
                     roomView.findViewById(R.id.btnSend).setVisibility(View.VISIBLE);
                 } else {
                     roomView.findViewById(R.id.btnTakePic).setVisibility(View.VISIBLE);
                     roomView.findViewById(R.id.btnChoosePic).setVisibility(View.VISIBLE);
-//                    roomView.findViewById(R.id.btnEmoji).setVisibility(View.VISIBLE);
                     roomView.findViewById(R.id.btnSend).setVisibility(View.GONE);
                 }
             }

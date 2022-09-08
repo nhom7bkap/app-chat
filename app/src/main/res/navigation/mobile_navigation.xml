@@ -45,6 +45,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_home_to_roomInfoFragment"
+            app:destination="@id/roomInfoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -53,6 +60,20 @@
         android:label="Chat Room"
         app:defaultNavHost="true"
         tools:layout="@layout/fragment_chat_room" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/roomInfoFragment"
+        android:name="com.team7.app_chat.ui.contacts.RoomInfoFragment"
+        android:label="fragment_room_info"
+        tools:layout="@layout/fragment_room_info" >
+        <action
+            android:id="@+id/action_roomInfoFragment_to_createRoomFragment"
+            app:destination="@id/createRoomFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -96,6 +117,20 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createRoomFragment"
+        android:name="com.team7.app_chat.ui.contacts.AddMemberFragment"
+        android:label="fragment_create_room"
+        tools:layout="@layout/fragment_add_member" >
+        <action
+            android:id="@+id/action_createRoomFragment_to_chatFragment"
+            app:destination="@id/navigation_chat"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment

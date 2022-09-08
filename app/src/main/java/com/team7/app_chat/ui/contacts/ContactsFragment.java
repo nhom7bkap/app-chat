@@ -74,13 +74,15 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         mView = inflater.inflate(R.layout.fragment_contacts,
                 container, false);
         this.recyclerView = mView.getRootView().findViewById(R.id.recyclerViewContact);
-        mView.findViewById(R.id.imAddFriend).setOnClickListener(new View.OnClickListener() {
+        mView.findViewById(R.id.btAddFriend).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 NavHostFragment.findNavController(ContactsFragment.this).navigate(R.id.action_home_to_add_friend);
             }
         });
-
+        mView.findViewById(R.id.lAddRoom).setOnClickListener(view -> {
+            NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_home_to_roomInfoFragment);
+        });
         return mView;
     }
 
