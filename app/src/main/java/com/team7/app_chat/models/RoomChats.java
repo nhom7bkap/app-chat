@@ -9,7 +9,7 @@ public class RoomChats {
 
     private String avatar;
     private String name;
-    private boolean isPublic;
+    private boolean isPublic = true;
     private DocumentReference lastMessage;
     private Date created_at;
 

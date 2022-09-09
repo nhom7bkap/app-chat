@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -174,6 +175,7 @@ public class SetupProfileActivity extends AppCompatActivity {
                 user.setGender(0);
                 break;
         }
+
         String fileName = String.valueOf(System.currentTimeMillis());
         final StorageReference fileRef = storageReference.child("users/" + fileName);
         fileRef.putFile(sourceUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -199,7 +201,6 @@ public class SetupProfileActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Failed.", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
 
@@ -308,7 +309,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         return finalUri;
     }
 
-    private void loadImage(Uri uri){
+    private void loadImage(Uri uri) {
         Glide.with(mCtx).load(uri.toString()).into(imgAvatar);
     }
 }

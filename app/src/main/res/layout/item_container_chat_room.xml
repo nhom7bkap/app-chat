@@ -42,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/roomAvatar"
                 app:layout_constraintTop_toBottomOf="@+id/roomName" />
 

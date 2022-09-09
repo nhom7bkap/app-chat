@@ -52,6 +52,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_chatFragment_to_roomSettingFragment"
+            app:destination="@id/roomSettingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -61,6 +68,52 @@
         app:defaultNavHost="true"
         tools:layout="@layout/fragment_chat_room" >
     </fragment>
+
+    <fragment
+        android:id="@+id/roomSettingFragment"
+        android:name="com.team7.app_chat.ui.chat.RoomSettingFragment"
+        android:label="fragment_room_setting"
+        tools:layout="@layout/fragment_room_setting" >
+        <action
+            android:id="@+id/action_roomSettingFragment_to_changeInfoFragment"
+            app:destination="@id/changeInfoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_roomSettingFragment_to_allMemberFragment"
+            app:destination="@id/allMemberFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_roomSettingFragment_to_homeFragment"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/roomSettingFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/changeInfoFragment"
+        android:name="com.team7.app_chat.ui.chat.ChangeInfoFragment"
+        android:label="fragment_change_info"
+        tools:layout="@layout/fragment_change_info" />
+    <fragment
+        android:id="@+id/allMemberFragment"
+        android:name="com.team7.app_chat.ui.chat.AllMemberFragment"
+        android:label="fragment_all_member"
+        tools:layout="@layout/fragment_all_member" >
+        <action
+            android:id="@+id/action_allMemberFragment_to_chatFragment"
+            app:destination="@id/navigation_chat" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/roomInfoFragment"
@@ -117,6 +170,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             />
+        <action
+            android:id="@+id/action_chatFragment_to_roomSettingFragment"
+            app:destination="@id/roomSettingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment

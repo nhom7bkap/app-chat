@@ -31,6 +31,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -83,6 +84,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
     private ImageView avatarView;
     private ConstraintLayout layoutInputMess;
     private LinearLayout layoutBlock;
+    private AppCompatImageButton btInfo;
     private ConstraintLayout layoutUnavailable;
 
     private ActivityResultLauncher<String[]> permissionContract;
@@ -162,6 +164,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
 
             }
         });
+        btInfo = roomView.findViewById(R.id.btInfo);
         roomView.findViewById(R.id.btnSend).setOnClickListener(view -> sendMessage());
         roomView.findViewById(R.id.btnChoosePic).setOnClickListener(view -> {
             pickImageContract();
@@ -451,6 +454,13 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                             getFriendInfo(value.getDocuments());
                         } else {
                             layoutInputMess.setVisibility(View.VISIBLE);
+                            btInfo.setVisibility(View.VISIBLE);
+                            btInfo.setOnClickListener(view -> {
+                                Bundle bundle = new Bundle();
+                                bundle.putString("roomId", roomId);
+                                bundle.putBoolean("isMod", isMod);
+                                NavHostFragment.findNavController(this).navigate(R.id.action_chatFragment_to_roomSettingFragment, bundle);
+                            });
                             Glide.with(getActivity()).load(chatRoom.getAvatar()).into(avatarView);
                             ((TextView) roomView.findViewById(R.id.chatName)).setText(chatRoom.getName());
                         }

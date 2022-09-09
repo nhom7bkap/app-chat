@@ -16,7 +16,10 @@ import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.models.Contact;
 import com.team7.app_chat.models.User;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -151,6 +154,8 @@ public class UserRepository {
         });
     }
 
+
+
     public Task<Void> blockFriend(String id, boolean status) {
         return collectionReference.document(user.getId()).collection("contacts")
                 .document(id).update("blocked", status);
@@ -162,6 +167,28 @@ public class UserRepository {
         collectionReference.document(user.getId()).collection("contacts")
                 .document(friendId).delete();
     }
+
+    public void addFriendRequest(String receiverId) {
+        DocumentReference myRef = getDocRf(user.getId());
+        DocumentReference receiverRef = getDocRf(receiverId);
+        myRef.collection("friend_request").whereEqualTo("user", receiverRef).get().addOnSuccessListener(snapshot -> {
+            if (snapshot.size() > 0) return;
+            else {
+                Map<String, Object> myData = new HashMap<>();
+                myData.put("user", receiverRef);
+                Map<String, Object> receiverData = new HashMap<>();
+                receiverData.put("user", myRef);
+
+                myRef.collection("friend_request")
+                        .document(receiverId).set(myData)
+                        .addOnSuccessListener(unused -> {
+                            receiverRef.collection("friend_request").document(user.getId()).set(receiverData);
+                        });
+            }
+        });
+    }
+
+
 
     public Task<Void> delete(final String documentName) {
         DocumentReference documentReference = collectionReference.document(documentName);

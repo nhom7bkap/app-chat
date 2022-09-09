@@ -29,6 +29,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.team7.app_chat.CurrentUser;
 import com.team7.app_chat.R;
 import com.team7.app_chat.SignInActivity;
 import com.team7.app_chat.Util.ContactRepository;
@@ -46,27 +47,30 @@ import java.util.function.Predicate;
 
 public class FindFriendFragment extends Fragment implements UsersAdapter.SelectListstener {
     private RecyclerView recyclerView;
-    private FirebaseAuth mAuth;
     private FriendRequestRepository requestRepository;
     private UserRepository userRepository;
     private UsersAdapter usersAdapter;
     private ArrayList<User> userArrayList;
-    private FirebaseUser currentUser;
     private ProgressBar mProgressBar;
     private TextView mTextView;
     private View mView;
+    private User currentUser;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        currentUser = CurrentUser.user;
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_find_friend,
                 container, false);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
         userRepository = new UserRepository();
         mProgressBar = mView.findViewById(R.id.findFriendProgressBar);
         mTextView = mView.findViewById(R.id.txtFindFriendNotFound);
-        requestRepository = new FriendRequestRepository(currentUser.getUid());
+        requestRepository = new FriendRequestRepository(currentUser.getId());
         this.recyclerView = mView.getRootView().findViewById(R.id.recyclerViewUser);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(this.getContext(), DividerItemDecoration.VERTICAL));
@@ -95,13 +99,13 @@ public class FindFriendFragment extends Fragment implements UsersAdapter.SelectL
                             for (DocumentChange doc : value.getDocumentChanges()) {
                                 User user = doc.getDocument().toObject(User.class);
                                 if (doc.getType() == DocumentChange.Type.ADDED) {
-                                    ContactRepository contactRepository = new ContactRepository(user.getId());
-                                    FriendRequestRepository requestRepository = new FriendRequestRepository(user.getId());
-                                    contactRepository.exists(currentUser.getUid()).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+                                    ContactRepository contactRepository = new ContactRepository(doc.getDocument().getId());
+                                    FriendRequestRepository requestRepository = new FriendRequestRepository(doc.getDocument().getId());
+                                    contactRepository.exists(currentUser.getId()).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                                         @Override
                                         public void onSuccess(Boolean aBoolean) {
                                             if (!aBoolean) {
-                                                requestRepository.exists(currentUser.getUid()).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+                                                requestRepository.exists(currentUser.getId()).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                                                     @Override
                                                     public void onSuccess(Boolean aBoolean) {
                                                         if (!aBoolean) {
@@ -136,9 +140,9 @@ public class FindFriendFragment extends Fragment implements UsersAdapter.SelectL
     @Override
     public void onItemClicked(User user) {
         FriendRequest friendRequest = new FriendRequest();
-        DocumentReference drf = userRepository.getDocRf(currentUser.getUid());
+        DocumentReference drf = userRepository.getDocRf(currentUser.getId());
         friendRequest.setSender(drf);
-        friendRequest.setSenderId(currentUser.getUid());
+        friendRequest.setSenderId(currentUser.getId());
         friendRequest.setReceiverId(user.getId());
         friendRequest.setCreated_at(new Date());
         requestRepository.create(friendRequest);
