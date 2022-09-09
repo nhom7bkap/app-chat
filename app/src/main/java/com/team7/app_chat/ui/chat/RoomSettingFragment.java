@@ -98,6 +98,12 @@ public class RoomSettingFragment extends Fragment {
     });
     CardView cvInfo = settingView.findViewById(R.id.cvInfo);
     ImageButton btnPickImg = settingView.findViewById(R.id.btnPickImg);
+    settingView.findViewById(R.id.btnBackChat6).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        NavHostFragment.findNavController(RoomSettingFragment.this).popBackStack();
+      }
+    });
     if(isMod){
       cvInfo.setOnClickListener(view -> {
         Bundle bundle = new Bundle();

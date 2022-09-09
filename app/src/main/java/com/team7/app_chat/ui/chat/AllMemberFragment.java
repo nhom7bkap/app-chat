@@ -9,6 +9,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -45,6 +46,13 @@ public class AllMemberFragment extends Fragment {
     btAdd.setOnClickListener(view -> {
       AddUserDialog dialog = new AddUserDialog(roomId);
       dialog.show(getActivity().getSupportFragmentManager(), "aa");
+    });
+
+    memberView.findViewById(R.id.btnBackChat8).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        NavHostFragment.findNavController(AllMemberFragment.this).popBackStack();
+      }
     });
 
     viewPager = memberView.findViewById(R.id.vpMember);

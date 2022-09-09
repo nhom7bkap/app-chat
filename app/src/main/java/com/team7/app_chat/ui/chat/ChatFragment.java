@@ -138,7 +138,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
             }
         });
         roomView.findViewById(R.id.btnBackChat).setOnClickListener(view -> {
-            NavHostFragment.findNavController(ChatFragment.this).navigate(R.id.action_chat_room_to_chat);
+            NavHostFragment.findNavController(ChatFragment.this).popBackStack();
         });
         ((EditText) roomView.findViewById(R.id.edtMessage)).addTextChangedListener(new TextWatcher() {
             @Override
@@ -363,7 +363,7 @@ public class ChatFragment extends Fragment implements MessageAdapter.INavMessage
                 roomRef.collection("messages").add(message).addOnSuccessListener(documentReference -> {
                     ((TextView) roomView.findViewById(R.id.edtMessage)).setText("");
                     roomRef.update("lastMessage", documentReference);
-                    roomRef.update("updateAt", new Date());
+                    roomRef.update("updatedAt", new Date());
                     Toast.makeText(getActivity(), "Completed!", Toast.LENGTH_SHORT).show();
                 });
             });

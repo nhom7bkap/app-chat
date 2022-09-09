@@ -194,10 +194,10 @@ public class RoomInfoFragment extends Fragment {
             builder.setTitle("Select one");
             builder.setItems(imageItems, (dialog, item) -> {
                 switch (imageItems[item]) {
-                    case "Take a picture":
-                        dialog.dismiss();
-                        captureImageContract();
-                        break;
+//                    case "Take a picture":
+//                        dialog.dismiss();
+//                        captureImageContract();
+//                        break;
                     case "Choose from gallery":
                         dialog.dismiss();
                         pickImageContract();

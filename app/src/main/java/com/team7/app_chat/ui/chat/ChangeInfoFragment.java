@@ -46,7 +46,7 @@ public class ChangeInfoFragment extends Fragment {
             String name = edName.getText().toString().trim();
             updateData(name);
         });
-        infoView.findViewById(R.id.btnBackChat6).setOnClickListener(new View.OnClickListener() {
+        infoView.findViewById(R.id.btnBackChat7).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 NavHostFragment.findNavController(ChangeInfoFragment.this).popBackStack();

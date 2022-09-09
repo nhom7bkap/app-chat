@@ -66,7 +66,9 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                 return;
             }
             assert value != null;
-            setData(value, holder);
+             if (value.exists()) {
+                 setData(value, holder);
+            }
         });
     }
 

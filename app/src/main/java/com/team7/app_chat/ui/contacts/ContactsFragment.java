@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,8 @@ import com.team7.app_chat.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
@@ -90,41 +93,47 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         contactList = new ArrayList<>();
-        contactAdapter = new ContactAdapter(view.getContext(), contactList, this);
+        contactAdapter = new ContactAdapter(mView.getContext(),contactList, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(contactAdapter);
 
-
-        userRepository.getDocRf(mAuth.getUid()).get().addOnSuccessListener(documentSnapshot -> {
+        userRepository.getDocRf(currentUser.getId()).get().addOnSuccessListener(documentSnapshot -> {
             documentSnapshot.getReference().collection("contacts").addSnapshotListener((value, error) -> {
                 if (error != null) return;
                 for (DocumentChange doc : value.getDocumentChanges()) {
                     switch (doc.getType()) {
                         case ADDED:
                             int count = (int) contactList.stream().filter(val -> val.getId().equals(doc.getDocument().getId())).count();
-                            if (count == 0) contactList.add(doc.getDocument());
+                            if(count == 0) {
+                                contactList.add(0, doc.getDocument());
+                                contactAdapter.notifyItemInserted(0);
+                            };
+                            break;
+                        case MODIFIED:
+                            Optional<DocumentSnapshot> friend = contactList.stream()
+                                    .filter(val -> val.getId().equals(doc.getDocument().getId())).findFirst();
+                            if(friend.isPresent()){
+                                int index = contactList.indexOf(friend.get());
+                                contactList.remove(index);
+                                contactList.add(index, doc.getDocument());
+                                contactAdapter.notifyItemChanged(index);
+                            }
                             break;
                         case REMOVED:
-                            DocumentSnapshot element = contactList.stream().filter(val -> val.getId().equals(doc.getDocument().getId())).findFirst().get();
-                            contactList.remove(element);
+                            Optional<DocumentSnapshot> friend2 = contactList.stream()
+                                    .filter(val -> val.getId().equals(doc.getDocument().getId())).findFirst();
+                            if(friend2.isPresent()){
+                                int index = contactList.indexOf(friend2.get());
+                                contactList.remove(index);
+                                contactAdapter.notifyItemRemoved(index);
+                            }
                             break;
                     }
-                    contactAdapter.notifyDataSetChanged();
                 }
             });
-//            documentSnapshot.getReference().collection("friend_request").addSnapshotListener((value, error) -> {
-//                if (error != null) return;
-//                int count = value.size();
-//                TextView tvCount = view.findViewById(R.id.tvRequestCount);
-//                if (count > 0) {
-//                    tvCount.setText(String.valueOf(count));
-//                    tvCount.setVisibility(View.VISIBLE);
-//                } else {
-//                    tvCount.setVisibility(View.GONE);
-//                }
-//            });
         });
     }
 
@@ -134,29 +143,32 @@ public class ContactsFragment extends Fragment implements ContactAdapter.INavCha
         DocumentReference user = doc.toObject(Contact.class).getUser();
         userRepository.getChatRoom().get().addOnSuccessListener(snapshot -> {
             List<String> myRoom = snapshot.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
-            user.collection("chatRoom").get().addOnSuccessListener(snapshot1 -> {
+            user.collection("chatRooms").get().addOnSuccessListener(snapshot1 -> {
                 List<String> friendRoom = snapshot1.getDocuments().stream().map(value -> value.getId()).collect(Collectors.toList());
                 myRoom.retainAll(friendRoom);
-
-                if (myRoom.size() > 0) {
-                    for (String id : myRoom) {
-                        roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
-                            RoomChats room = documentSnapshot.toObject(RoomChats.class);
-                            if (room.getName() == null) {
-                                Bundle bundle = new Bundle();
-                                bundle.putString("id", documentSnapshot.getId());
-                                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
-                            }
-                        });
-                    }
-                } else {
+                AtomicBoolean status = new AtomicBoolean(true);
+                for (String id : myRoom){
+                    roomRepository.get().document(id).get().addOnSuccessListener(documentSnapshot -> {
+                        RoomChats room = documentSnapshot.toObject(RoomChats.class);
+                        if(room.getName() == null){
+                            status.set(false);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("id", documentSnapshot.getId());
+                            NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
+                        } else if(myRoom.indexOf(documentSnapshot.getId()) == myRoom.size() - 1 && status.get()){
+                            Bundle bundle = new Bundle();
+                            bundle.putString("userId", user.getId());
+                            NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
+                        }
+                    });
+                }
+                if (myRoom.size() == 0){
                     Bundle bundle = new Bundle();
                     bundle.putString("userId", user.getId());
                     NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_home_to_chat, bundle);
                 }
             });
         });
-
     }
 
     public void showBottomSheet(DocumentSnapshot doc) {

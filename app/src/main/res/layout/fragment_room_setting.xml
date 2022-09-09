@@ -140,10 +140,10 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:background="@null"
-        android:tint="@color/theme_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_left_arrow_svgrepo_com" />
+        app:srcCompat="@drawable/ic_left_arrow_svgrepo_com"
+        app:tint="@color/theme_color" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvInfo"
